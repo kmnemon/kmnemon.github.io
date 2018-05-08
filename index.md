@@ -4,6 +4,6 @@
 # See: https://jekyllrb.com/docs/themes/#overriding-theme-defaults
 layout: blog
 title: Articles
-icon: fa-home
+icon: fa-pencil
 order: 1
 ---
