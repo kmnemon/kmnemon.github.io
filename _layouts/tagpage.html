@@ -11,14 +11,7 @@ layout: default
 	  <div class="container">
 			<header>
 				<h2>{{- page.title -}}</h2>
-				<p>{% if page.author %}{{ page.author }}, {% endif %}{{- page.date | date_to_long_string -}}</p>
-			</header>
-	    {{- content -}}
-	  </div>
-	</article>
-</div>
-
-<h1>{{ page.tag }}</h1>
+				<h1>{{ page.tag }}</h1>
 
 <ul>
 {% for post in site.tags[page.tag] %}
@@ -27,3 +20,9 @@ layout: default
   </li>
 {% endfor %}
 </ul>
+			</header>
+	    {{- content -}}
+	  </div>
+	</article>
+</div>
+
