@@ -2,6 +2,9 @@
 layout: default
 ---
 
+{%- assign _sections = site.sections | sort: 'order' -%}
+{%- include header.html scrolly_nav=_sections -%}
+
 <h1>{{ page.tag }}</h1>
 
 <ul>
