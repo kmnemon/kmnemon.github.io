@@ -4,13 +4,17 @@ author: ke
 layout: post
 tags: deep_learning
 ---
-# initialization 
+initialization 
+==
+
+Regularization or Dropout
+==
+
+Gradient Checking  
+==
+the goal of gradient checking is compare derivative cost function to derivate cost function approximate.  
 
 
-## Regularization or Dropout
-
-
-#### Gradient Checking  
 Take W1,b1,...,WL,bL and reshape into a big vector P  
 Cost function J(W1,b1,...,WL,bL) = J(P)  
 Take dW1,db1,...,dWL,dbL and reshape into a big vector dP  
