@@ -15,6 +15,9 @@ tags: deep_learning
 
 
 #sdfsdfs
+<h2>sdfsdfs</h2>
+<h1>aadfs</h1>
+
 
 the goal of gradient checking is compare derivative cost function to derivate cost function approximate.  
 
