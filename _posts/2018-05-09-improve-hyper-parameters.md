@@ -4,7 +4,7 @@ author: ke
 layout: post
 tags: deep_learning
 ---
-initialization 
+<h1>initialization</h1>
 ==
 
 Regularization or Dropout
