@@ -63,10 +63,10 @@
 	body {
 		background: #fff;
 		font-family: 'Source Sans Pro', sans-serif;
-		font-size: 14pt;
+		font-size: 19pt;
 		font-weight: 300;
 		line-height: 1.75em;
-		color: #666
+		color: #888;
 
 		&.is-loading * {
 			@include vendor('transition', 'none !important');
@@ -76,10 +76,10 @@
 
 	input, textarea, select {
 		font-family: 'Source Sans Pro', sans-serif;
-		font-size: 14pt;
+		font-size: 19pt;
 		font-weight: 300;
 		line-height: 1.75em;
-		color: #666;
+		color: #888;
 	}
 
 	h1, h2, h3, h4, h5, h6 {
@@ -98,12 +98,12 @@
 	}
 
 	h2 {
-		font-size: 1.5em;
+		font-size: 2em;
 		letter-spacing: -1px;
 	}
 
 	h3 {
-		font-size: 1em;
+		font-size: 1.5em;
 	}
 
 	header {
@@ -115,7 +115,7 @@
 	}
 
 	footer {
-		margin: 1.5em 0 0 0;
+		margin: 2em 0 0 0;
 	}
 
 	strong, b {
@@ -143,13 +143,13 @@
 	sub {
 		position: relative;
 		top: 0.5em;
-		font-size: 0.6em;
+		font-size: 0.8em;
 	}
 
 	sup {
 		position: relative;
 		top: -0.5em;
-		font-size: 0.6em;
+		font-size: 0.8em;
 	}
 
 	hr {
@@ -461,7 +461,7 @@
 			background: #fff;
 			margin: 0;
 			padding: 1em;
-			font-size: 0.9em;
+			font-size: 0.8em;
 
 			h3 {
 				font-size: 1em;
@@ -557,7 +557,7 @@
 		p {
 			position: relative;
 			display: block;
-			font-size: 0.7em;
+			font-size: 0.6em;
 			color: rgba(255, 255, 255, 0.5);
 			line-height: 1.25em;
 			margin: 0.5em 0 0 0;
@@ -625,7 +625,7 @@
 		background-color: #dce3e2;
 		padding: 3em 0 4em 0;
 		box-shadow: inset 0 1px 0 0 rgba(0, 0, 0, 0.05), inset 0 0.1em 0.1em 0 rgba(0, 0, 0, 0.025);
-		font-size: 0.7em;
+		font-size: 0.8em;
 
 		.copyright {
 			cursor: default;
@@ -732,7 +732,7 @@
 		/* Basic */
 
 			body, input, textarea, select {
-				font-size: 14pt;
+				font-size: 17pt;
 			}
 
 		/* Header */
@@ -790,7 +790,7 @@
 		/* Basic */
 
 			body, input, textarea, select {
-				font-size: 14pt;
+				font-size: 16pt;
 			}
 
 			.container {
@@ -880,7 +880,7 @@
 			}
 
 			body, input, textarea, select {
-				font-size: 14pt;
+				font-size: 16pt;
 			}
 
 			header {
@@ -990,7 +990,7 @@
 						-moz-osx-font-smoothing: grayscale;
 						content: '\f0c9';
 						color: #fff;
-						font-size: 14px;
+						font-size: 18px;
 						line-height: 2.25em;
 						background: rgba(128, 136, 144, 0.5);
 						border-radius: 0.35em;
