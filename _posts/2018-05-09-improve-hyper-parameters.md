@@ -7,10 +7,10 @@ tags: deep_learning
 # initialization 
 
 
-# Regularization or Dropout
+## Regularization or Dropout
 
 
-# Gradient Checking  
+#### Gradient Checking  
 Take W1,b1,...,WL,bL and reshape into a big vector P  
 Cost function J(W1,b1,...,WL,bL) = J(P)  
 Take dW1,db1,...,dWL,dbL and reshape into a big vector dP  
