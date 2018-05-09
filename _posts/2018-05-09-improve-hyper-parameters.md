@@ -5,22 +5,14 @@ layout: post
 tags: deep_learning
 ---
 
-#initialization
+<h2>Initialization</h2>
 
 
-#Regularization or Dropou
+<h2>Regularization or Dropout</h2>
 
 
-#Gradient Checking
-
-
-#sdfsdfs
-<h2>sdfsdfs</h2>
-<h1>aadfs</h1>
-
-
-the goal of gradient checking is compare derivative cost function to derivate cost function approximate.  
-
+<h2>Gradient Checking</h2>
+The goal of gradient checking is compare derivative cost function to the approximate of derivate cost function  
 
 Take W1,b1,...,WL,bL and reshape into a big vector P  
 Cost function J(W1,b1,...,WL,bL) = J(P)  
@@ -28,9 +20,9 @@ Take dW1,db1,...,dWL,dbL and reshape into a big vector dP
 Is dP is the gradient or the slope of the cost function J?  
 
 for each i:  
-    dP(approx)[i] = ( J(P1, P2, ..., Pi+e) - J(P1,P2,..., Pi-e) )/ 2e  
-
+    dP(approx)[i] = ( J(P1, P2, ..., Pi+e) - J(P1,P2,..., Pi-e) )/ 2e
     approx= dP[i] = derivative J / derivative P[i]  
-
     if ( dP approx == dP ) ??
+
+
  
