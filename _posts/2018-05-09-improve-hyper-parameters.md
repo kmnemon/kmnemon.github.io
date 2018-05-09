@@ -4,13 +4,17 @@ author: ke
 layout: post
 tags: deep_learning
 ---
-#.initialization  
+
+#initialization
 
 
-#.Regularization or Dropout
+#Regularization or Dropou
 
 
-#.Gradient Checking  
+#Gradient Checking
+
+
+#sdfsdfs
 
 the goal of gradient checking is compare derivative cost function to derivate cost function approximate.  
 
