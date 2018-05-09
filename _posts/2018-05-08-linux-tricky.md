@@ -4,7 +4,7 @@ author: ke
 layout: post
 tags: tricky
 ---
-* How to recover the flash disk from the ubuntu boot disk
+* How to recover the flash disk from the ubuntu boot disk  
 
 prepare: win 10 system
 
@@ -15,28 +15,28 @@ prepare: win 10 system
 
 done :)
 
-* find the listen port
+* find the listen port  
 lsof -i:8000
 
-* transfer file
+* transfer file  
 SCP local.py root@192.168.0.1:/home/ke/tornado
 
-* MongoDB
+* MongoDB  
 ```
   service mongod start
   chkconfig mongod on
 ```
 
-log: /var/log/mongodb/mongod.log
-config file: /etc/mongod.conf
-	net: bindIpAll: true
+log: /var/log/mongodb/mongod.log  
+config file: /etc/mongod.conf  
+	net: bindIpAll: true  
 
-* nginx
-location: `/usr/local/nginx/sbin`
-start: `./nginx`
-stop: `./nginx -s stop`
-reload: `./nginx -s reload`
+* nginx  
+location: `/usr/local/nginx/sbin`  
+start: `./nginx`  
+stop: `./nginx -s stop`  
+reload: `./nginx -s reload`  
 
-* jenkins
-location: `/etc/init.d`
-start: `./jenkins start`
+* jenkins  
+location: `/etc/init.d`  
+start: `./jenkins start`  
