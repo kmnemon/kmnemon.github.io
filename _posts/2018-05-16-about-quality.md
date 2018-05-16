@@ -9,7 +9,8 @@ The company invited me to do a training crouse about the software's quality, it'
 maybe i just list what i thought is important for the quality and what's wrong with our modern software development process.
 
 * about code review  
-let's list some research record:  
+let's list some research material:  
+
 ```
 Capers Jones' ongoing analysis of over 12,000 software development projects showed that the latent defect discovery rate of formal inspection is in
  the 60-65% range. For informal inspection, the figure is less than 50%. The latent defect discovery rate for most forms of testing is about 30%.
@@ -17,7 +18,7 @@ Capers Jones' ongoing analysis of over 12,000 software development projects show
  Code review rates should be between 200 and 400 lines of code per hour.Inspecting and reviewing more than a few hundred lines of code per hour for
   critical software (such as safety critical embedded software) may be too fast to find errors.Industry data indicates that code reviews can 
   accomplish at most an 85% defect removal rate with an average rate of about 65%.  
-  
+
 -quote by wiki
 ```
 
