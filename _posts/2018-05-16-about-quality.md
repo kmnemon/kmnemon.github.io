@@ -17,7 +17,7 @@ everybody know a week's task, they know each other's job and can adjust the day 
 
 * productive tools
 just one button of work  
-jekins + static check + auto deploy + auto test
+jekins + static check + auto deploy + auto test  
 ![](/assets/images/2018-05-16-about-quality/jenkins.png)
 ![](/assets/images/2018-05-16-about-quality/static_scan.png)  
 ![](/assets/images/2018-05-16-about-quality/testng.png)  
