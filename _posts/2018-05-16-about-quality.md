@@ -10,8 +10,7 @@ maybe i just list what i thought is important for the quality and what's wrong w
 
 * KANBAN  
 the most important thing in a project is the Team have the whole and same piction. whatever u do is keep everybody in the same line. we use KANBAN to do this thing. see the follow:  
-<span class="image left"><img src="{{ 'assets/images/2018-05-16-about-quality/KANBAN1.jpeg' | relative_url }}" alt="" /></span>  
-<span class="image left"><img src="{{ 'assets/images/2018-05-16-about-quality/KANBAN2.jpeg' | relative_url }}" alt="" /></span>  
+
 
 ![](2018-05-16-about-quality/1.png)
 
