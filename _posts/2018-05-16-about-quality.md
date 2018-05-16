@@ -8,10 +8,10 @@ tags: essay
 The company invited me to do a training crouse about the software's quality, it's an old topic every project book talk about it, every quality master discuss it, the cmmi and agile process have such a huge practices about it, what should i do about it? 
 maybe i just list what i thought is important for the quality and what's wrong with our modern software development process.
 
-* KANBAN
+* KANBAN  
 the most important thing in a project is the Team have the whole and same piction. whatever u do is keep everybody in the same line. we use KANBAN to do this thing. see the follow:  
-<span class="image left"><img src="{{ 'assets/images/2018-05-16-about-quality/KANBAN1.jpg' | relative_url }}" alt="" /></span>
-<span class="image left"><img src="{{ 'assets/images/2018-05-16-about-quality/KANBAN2.jpg' | relative_url }}" alt="" /></span>
+<span class="image left"><img src="{{ 'assets/images/2018-05-16-about-quality/KANBAN1.jpeg' | relative_url }}" alt="" /></span>  
+<span class="image left"><img src="{{ 'assets/images/2018-05-16-about-quality/KANBAN2.jpeg' | relative_url }}" alt="" /></span>  
 
 * about code review  
 let's list some research material:  
