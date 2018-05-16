@@ -13,6 +13,8 @@ the most important thing in a project is the Team have the whole and same pictio
 <span class="image left"><img src="{{ 'assets/images/2018-05-16-about-quality/KANBAN1.jpeg' | relative_url }}" alt="" /></span>  
 <span class="image left"><img src="{{ 'assets/images/2018-05-16-about-quality/KANBAN2.jpeg' | relative_url }}" alt="" /></span>  
 
+![](2018-05-16-about-quality/1.png)
+
 * about code review  
 let's list some research material:  
 
