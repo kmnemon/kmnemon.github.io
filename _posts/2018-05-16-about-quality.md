@@ -13,7 +13,16 @@ the most important thing in a project is the Team have the whole and same pictio
 ![](/assets/images/2018-05-16-about-quality/KANBAN1.jpeg)  
 ![](/assets/images/2018-05-16-about-quality/KANBAN2.jpeg)  
   
-everybody know a week's task, they know the job for each other and can adjust the day of work to coodinate others.  
+everybody know a week's task, they know each other's job and can adjust the day of work to coodinate others.  
+
+* productive tools
+just one button of work  
+jekins + static check + auto deploy + auto test
+![](/assets/images/2018-05-16-about-quality/jenkins.png)
+![](/assets/images/2018-05-16-about-quality/deploy.png)  
+![](/assets/images/2018-05-16-about-quality/testng.png)  
+
+it's great to use productive tools make the team efficiency. click one button and it's done! build, code static scan, deploy, auto test, the developer and QA love to do the job smoothly. it's saving a lot of time. do not do the same thing manually.
   
 * about code review  
 let's list some research material:  
