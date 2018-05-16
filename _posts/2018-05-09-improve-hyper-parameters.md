@@ -22,7 +22,7 @@ Is dP is the gradient or the slope of the cost function J?
 ```
 for each i:  
     dtheta(approx)[i] = ( J(theta1, theta2, ..., thetai+e) - J(theta1,theta2,..., thetai-e) )/ 2e  
-    (approx dP[i] = derivative J / derivative P[i])  
+    (approx dtheta[i] = derivative J / derivative theta[i])  
 
 So for all  
  dtheta_approx =  (J(theta+e) - J(theta - e)) / (2 * e)  
