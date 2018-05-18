@@ -43,9 +43,13 @@ Most of research about code review reveal that it is the most efficient way to i
   
 the reason i think is **counter-intuitive**, **kpi-oriented**, and **deadline**. im the prefession developer, i reading others boring code and 200~400 per hour, do not have any advance for the project yet. the trash i just read belong to the other code monkey, it's none of my bussiness. i have lots of features not done yet, i will coding my own code, meet the deliver time, go to the hell the other's code!   
 
-* hurry, not rush
+* hurry, not rush  
 Deliver the software to the market, we need to be hurry, but donot rush, if you rush, the software definite to be...
 ![](/assets/images/2018-05-16-about-quality/crush.jpeg)  
+
+* They are not nerd, they are geeks
+They can drive plane, they can play instrument, they are artisit. 
+
 
 
  
