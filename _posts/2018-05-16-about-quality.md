@@ -56,8 +56,8 @@ the reason i think is **counter-intuitive**, **kpi-oriented**, and **deadline**.
 Deliver the software to the market, we need to be hurry, but donot rush, if you rush, the software definite to be...
 ![](/assets/images/2018-05-16-about-quality/crush.jpeg)  
 
-* They are not nerd, they are geeks
-They can drive plane, they can play instrument, they are artisit. 
+* They are not nerd, they are geeks  
+They can drive plane, they can play instrument, they are artisit.   
 
 
 
