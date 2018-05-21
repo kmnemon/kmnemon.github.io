@@ -8,6 +8,12 @@ tags: essay
 The company invited me to do a training crouse about the software's quality, it's an old topic every project book talk about it, every quality master discuss it, the cmmi and agile process have such a huge practices about it, what should i do about it? 
 maybe i just list what i thought is important for the quality and what's wrong with our modern software development process.
 
+* daily meeting  
+three questiones to figture out:  
+1. what did you do yesterday?  
+2. what are you going to do today?  
+3. Do you need some help?(is there something to stuck the process?)  
+  
 * KANBAN  
 the most important thing in a project is the Team have the whole and same piction. whatever u do is keep everybody in the same line. we use KANBAN to do this thing. see the follow:  
 ![](/assets/images/2018-05-16-about-quality/KANBAN1.jpeg)  
@@ -43,6 +49,9 @@ Most of research about code review reveal that it is the most efficient way to i
   
 the reason i think is **counter-intuitive**, **kpi-oriented**, and **deadline**. im the prefession developer, i reading others boring code and 200~400 per hour, do not have any advance for the project yet. the trash i just read belong to the other code monkey, it's none of my bussiness. i have lots of features not done yet, i will coding my own code, meet the deliver time, go to the hell the other's code!   
 
+* focus  
+![](/assets/images/2018-05-16-about-quality/focus.jpg)   
+  
 * hurry, not rush  
 Deliver the software to the market, we need to be hurry, but donot rush, if you rush, the software definite to be...
 ![](/assets/images/2018-05-16-about-quality/crush.jpeg)  
