@@ -8,6 +8,8 @@ tags: essay
 The company invited me to do a training crouse about the software's quality, it's an old topic every project book talk about it, every quality master discuss it, the cmmi and agile process have such a huge practices about it, what should i do about it? 
 maybe i just list what i thought is important for the quality and what's wrong with our modern software development process.
 
+* the passion and love IT industry
+
 * daily meeting  
 three questiones to figture out:  
 1. what did you do yesterday?  
@@ -49,8 +51,11 @@ Most of research about code review reveal that it is the most efficient way to i
   
 the reason i think is **counter-intuitive**, **kpi-oriented**, and **deadline**. im the prefession developer, i reading others boring code and 200~400 per hour, do not have any advance for the project yet. the trash i just read belong to the other code monkey, it's none of my bussiness. i have lots of features not done yet, i will coding my own code, meet the deliver time, go to the hell the other's code!   
 
-* focus  
-![](/assets/images/2018-05-16-about-quality/focus.jpg)   
+* focus and cooperate trade off  
+![](/assets/images/2018-05-16-about-quality/focus.jpg)  
+programming need 
+
+* be aware off technism
   
 * hurry, not rush  
 Deliver the software to the market, we need to be hurry, but donot rush, if you rush, the software definite to be...
