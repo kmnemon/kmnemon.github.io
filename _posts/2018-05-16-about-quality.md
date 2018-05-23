@@ -8,7 +8,8 @@ tags: essay
 The company invited me to do a training crouse about the software's quality, it's an old topic every project book talk about it, every quality master discuss it, the cmmi and agile process have such a huge practices about it, what should i do about it? 
 maybe i just list what i thought is important for the quality and what's wrong with our modern software development process.
 
-* the passion and love IT industry
+* the passion  
+i think most of us going to the industry is because we love this, we love the feel of change something through the finger.if you have this feeling, then you are good damn of it  
 
 * daily meeting  
 three questiones to figture out:  
@@ -22,17 +23,21 @@ the most important thing in a project is the Team have the whole and same pictio
 ![](/assets/images/2018-05-16-about-quality/KANBAN2.jpeg)  
   
 everybody know a week's task, they know each other's job and can adjust the day of work to coodinate others.  
+  
+* Retrospective Meeting  
+![](/assets/images/2018-05-16-about-quality/Retrospective.jpg)  
+  
 
-* productive tools  
+* productivity tools  
 just one button of work  
-jekins + static check + auto deploy + auto test  
+build + static check + auto deploy + auto test  
 ![](/assets/images/2018-05-16-about-quality/jenkins.jpeg)  
 ![](/assets/images/2018-05-16-about-quality/static_scan.jpeg)  
 ![](/assets/images/2018-05-16-about-quality/testng.jpeg)  
 
 it's great to use productive tools make the team efficiency. click one button and it's done! build, code static scan, deploy, auto test, the developer and QA love to do the job smoothly. it's saving a lot of time. do not do the same thing manually.
   
-* about code review  
+* mysterious of code review  
 let's list some research material:  
 
 ```
@@ -55,7 +60,7 @@ the reason i think is **counter-intuitive**, **kpi-oriented**, and **deadline**.
 ![](/assets/images/2018-05-16-about-quality/focus.jpg)  
 programming need 
 
-* be aware off technism
+* be aware of technism
   
 * hurry, not rush  
 Deliver the software to the market, we need to be hurry, but donot rush, if you rush, the software definite to be...
