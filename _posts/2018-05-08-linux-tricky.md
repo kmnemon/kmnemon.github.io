@@ -17,6 +17,7 @@ done :)
 
 * find the listen port  
 lsof -i:8000
+ps aux | grep xxx
 
 * transfer file  
 SCP local.py root@192.168.0.1:/home/ke/tornado
@@ -40,3 +41,7 @@ reload: `./nginx -s reload`
 * jenkins  
 location: `/etc/init.d`  
 start: `./jenkins start`  
+
+* nohub the python  
+nohup python3 webanalysis.py &  
+

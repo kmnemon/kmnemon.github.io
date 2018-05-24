@@ -50,7 +50,7 @@ let's list some research material:
 
 Most of research about code review reveal that it is the most efficient way to improve software quality, but why most of the orgnization in our nation not do it well?  
   
-the reason i think is **counter-intuitive**, **kpi-oriented**, and **deadline**. im the prefession developer, i reading others boring code and 200~400 per hour, do not have any advance for the project yet. the trash i just read belong to the other code monkey, it's none of my bussiness. i have lots of features not done yet, i will coding my own code, meet the deliver time, go to the hell the other's code!   
+the reason i think is **counter-intuitive**, **kpi-oriented**, and **deadline**. im the prefession developer, i reading others boring code and 200~400 per hour, do not have any advanced for the project yet. the trash i just read belong to the other code monkey, it's none of my bussiness. i have lots of features not done yet, i will coding my own code, meet the deliver time, go to the hell the other's code!   
 
 * focus and cooperate trade off  
 ![](/assets/images/2018-05-16-about-quality/focus.jpg)  
