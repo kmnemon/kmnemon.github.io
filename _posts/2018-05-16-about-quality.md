@@ -35,7 +35,9 @@ build + static check + auto deploy + auto test
 ![](/assets/images/2018-05-16-about-quality/static_scan.jpeg)  
 ![](/assets/images/2018-05-16-about-quality/testng.jpeg)  
 
-it's great to use productive tools make the team efficiency. click one button and it's done! build, code static scan, deploy, auto test, the developer and QA love to do the job smoothly. it's saving a lot of time. do not do the same thing manually.
+it's great to use productive tools make the team efficiency. click one button and it's done! build, code static scan, deploy, auto test, the developer and QA love to do the job smoothly. it's saving a lot of time. do not do the same thing manually.  
+we need to be 'lazy' as possible as we can.  
+
   
 * mysterious of code review  
 let's list some research material:  
@@ -54,8 +56,11 @@ the reason i think is **counter-intuitive**, **kpi-oriented**, and **deadline**.
 
 * focus and cooperate trade off  
 ![](/assets/images/2018-05-16-about-quality/focus.jpg)  
-programming need 
-
+programming need  
+  
+* Process Capability Baseline  
+the lack of data
+  
 * be aware of technism
   
 * hurry, not rush  
