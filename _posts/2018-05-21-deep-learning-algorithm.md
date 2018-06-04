@@ -23,14 +23,14 @@ make sure mini-batch fit in CPU/GPU memery
   
 On iteration t:  
 Compute dW, db on the current mini-batch: 
-1. momentum  
+1.momentum  
 VdW = B1 * VdW + (1-B1)dW  
 Vdb = B1 * Vdb (1-B1)db  
 W = W - a * vdW, b = b - a * Vdb  
   
 Hyperparameters: a, B1,   B1 = 0.9 
 
-2. RMSprop  
+2.RMSprop  
 SdW = B * SdW +(1-B2)dW^2  
 Sdb = B * Sdb + (1-B2)db^2  
 
@@ -39,7 +39,7 @@ b = b - a * db/(square(sdb) + e)
 
 Hyperarameters: a, B, e = 10^-8  
 
-3. Adam  
+3.Adam  
 VdW = B1 * VdW + (1-B1)dW, Vdb = B1 * Vdb + (1-B1)db  
 Sdw = B2 * Sdw + (1-B2)dw^2, Sdb = B2 * Sdb + (1-B2)db^2  
 VcorrecteddW = Vdw/(1-B1^t), Vcordb = Vdb/(1-B1^t)  
