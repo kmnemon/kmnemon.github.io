@@ -22,7 +22,7 @@ make sure mini-batch fit in CPU/GPU memery
 ![](/assets/images/2018-05-21-deep-learning-algorithm/momentum.png)  
   
 On iteration t:  
-Compute dW, db on the current mini-batch: 
+Compute dW, db on the current mini-batch:  
 1.momentum  
 VdW = B1 * VdW + (1-B1)dW  
 Vdb = B1 * Vdb (1-B1)db  
