@@ -6,6 +6,7 @@ tags: deep_learning
 ---
 
 * Hyperparameters tuning sequence  
+
 1.sequence  
 a - 1st  
 beta - 2nd  
@@ -22,6 +23,7 @@ mini-batch size - 2nd
 ![](/assets/images/2018-06-06-hyperparameter-tuning/coarse_to_fine.png)  
   
 * Appropriate scale for hyperparameters  
+
 a = 0.0001 ~ 1  
 scale: 0.0001, 0.001, 0.01, 0.1, 1 (log10 0.0001~log10 1)  
   
@@ -32,10 +34,11 @@ r = [-3, -1]
 beta = 1- 10^r  
   
 * Pandas VS. Caviar  
-![](/assets/images/2018-06-06-hyperparameter-tuning/babysitting.png)  
+![](/assets/images/2018-06-06-hyperparameter-tuning/babysitting.png)
 ![](/assets/images/2018-06-06-hyperparameter-tuning/caviar.png)  
 
 * Batch Normalization  
+
 normalizing the input features:  
 u = 1/m * E x(i)  
 X = X - u  
@@ -50,7 +53,7 @@ variances^2 = 1/m * E (Z(i) - u)^2
 Z(i)norm = (Z(i) - u) / sqrt(variances^2 + e)  
 Ztilde(i) = gamma * Z(i)norm + beta (gamma, beta learnable paramerters)  	
   
-  
+
 
    
 
