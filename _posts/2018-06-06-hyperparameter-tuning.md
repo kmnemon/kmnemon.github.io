@@ -31,9 +31,29 @@ r = [-3, -1]
 1-beta = 10^r  
 beta = 1- 10^r  
   
-* Pandas VS. Caviar
+* Pandas VS. Caviar  
 ![](/assets/images/2018-06-06-hyperparameter-tuning/babysitting.png)  
-![](/assets/images/2018-06-06-hyperparameter-tuning/random_values.png)  
+![](/assets/images/2018-06-06-hyperparameter-tuning/caviar.png)  
+
+* Batch Normalization  
+normalizing the input features:  
+u = 1/m * E x(i)  
+X = X - u  
+  
+variances^2 = 1/m * E x(i)^2  
+X = X / variances^2  
+
+Batch Norm:  
+give the intermediate values in neuro net: Z(1), ..., Z(m)  
+u = 1/m * E Z(i)  
+variances^2 = 1/m * E (Z(i) - u)^2  
+Z(i)norm = (Z(i) - u) / sqrt(variances^2 + e)  
+Ztilde(i) = gamma * Z(i)norm + beta (gamma, beta learnable paramerters)  	
+  
+  
+
+   
+
 
 
 
