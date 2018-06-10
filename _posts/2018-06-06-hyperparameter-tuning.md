@@ -51,7 +51,31 @@ give the intermediate values in neuro net: Z(1), ..., Z(m)
 u = 1/m * E Z(i)  
 variances^2 = 1/m * E (Z(i) - u)^2  
 Z(i)norm = (Z(i) - u) / sqrt(variances^2 + e)  
-Ztilde(i) = gamma * Z(i)norm + beta (gamma, beta learnable paramerters)  	
+Ztilde(i) = gamma * Z(i)norm + beta (gamma, beta learnable paramerters)  
+  
+* Softmax regression  
+![](/assets/images/2018-06-06-hyperparameter-tuning/softmax_layer.png)  
+Z[L] = W[L]a[L-1] + b[L]  
+  
+Activation function:  
+t = e ^ Z[L]
+a[L] = yhat = ( e ^ Z[L] ) / E(j=1~4) ti,  ai[L] = ti / E(j=1~4) ti  
+example:  
+![](/assets/images/2018-06-06-hyperparameter-tuning/softmax_example.png)  
+  
+Loss function:  
+L(y, yhat) = - E(j=1~4) y(j) * log yhat(j)  
+example:  
+y = [[0], [1], [0], [0]]; a[L] = yhat = [[0.3], [0.2], [0.1], [0.4]]  
+L = -y(2) * log yhat(2) = - log yhat(2), make yhat(2) as big as possible  
+
+Cost function:  
+J(w[1], b[1],...) = 1/m E(i=1~m) L(y(i, yhat(i))  
+
+
+
+
+
   
 
 
