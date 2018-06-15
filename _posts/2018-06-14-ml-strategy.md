@@ -24,7 +24,8 @@ change dev set
 change cost function  
 
 * Single number evaluation metric  
-Classifier, Precision, Recall, F1 Score 
+
+Classifier, Precision, Recall, F1 Score  
 A, 95%, 90%, 92.4%  
 B, 98%, 85%, 91.0%  
 
