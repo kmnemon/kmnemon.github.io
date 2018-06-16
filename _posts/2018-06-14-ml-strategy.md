@@ -132,8 +132,24 @@ today - speech recognition systems can surpass human-level performance
   
 * Improving your model performance  
   
-
-
+The two fundamental assumptions supervised learning  
+1. You can fit the traiing set pretty well(low avoidable bias)  
+2. The training set performance generalizes pretty well to the dev/test set.(variance is not too bad)  
+  
+avoidable bias fix:  
+Tran bigger model  
+Train longer/better optimization algorithm  
+--momentum or RMS prop or Adam  
+NN architecture / hyperparameters search  
+--RNN or CNN  
+  
+variance problem fix:  
+More data  
+Regularization  
+--L2 regularization or dropout or data augmentation  
+NN architecture / hyperarameters search  
+  
+  
 
 
 
