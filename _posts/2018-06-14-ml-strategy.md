@@ -83,7 +83,7 @@ if doing well on your metric + dev/test set does not correspond to doing well on
 ![](/assets/images/2018-06-14-ml-strategy/human_level_performance.png)  
 the green line is Bayes optimal error that can not pass(human or machine)  
 Humans are quite good at a lot of tasks. So long as ML is worse than humans, you can:  
--Get labeled data from humans
+-Get labeled data from humans  
 -Gain insight from manual error analysis:  
 Why did a person get this right?  
 -Better analysis of bias/variance.  
@@ -117,18 +117,18 @@ if you have another purpose, you can use another x% error for human level error
   
 * ML significantly surpasses human-level performance  
   
-- Online advertising  
-- Product recommendations  
-- Logistics(predicting transit time)  
-- Loan approvals  
+-- Online advertising  
+-- Product recommendations  
+-- Logistics(predicting transit time)  
+-- Loan approvals  
   
 these four a learn from struct data like database of how you click on the web or their loan applications and their outcomes  
 these are not natural perception problems, human are good at natural perception.  
   
 others in natural perception:  
 today - speech recognition systems can surpass human-level performance  
-- some image recognition tasks  
-- some medical tasks, for example reading ECGS or diagnoseing skin canncer or certain narrow radiology task.  
+-- some image recognition tasks  
+-- some medical tasks, for example reading ECGS or diagnoseing skin canncer or certain narrow radiology task.  
   
 * Improving your model performance  
   
