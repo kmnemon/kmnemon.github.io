@@ -31,6 +31,7 @@ They are less robust to systematic errors. if your labeler consistently labels w
   
 Dev set or Test set:  
 doing error analysis and add incorrectly labedled  
+  
 Image | Dog | Great cat | Incorrectly labeled |comments 
 - | :-: | :-: | :-: | :-:
 1 |  | O |   | pitball | 
