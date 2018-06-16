@@ -14,15 +14,12 @@ error analysis procedure:
 2. Count up how many are dogs.  
 
 Image | Dog | Great cat | comments 
-- | :-: | - | -
+- | :-: | :-: | :-:
 1 |  | O |   | pitball 
 2 |  |   | O |
 3 |  |   | O |
 . |O |   |   |
-% of total | | |
+% of total | 5% | 95% |  
   
   
-  
-| abc | def |
-| --- | --- |
-| bar | baz |
+ 
