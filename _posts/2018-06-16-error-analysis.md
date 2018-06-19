@@ -58,6 +58,43 @@ Guidelines:
 2. Consider examining examples your algorithm got right as well as ones it got wrong.  (98% accuracy 2% error, Donot just consider the 2% error's mislabel, consider the 98% mislabel as well)  
 3. Train and dev/test data may now come from slightly different distributions.  
   
+* Train, dev/test set from different distribution  
+
+cat app example:  
+if you have an app that allow users upload cat pics, you wanna know if these pics are cat or not. but you only have 10,000 Data from mobile app, so you scrap web and download cat pics from webpages about 200,000,so how can we use these 200,000 pics?  
+  
+Option 1: put 200,000 into 10,000 pics and random shuffle, pick 205,000 for train set ,and 2,500 for dev set , 2,500 for test set.  
+advantage:you train, dev, test sets are all from same distribution  
+huge disadvantage: the most pics in dev/test are from webpages.  
+  
+Option 2: put all 200,000 webpage pics in training set and plus 5,000 mobile pics, then put 2,500 + 2,500 mobile into the dev/test sets  
+  
+* Bias and Bariance with mismatched data distributions  
+
+new define  
+Training-dev set: Same distribution as training set, but not used for training  
+  
+train set, train-dev set, dev set, test set.  
+  
+Sets | error % | comment
+:-:|:-:|:-:
+Human error | 0% | 
+Training error | 10% | avoidable bias
+Training-dev error | 11% | 
+Dev error | 12% | 
+ | | high bias
+Human error | 0% | 
+Training error | 10% |  avoidable bias
+Training-dev error | 11% | 
+Dev error | 20% | data mismatch
+ | | high bias, Data mismatch
+Human error | 4% | 
+Training error | 7% |  avoidable bias
+Training-dev error | 10% | variance
+Dev error | 12% | data mismatch
+test error |12 | degree of overfit to the dev set
+  
+
 * Transfer learning  
 
 you have a cat classifier, trained from deep learning nerual. and now you have another set of diagnose image, you want bulid a diagnose classifier, so here is what you can do:  
