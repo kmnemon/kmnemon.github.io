@@ -38,8 +38,8 @@ keras: Conv2d
 Why is the vertical edge:  
 ![](/assets/images/2018-06-20-convolutional-neural-networks/convolve4.png)  
 why is the right image in the middle vertical so thick, 'cause the input image is 6 * 6 so small. 
-   
-vertical filter |  |  |  | Horizontal | | |
+
+vertical filter |  |  |  | Horizontal filter| | |
 :-:| :-: | :-: | :-: | :-: | :-: | :-: |
 1 | 0 | -1 |  | 1 | 1 | 1 |
 1 | 0 | -1 |  | 0 | 0 | 0 |
@@ -47,5 +47,40 @@ vertical filter |  |  |  | Horizontal | | |
   
 positive edge: light to dark  
 negative edge: dark to light  
+
+sobel filter |  |  |  | Schar filter| | |
+:-:| :-: | :-: | :-: | :-: | :-: | :-: |
+1 | 0 | -1 |  | 3 | 0 | -3 |
+2 | 0 | -2 |  | 10 | 0 | -10 |
+1 | 0 | -1 |  | 3| 0 | -3|
+  
+Advantage:  a little bit more robust  
+  
+in the deep learning you could learn the 9 parameters.  
+
+* Padding  
+  
+in the previous example the disadvantage of edge detector is:  
+1. image shrink  
+2. throw away information from the edge of image  
+
+![](/assets/images/2018-06-20-convolutional-neural-networks/padding.png)  
+padding = 1  
+  
+how much to pad?
+Valid convolutions: no padding  
+Same convolutions: Pad so that output size is the same as the input size  
+filters: odd-number 3 * 3(common), 5 * 5, 7 * 7  
+  
+* Strided convolutions  
+  
+n * n image, f * f filter, padding p, stride s, the output = [(n +2p -f)/s +1] * [(n +2p -f)/s +1]  rounding down  
+  
+
+
+
+  
+
+
 
 
