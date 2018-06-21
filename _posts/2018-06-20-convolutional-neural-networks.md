@@ -38,4 +38,10 @@ keras: Conv2d
 Why is the vertical edge:  
 ![](/assets/images/2018-06-20-convolutional-neural-networks/convolve4.png)  
 why is the right image in the middle vertical so thick, 'cause the input image is 6 * 6 so small.  
+vertical filter |  |   |  | Horizontal | | |
+:-:| :-: | :-: | :-: | :-: | :-: | :-: |
+1 | 0 | -1 |  | 1 | 1 | 1 |
+1 | 0 | -1 |  | 0 | 0 | 0 |
+1 | 0 | -1 |  | -1| -1| -1|  
+
 
