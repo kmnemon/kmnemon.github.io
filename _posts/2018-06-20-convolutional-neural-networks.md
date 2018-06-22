@@ -76,6 +76,20 @@ filters: odd-number 3 * 3(common), 5 * 5, 7 * 7
   
 n * n image, f * f filter, padding p, stride s, the output = [(n +2p -f)/s +1] * [(n +2p -f)/s +1]  rounding down  
   
+* Convolutions over volumes  
+  
+![](/assets/images/2018-06-20-convolutional-neural-networks/convolution_RGB.png)  
+![](/assets/images/2018-06-20-convolutional-neural-networks/convolution_RGB2.png)  
+  
+* One layer of a convolutional network  
+  
+![](/assets/images/2018-06-20-convolutional-neural-networks/convolution_one_layer.png)  
+![](/assets/images/2018-06-20-convolutional-neural-networks/convolution_notation.png)  
+  
+* A simple convolution network example  
+
+  
+
 
 
 
