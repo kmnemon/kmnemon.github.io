@@ -111,7 +111,7 @@ there is nothing to learn, just a fix function
   
 ![](/assets/images/2018-06-20-convolutional-neural-networks/convolutional_neural_network.png)  
   
- | Activation shape | Activation size | #parameters
+   | Activation shape | Activation size | #parameters
 :-:| :-: | :-: | :-: 
 Input: | (32,32,3) | 3072(a[0]) | 0 
 CONV1 (f=5, s=1) | (28,28,8) | 6272 | 208 
@@ -122,7 +122,7 @@ FC3 | (120,1) | 120 | 48,001
 FC4 | (84,1) | 84 | 10,081
 Softmax | (10,1) | 10 | 841
   
- 
+
 
   
 
