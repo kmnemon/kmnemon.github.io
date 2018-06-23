@@ -122,7 +122,11 @@ FC3 | (120,1) | 120 | 48,001
 FC4 | (84,1) | 84 | 10,081
 Softmax | (10,1) | 10 | 841
   
-
+* Why convolutions  
+1. Parameter sharing: A feature detector(such as a vertical edge detector) that's useful in one part of the image is probably useful in another part of the image  
+2. Sparsity of connections: In each layer, each output value depends only on a small number of inputs.  
+  
+  
 
   
 
