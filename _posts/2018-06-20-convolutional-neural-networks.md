@@ -67,7 +67,7 @@ in the previous example the disadvantage of edge detector is:
 ![](/assets/images/2018-06-20-convolutional-neural-networks/padding.png)  
 padding = 1  
   
-how much to pad?
+how much to pad?  
 Valid convolutions: no padding  
 Same convolutions: Pad so that output size is the same as the input size  
 filters: odd-number 3 * 3(common), 5 * 5, 7 * 7  
@@ -87,6 +87,44 @@ n * n image, f * f filter, padding p, stride s, the output = [(n +2p -f)/s +1] *
 ![](/assets/images/2018-06-20-convolutional-neural-networks/convolution_notation.png)  
   
 * A simple convolution network example  
+  
+Types of layer in a convolutional network:  
+-Convolution(coun)  
+-Polling(Pool)  
+-Fully connected(FC)  
+  
+* Pooling layers  
+  
+Max pooling:  
+![](/assets/images/2018-06-20-convolutional-neural-networks/max_pooling.png)  
+
+Average pooling:  
+![](/assets/images/2018-06-20-convolutional-neural-networks/average_pooling.png)  
+  
+Hyperparameters:  
+f: filter size  
+s: stride  
+common: f = 2, s= 2; f = 3, s = 2  
+there is nothing to learn, just a fix function  
+  
+* Convolutional neural network example  
+  
+![](/assets/images/2018-06-20-convolutional-neural-networks/convolutional_neural_network.png)  
+  
+ | Activation shape | Activation size | #parameters
+:-:| :-: | :-: | :-: 
+Input: | (32,32,3) | 3072(a[0]) | 0 
+CONV1 (f=5, s=1) | (28,28,8) | 6272 | 208 
+POOL1 | (14,14,8) | 1568 | 0 
+CONV2 (f=5, s=1) | (10,10,16) | 1600 | 416 
+POOL2 | (5,5,16) | 400 | 0 
+FC3 | (120,1) | 120 | 48,001
+FC4 | (84,1) | 84 | 10,081
+Softmax | (10,1) | 10 | 841
+  
+ 
+
+  
 
   
 
