@@ -78,7 +78,9 @@ n * n image, f * f filter, padding p, stride s, the output = [(n +2p -f)/s +1] *
   
 * Convolutions over volumes  
   
-![](/assets/images/2018-06-20-convolutional-neural-networks/convolution_RGB.png)  
+![](/assets/images/2018-06-20-convolutional-neural-networks/convolution_RGB.png) 
+caculate 3 * 3 * 3 = 27 numbers and sum up all equal to one of 4 * 4 numbers.  
+  
 ![](/assets/images/2018-06-20-convolutional-neural-networks/convolution_RGB2.png)  
   
 * One layer of a convolutional network  
