@@ -107,6 +107,7 @@ Hyperparameters:
 f: filter size  
 s: stride  
 common: f = 2, s= 2; f = 3, s = 2  
+the output channel(n_C) equal to the input channel(n_pre_C), intput: 3 * 3 * n_pre_C output: f * f * n_C  
 there is nothing to learn, just a fix function  
   
 * Convolutional neural network example  
