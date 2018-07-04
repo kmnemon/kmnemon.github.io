@@ -27,10 +27,22 @@ Residual block
 Z[l+1] = W[l+1] * a[l] + b[l+1], a[l+1] = g(Z[l+1]), Z[l+2] = W[l+2] * a[l+1] + b[l+2], a[l+2]=g(Z[l+2])  
 Residual block: ......................................................................, a[l+2]=g(Z[l+2]+a[l])  
   
-ResNet
+ResNet  
 ![](/assets/images/2018-06-27-convolutional-case-study/Residual_Network.png)  
   
-Inception  
+1 * 1 convolutions  
+![](/assets/images/2018-06-27-convolutional-case-study/1by1_convolutions.png)  
+use 1 * 1 convolutions to shrink or expand the n_C channels  
+
+Inception network motivation  
+[Szegedy et al. 2014. Going deeper with convolutions]  
+![](/assets/images/2018-06-27-convolutional-case-study/motivation_for_inception.png)  
+  
+Inception module  
+![](/assets/images/2018-06-27-convolutional-case-study/Inception_module.png)  
+
+Inception network  
+![](/assets/images/2018-06-27-convolutional-case-study/Inception_network.png)  
   
 * Classic networks  
   
