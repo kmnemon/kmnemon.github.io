@@ -65,6 +65,8 @@ While there are any remaining boxes:
 3. for each class(pedestrian, car, motorcycle) use non-max suppression to generate final predictions.
 ![](/assets/images/2018-07-11-object-detection/output_non_max_3.png)  
   
+* Region proposals  
+  
 
 
 
