@@ -39,6 +39,11 @@ YOLO algorithm, [Redmon et al. 2015, You Only Look Once: Unified real-time objec
   
 ![](/assets/images/2018-07-11-object-detection/YOLO_algorithm.png)  
 ![](/assets/images/2018-07-11-object-detection/specify_the_bounding_box.png)  
+  
+* Intersection over union  
+  
+More generally, IoU is a measure of the overlap between two bounding boxes.  
+![](/assets/images/2018-07-11-object-detection/IOU.png)  
 
   
 
