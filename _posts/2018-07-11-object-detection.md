@@ -44,6 +44,29 @@ YOLO algorithm, [Redmon et al. 2015, You Only Look Once: Unified real-time objec
   
 More generally, IoU is a measure of the overlap between two bounding boxes.  
 ![](/assets/images/2018-07-11-object-detection/IOU.png)  
+  
+* Non-max suppression  
+  
+Each output prediction is: [pc, bx, by, bh, bw], discard all boxes with pc<= 0.6  
+While there are any remaining boxes:  
+. Pick the box with the largest pc Output that as a prediction.  
+. Discard any remaining box with IoU >= 0.5 with the box output in the previous step  
+  
+* Anchor boxes  
+  
+[Redmon et al., 2015, You Onlu Look Once: Unified real-time object detection]  
+  
+* YOLO  
+  
+1. for each grid call, get 2 predicted bounding boxes.  
+![](/assets/images/2018-07-11-object-detection/output_non_max_1.png)  
+2. get rid of low probability predictions  
+![](/assets/images/2018-07-11-object-detection/output_non_max_2.png)  
+3. for each class(pedestrian, car, motorcycle) use non-max suppression to generate final predictions.
+![](/assets/images/2018-07-11-object-detection/output_non_max_3.png)  
+  
+
+
 
   
 
