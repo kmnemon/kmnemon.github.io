@@ -23,7 +23,7 @@ Output ID if the image is any of the K persons ( or "not recognized")
 Learning a "similarity" function  
 d(img1, img2) = degree of difference between images  
 if d(img1, img2) <= t "same"  
->t "different"  
+else >t "different"  
   
 * Siamese network  
   
