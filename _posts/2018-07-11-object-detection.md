@@ -62,7 +62,7 @@ While there are any remaining boxes:
 ![](/assets/images/2018-07-11-object-detection/output_non_max_1.png)  
 2. get rid of low probability predictions  
 ![](/assets/images/2018-07-11-object-detection/output_non_max_2.png)  
-3. for each class(pedestrian, car, motorcycle) use non-max suppression to generate final predictions.
+3. for each class(pedestrian, car, motorcycle) use non-max suppression to generate final predictions.  
 ![](/assets/images/2018-07-11-object-detection/output_non_max_3.png)  
   
 * Region proposals  
