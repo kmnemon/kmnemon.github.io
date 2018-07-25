@@ -34,6 +34,9 @@ Here, nH,nW and nC are the height, width and number of channels of the hidden la
 ![](/assets/images/2018-07-22-neural_style_transfer/style_matrix.png)  
 ![](/assets/images/2018-07-22-neural_style_transfer/gram_matrix.png)  
 ![](/assets/images/2018-07-22-neural_style_transfer/style_cost.png)  
+![](/assets/images/2018-07-22-neural_style_transfer/style_weight.png)
+
+
   
 
   
