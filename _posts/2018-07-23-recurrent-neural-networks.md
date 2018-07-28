@@ -58,6 +58,13 @@ vanishing gradients see the follow
   
 * Bidirectional RNN  
   
+![](/assets/images/2018-07-23-recurrent-Neural-networks/BRNN.png)  
+  
+* Deep RNNs  
+  
+![](/assets/images/2018-07-23-recurrent-Neural-networks/Deep_RNN.png)   
+  
+
 
 
 
