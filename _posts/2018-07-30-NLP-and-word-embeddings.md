@@ -37,9 +37,14 @@ sim(u,v) = (u.T * v) / ||v||2 * ||v||2
 * Learning word embeddings  
   
 ![](/assets/images/2018-07-30-NLP-and-word-embeddings/learning_embedding.png)  
+The softmax output the probability of juice, p(juice)  
   
 * Word2Vec  
   
 Skip-grams  
-
+![](/assets/images/2018-07-30-NLP-and-word-embeddings/skip_grams.png)  
+  
+* Negative sampling  
+  
+![](/assets/images/2018-07-30-NLP-and-word-embeddings/snegative_sampling.png)  
 
