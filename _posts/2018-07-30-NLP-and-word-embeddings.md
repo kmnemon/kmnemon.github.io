@@ -46,7 +46,7 @@ Skip-grams
   
 * Negative sampling  
   
-![](/assets/images/2018-07-30-NLP-and-word-embeddings/snegative_sampling.png)  
+![](/assets/images/2018-07-30-NLP-and-word-embeddings/negative_sampling.png)  
 
 * GloVe(global vectors for word representation)  
   
