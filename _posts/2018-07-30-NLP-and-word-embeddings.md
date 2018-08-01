@@ -48,3 +48,38 @@ Skip-grams
   
 ![](/assets/images/2018-07-30-NLP-and-word-embeddings/snegative_sampling.png)  
 
+* GloVe(global vectors for word representation)  
+  
+i want a glass of orange juice to go alone with my cereal.  
+  
+c, t  
+Xij = #times i(t) appears in content of j(c)  
+  
+
+![](/assets/images/2018-07-30-NLP-and-word-embeddings/GloVe_model.png)  
+
+* Sentiment classification  
+
+sentiment classification problem:    
+![](/assets/images/2018-07-30-NLP-and-word-embeddings/sentiment_classification_problem.png)    
+simple sentiment classification model  
+![](/assets/images/2018-07-30-NLP-and-word-embeddings/simple_sentiment_classification_model.png)  
+  
+RNN for sentiment classification  
+![](/assets/images/2018-07-30-NLP-and-word-embeddings/RNN_for_sentiment_classification.png)  
+
+* Debiasing word embeddings  
+  
+![](/assets/images/2018-07-30-NLP-and-word-embeddings/addressing_bias.png)  
+  
+  
+
+
+
+
+
+
+
+
+
+
