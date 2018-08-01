@@ -56,12 +56,12 @@ c, t
 Xij = #times i(t) appears in content of j(c)  
   
 
-![](/assets/images/2018-07-30-NLP-and-word-embeddings/GloVe_model.png)  
+![](/assets/images/2018-07-30-NLP-and-word-embeddings/GloVe_model.PNG)  
 
 * Sentiment classification  
 
 sentiment classification problem:    
-![](/assets/images/2018-07-30-NLP-and-word-embeddings/sentiment_classification_problem.png)    
+![](/assets/images/2018-07-30-NLP-and-word-embeddings/sentiment_classification_problem.PNG)    
 simple sentiment classification model  
 ![](/assets/images/2018-07-30-NLP-and-word-embeddings/simple_sentiment_classification_model.png)  
   
@@ -70,7 +70,7 @@ RNN for sentiment classification
 
 * Debiasing word embeddings  
   
-![](/assets/images/2018-07-30-NLP-and-word-embeddings/addressing_bias.png)  
+![](/assets/images/2018-07-30-NLP-and-word-embeddings/addressing_bias.PNG)  
   
   
 
