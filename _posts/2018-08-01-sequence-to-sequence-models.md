@@ -26,7 +26,7 @@ Length normalization
   
 * Error analysis on beam search  
   
-![](/assets/images/2018-08-01-sequence-to-sequence-models/example.png) 
+![](/assets/images/2018-08-01-sequence-to-sequence-models/example.png)  
 Human: Jane visite Africa in September.(y* )  
 Algorithm: Jane visited Africa last September.(y^)  
 Case 1: P(y* |x) > p(y^|x)  
@@ -37,6 +37,24 @@ y* is a better translation than Y^. But RNN predictedP(y* |x)<P(y^|x).
 Conclusion: RNN model is at fault.  
 
 Through much of up process, figures out what faction of errors are "due to" beam search vs. RNN model.(BRBRBBBBRRR which one is the most)  
+  
+* Bleu score  
+  
+![](/assets/images/2018-08-01-sequence-to-sequence-models/bleu_score_on_bigrams.png)  
+![](/assets/images/2018-08-01-sequence-to-sequence-models/bleu_score_on_unigrrams.png)  
+![](/assets/images/2018-08-01-sequence-to-sequence-models/bleu_details.png)  
+  
+* Attention model intuition  
+  
+
+
+
+
+
+
+
+
+
 
 
 
