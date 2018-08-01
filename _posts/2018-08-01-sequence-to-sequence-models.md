@@ -46,6 +46,10 @@ Through much of up process, figures out what faction of errors are "due to" beam
   
 * Attention model intuition  
   
+![](/assets/images/2018-08-01-sequence-to-sequence-models/attention_model_intuition.png)  
+  
+* Attention model  
+  
 
 
 
