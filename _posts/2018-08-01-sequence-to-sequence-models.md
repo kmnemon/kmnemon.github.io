@@ -50,6 +50,26 @@ Through much of up process, figures out what faction of errors are "due to" beam
   
 * Attention model  
   
+![](/assets/images/2018-08-01-sequence-to-sequence-models/attention_model.png)  
+![](/assets/images/2018-08-01-sequence-to-sequence-models/acomputing_attention_a.png)  
+  
+* Speech recognition  
+  
+x(audio clip)----------------->y(transcript)"the quick brown fox"  
+![](/assets/images/2018-08-01-sequence-to-sequence-models/CTC_cost.png)  
+  
+* Trigger word detection  
+  
+Trigger word detection algorithm  
+![](/assets/images/2018-08-01-sequence-to-sequence-models/trigger_word.png)  
+  
+
+
+  
+
+
+
+  
 
 
 
