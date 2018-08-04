@@ -52,6 +52,7 @@ Through much of up process, figures out what faction of errors are "due to" beam
   
 ![](/assets/images/2018-08-01-sequence-to-sequence-models/attention_model.png)  
 ![](/assets/images/2018-08-01-sequence-to-sequence-models/acomputing_attention_a.png)  
+![](/assets/images/2018-08-01-sequence-to-sequence-models/attn_model.png)  
   
 * Speech recognition  
   
