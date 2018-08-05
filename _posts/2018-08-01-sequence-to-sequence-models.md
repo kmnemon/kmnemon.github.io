@@ -55,6 +55,8 @@ Through much of up process, figures out what faction of errors are "due to" beam
   
 attention model for human readable data to compute readable data, a simple version(reduce yt-1 as a input to LSTM):  
 ![](/assets/images/2018-08-01-sequence-to-sequence-models/attn_model.png)  
+visualize the a< t,t'>  
+![](/assets/images/2018-08-01-sequence-to-sequence-models/date_attention.png)  
   
 * Speech recognition  
   
@@ -65,6 +67,12 @@ x(audio clip)----------------->y(transcript)"the quick brown fox"
   
 Trigger word detection algorithm  
 ![](/assets/images/2018-08-01-sequence-to-sequence-models/trigger_word.png)  
+  
+Trigger word  model  
+![](/assets/images/2018-08-01-sequence-to-sequence-models/trigger_model.png)  
+  
+  
+  
   
 
 
