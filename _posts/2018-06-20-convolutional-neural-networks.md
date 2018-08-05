@@ -1,5 +1,5 @@
 ---
-title: Convolutional Neural Networks
+title: Convolutional Neural Networks(CNN)
 author: ke
 layout: post
 tags: deep_learning
