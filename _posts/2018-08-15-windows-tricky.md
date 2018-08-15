@@ -1,5 +1,5 @@
 ---
-title: linux tricky
+title: windows tricky
 author: ke
 layout: post
 tags: tricky
@@ -17,11 +17,11 @@ done :)
 
 * dual lan and wifi surf  
   
-'''
+```
 route delete 0.0.0.0
 route add 0.0.0.0 mask 0.0.0.0 192.168.1.1 #all the others go to the gateway 192.168.1.1
 route add 192.168.0.0 mask 255.255.255.0 192.168.0.1 #use gateway 192.168.0.1 access net 192.168.0.0
-'''
-  
+```
+
 
 
