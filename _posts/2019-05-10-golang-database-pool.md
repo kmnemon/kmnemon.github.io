@@ -116,7 +116,7 @@ func ReleaseClient(mongoclient *mongodata){
 }
 
 ```
-以上就是核心代码实现，但是这个代码有一个问题，就是在高并发下并非协程安全，这个留在下一篇《[用golang实现mongodb数据库连接池-高级篇-协程安全](/2019/05/11/golang-database-pool-2.md)》来优化。    
+以上就是核心代码实现，但是这个代码有一个问题，就是在高并发下并非协程安全，这个留在下一篇《[用golang实现mongodb数据库连接池-高级篇-协程安全](/2019/05/11/golang-database-pool-2.html)》来优化。    
   
 
 
