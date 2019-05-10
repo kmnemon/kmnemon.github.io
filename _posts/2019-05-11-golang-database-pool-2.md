@@ -35,6 +35,7 @@ go bank.Deposit(100)                  // B
 
 当alice和bob同时执行如上的操作，最后的存款有几种可能性？  
 根据直觉会有3种可能：  
+
 alice first | bob first | alice/bob/alice
 :-: | :-: | :- 
 0 | 0 | 0
@@ -43,6 +44,7 @@ A2 "=200" | A1 300 | B 300
 B 300 | A2 "=300" | A2 "=300"  
   
 这个结果最后存款都是剩余300似乎也没什么问题，但是这里还有第4种可能，那就是bob的存款操作发生在A1的balance + amount之后，但是在A1的balance =之前，那么会出现什么？  
+
 Data | race  
 :-: | :-: | :- 
  | 0 | 
