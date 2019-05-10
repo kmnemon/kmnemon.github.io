@@ -1,5 +1,5 @@
 ---
-layout: program
+layout: tagpage
 title: "--program"
 tag: program
 robots: noindex
