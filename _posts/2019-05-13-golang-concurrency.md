@@ -11,7 +11,7 @@ golang -- 1.12.4
   
 * golang协程同步  
   
-1. channel - monitor goroutine 
+1. channel - monitor goroutine  
 
 ```
 var deposits = make(chan int) // send amount to deposit
