@@ -11,7 +11,7 @@ golang -- 1.12.4
   
 * golang协程同步  
   
-1. channel - monitor goroutine  
+1.channel - monitor goroutine  
 
 ```
 var deposits = make(chan int) // send amount to deposit
@@ -35,7 +35,7 @@ func init() {
 }
 ```  
   
-2. channel - serial confinement  
+2.channel - serial confinement  
 
 ```
 type Cake struct{ state string }
@@ -56,7 +56,7 @@ func icer(iced chan<- *Cake, cooked <-chan *Cake) {
 }
 ```
   
-3. mutual exclusion  
+3.mutual exclusion  
 
 ```
 import "sync"
@@ -77,7 +77,7 @@ func Balance() int {
 }
 ```
 
-4. mutual exclusion - RWMutex  
+4.mutual exclusion - RWMutex  
 
 ```
 import "sync"
@@ -99,7 +99,7 @@ func Balance() int {
 ```
 RLock允许读取并行，写入和读取完全互斥，多次读取，一次写入  
   
-5. Lazy Initialization - sync.Once  
+5.Lazy Initialization - sync.Once  
 
 ```
 var loadIconsOnce sync.Once
