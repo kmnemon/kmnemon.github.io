@@ -152,7 +152,7 @@ func ReleaseClient(mongoclient *mongodata){
 
 ```
 
-这样我们就完成了一个高效率协程安全的设计，完整代码地址: https://github.com/kmnemon/golang-mongodb-pool
+这样我们就完成了一个高效率协程安全的设计，完整代码地址: [https://github.com/kmnemon/golang-mongodb-pool](https://github.com/kmnemon/golang-mongodb-pool)
   
   
   
