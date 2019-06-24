@@ -2,7 +2,7 @@
 title: 用golang实现mongodb数据库连接池-高级篇-协程安全
 author: ke
 layout: post
-tags: program
+tags: golang
 ---
 
 

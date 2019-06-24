@@ -1,5 +1,5 @@
 ---
-title: golang实现协程安全的几种方式
+title: golang-NSQ深入浅出-理解篇
 author: ke
 layout: post
 tags: golang
@@ -8,8 +8,24 @@ tags: golang
 
 * 版本  
 golang -- 1.12.4   
+nsq-1.1.0.linux-amd64.go1.10.3.tar.gz  
   
-* golang协程同步  
+* 什么是NSQ  
+  
+一句话讲NSQ是一个简单队列，类似于java经常使用的activeMQ或者RocketMQ,NSQ有以下特性:  
+  - 支持拓扑的高可用性和避免单点故障(SPOFs)。
+  - 更强的消息递交保证  
+  - 为单次处理绑定着内存的足迹(通过把一些持久话的消息放入磁盘)  
+  - 对生产者和消费者的配置进行极大的简化  
+  - 提供直接的升级路径  
+  - 提升效率  
+  
+* NSQ组成  
+  
+NSQ由三个组件组成:  
+  - nsqd 用于接收消息，排队消息，投递消息，我们的客户端主要和它打交道  
+  - nsqlookupd 管理拓扑信息。 我们的客户端询问此组件来发现nsqd的生产者等  
+  - nsqadmin web UI 查询各种NSQ组件的信息，消息信息  
   
 1.channel - monitor goroutine  
 
