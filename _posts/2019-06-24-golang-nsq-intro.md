@@ -6,11 +6,11 @@ tags: golang
 ---
 
 
-* 版本  
+* 1.版本  
 golang -- 1.12.4   
 nsq-1.1.0.linux-amd64.go1.10.3.tar.gz  
   
-* 什么是NSQ  
+* 2.什么是NSQ  
   
 一句话讲NSQ是一个简单队列，类似于java经常使用的activeMQ或者RocketMQ,NSQ有以下特性:  
   - 支持拓扑的高可用性和避免单点故障(SPOFs)。
@@ -20,7 +20,7 @@ nsq-1.1.0.linux-amd64.go1.10.3.tar.gz
   - 提供直接的升级路径  
   - 提升效率  
   
-* NSQ组成  
+* 3.NSQ组成  
   
 NSQ由三个组件组成:  
   - nsqd 用于接收消息，排队消息，投递消息，我们的客户端主要和它打交道  
