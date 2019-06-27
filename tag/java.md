@@ -1,7 +1,7 @@
 ---
 layout: tagpage
-title: "--Java"
-tag: Java
+title: "--java"
+tag: java
 robots: noindex
 order: 13
 ---
