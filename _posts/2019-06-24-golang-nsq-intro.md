@@ -1,5 +1,5 @@
 ---
-title: golang-NSQ深入浅出-理解篇
+title: golang-NSQ讲明白
 author: ke
 layout: post
 tags: golang
@@ -23,8 +23,8 @@ nsq-1.1.0.linux-amd64.go1.10.3.tar.gz
 * 3.NSQ组成  
   
 NSQ由三个组件组成:  
-  - nsqd 用于接收消息，排队消息，投递消息，我们的客户端主要和它打交道  
-  - nsqlookupd 管理拓扑信息。 我们的客户端询问此组件来发现nsqd的生产者等  
+  - nsqd 用于接收消息，排队消息，投递消息，我们的客户端(生产者，消费者)主要和它打交道  
+  - nsqlookupd 管理nsqd,nsqadmin拓扑信息。 我们的客户端询问此组件来发现nsqd等  
   - nsqadmin web UI 查询各种NSQ组件的信息，消息信息  
   
 1.channel - monitor goroutine  
