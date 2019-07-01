@@ -6,13 +6,14 @@ tags: golang
 ---
 
 
-* 1.版本  
+1.版本  
 golang -- 1.12.4   
 nsq-1.1.0.linux-amd64.go1.10.3.tar.gz  
   
-* 2.什么是NSQ  
+2.什么是NSQ  
   
-一句话讲NSQ是一个简单队列，类似于java经常使用的activeMQ或者RocketMQ,NSQ有以下特性:  
+一句话讲NSQ是一个简单队列，类似于java经常使用的activeMQ或者RocketMQ,一般在同步分离成异步，发送消息和接受消息解耦的地方使用到。  
+NSQ有以下特性:  
   - 支持拓扑的高可用性和避免单点故障(SPOFs)。
   - 更强的消息递交保证  
   - 为单次处理绑定着内存的足迹(通过把一些持久话的消息放入磁盘)  
@@ -20,13 +21,29 @@ nsq-1.1.0.linux-amd64.go1.10.3.tar.gz
   - 提供直接的升级路径  
   - 提升效率  
   
-* 3.NSQ组成  
+3.NSQ组成  
   
 NSQ由三个组件组成:  
   - nsqd 用于接收消息，排队消息，投递消息，我们的客户端(生产者，消费者)主要和它打交道  
-  - nsqlookupd 管理nsqd,nsqadmin拓扑信息。 我们的客户端询问此组件来发现nsqd等  
+  - nsqlookupd 管理nsqd,nsqadmin拓扑信息。 我们的客户端(消费者)询问此组件来发现nsqd等  
   - nsqadmin web UI 查询各种NSQ组件的信息，消息信息  
   
+4.NSQ使用步骤  
+  
+1. 启动nsqlookupd组件  
+2. 启动nsqd并向nsqlookupd注册  
+3. 启动nsqadmin并向nsqlookupd注册  
+4. 生产者推送一个message到其中一个nsqd，并将此消息设置到一个topic里面  
+5. 消费者向nsqlookupd询问指定topic的消息，nsqlookupd把有此topic的nsqd地址给到消费者  
+6. 消费者建立channel和topic之间的订阅关系，通过channel向nsqd获取指定topic里面的消息  
+7. nsqd向所有订阅该topic的channel推送message， 然后其中一个消费者可以通过其中一个channel获取该topic的message  
+  
+这就是nsq一个完整的使用流程，下面分别从客户端和代码两个方面介绍详细怎么使用  
+
+5.客户端使用  
+
+
+
 1.channel - monitor goroutine  
 
 ```
