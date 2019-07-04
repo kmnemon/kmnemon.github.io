@@ -38,10 +38,10 @@ NSQ由三个组件组成:
 6. 消费者建立channel和topic之间的订阅关系，通过channel向nsqd获取指定topic里面的消息  
 7. nsqd向所有订阅该topic的channel推送message， 然后其中一个消费者可以通过其中一个channel获取该topic的message  
   
-启动，注册过程： 
+*启动，注册过程:  
 ![](/assets/images/2019-06-24-golang-nsq-intro/startup.png)  
 
-生产者，消费者：  
+*生产者，消费者:  
 ![](/assets/images/2019-06-24-golang-nsq-intro/producer_consumer.png)  
 
 这就是nsq一个完整的使用流程，下面分别从客户端和代码两个方面介绍详细怎么使用  
