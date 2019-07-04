@@ -47,7 +47,35 @@ NSQ由三个组件组成:
 这就是nsq一个完整的使用流程，下面分别从客户端和代码两个方面介绍详细怎么使用  
 
 5.客户端使用  
+1. 启动nsqlookup
+```
+$ nsqlookupd
 
+```
+
+2. 在另一个shell启动一个nsqd,并在lookupd注册
+
+```
+$ nsqd --lookupd-tcp-address=127.0.0.1:4160
+```
+3. 启动nsqadmin，并在lookupd注册:
+```
+$ nsqadmin --lookupd-http-address=127.0.0.1:4161
+```
+4. 生产者生产一个message，并创建该消息的topic
+```
+$ curl -d 'hello world 1' 'http://127.0.0.1:4151/pub?topic=test'
+```
+5.消费者通过lookupd查找对应的topic的nsq并绑定topic和channel，通过channel接受该topic的message
+```
+$ nsq_to_file --topic=test --output-dir=/tmp --lookupd-http-address=127.0.0.1:4161
+```
+6.生产者生产更多消息
+```
+$ curl -d 'hello world 2' 'http://127.0.0.1:4151/pub?topic=test'
+$ curl -d 'hello world 3' 'http://127.0.0.1:4151/pub?topic=test'
+```
+7.可以打开nsaadmin查看所有详情http://127.0.0.1:4171/ ，同时也可以查看/tmp下面接受并写入的message (test.*.log)
 
 
 1.channel - monitor goroutine  
