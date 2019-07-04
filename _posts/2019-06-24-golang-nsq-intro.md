@@ -6,11 +6,11 @@ tags: golang
 ---
 
 
-1.版本  
+# 版本  
 golang -- 1.12.4   
 nsq-1.1.0.linux-amd64.go1.10.3.tar.gz  
   
-2.什么是NSQ  
+# 什么是NSQ  
   
 一句话讲NSQ是一个简单队列，类似于java经常使用的activeMQ或者RocketMQ,一般在同步分离成异步，发送消息和接受消息解耦的地方使用到。  
 NSQ有以下特性:  
@@ -21,14 +21,14 @@ NSQ有以下特性:
   - 提供直接的升级路径  
   - 提升效率  
   
-3.NSQ组成  
+# NSQ组成  
   
 NSQ由三个组件组成:  
   - nsqd 用于接收消息，排队消息，投递消息，我们的客户端(生产者，消费者)主要和它打交道  
   - nsqlookupd 管理nsqd,nsqadmin拓扑信息。 我们的客户端(消费者)询问此组件来发现nsqd等  
   - nsqadmin web UI 查询各种NSQ组件的信息，消息信息  
   
-4.NSQ使用步骤  
+# NSQ使用步骤  
   
 1. 启动nsqlookupd组件  
 2. 启动nsqd并向nsqlookupd注册  
@@ -46,44 +46,44 @@ NSQ由三个组件组成:
 
 这就是nsq一个完整的使用流程，下面分别从客户端和代码两个方面介绍详细怎么使用  
 
-5.客户端使用  
-1. 启动nsqlookup 
+# 客户端使用  
+启动nsqlookup 
 
 ```
 $ nsqlookupd
 
 ```
 
-2. 在另一个shell启动一个nsqd,并在lookupd注册,注意-broadcast-address一定是消费者可以访问的地址  
+在另一个shell启动一个nsqd,并在lookupd注册,注意-broadcast-address一定是消费者可以访问的地址  
 
 ```
 $ nsqd --lookupd-tcp-address=127.0.0.1:4160 -broadcast-address="x.x.x.x"  -tcp-address="0.0.0.0:4150"
 ```
-3. 启动nsqadmin，并在lookupd注册:  
+启动nsqadmin，并在lookupd注册:  
 
 ```
 $ nsqadmin --lookupd-http-address=127.0.0.1:4161
 ```
-4. 生产者生产一个message，并创建该消息的topic  
+生产者生产一个message，并创建该消息的topic  
 
 ```
 $ curl -d 'hello world 1' 'http://127.0.0.1:4151/pub?topic=test'
 ```
-5.消费者通过lookupd查找对应的topic的nsq并绑定topic和channel，通过channel接受该topic的message 
+消费者通过lookupd查找对应的topic的nsq并绑定topic和channel，通过channel接受该topic的message 
 
 ```
 $ nsq_to_file --topic=test --output-dir=/tmp --lookupd-http-address=127.0.0.1:4161
 ```
-6.生产者生产更多消息  
+生产者生产更多消息  
 
 ```
 $ curl -d 'hello world 2' 'http://127.0.0.1:4151/pub?topic=test'
 $ curl -d 'hello world 3' 'http://127.0.0.1:4151/pub?topic=test'
 ```
-7.可以打开nsaadmin查看所有详情http://127.0.0.1:4171/ ，同时也可以查看/tmp下面接受并写入的message (test.*.log)  
+可以打开nsaadmin查看所有详情http://127.0.0.1:4171/ ，同时也可以查看/tmp下面接收并写入的message (test.*.log)  
 
   
-6.代码  
+# 代码  
 生产者代码:  
 
 ```
