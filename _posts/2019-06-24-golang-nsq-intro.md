@@ -53,10 +53,10 @@ $ nsqlookupd
 
 ```
 
-2. 在另一个shell启动一个nsqd,并在lookupd注册
+2. 在另一个shell启动一个nsqd,并在lookupd注册,注意-broadcast-address一定是消费者可以访问的地址， 
 
 ```
-$ nsqd --lookupd-tcp-address=127.0.0.1:4160
+$ nsqd --lookupd-tcp-address=127.0.0.1:4160 -broadcast-address="x.x.x.x"  -tcp-address="0.0.0.0:4150"
 ```
 3. 启动nsqadmin，并在lookupd注册:
 ```
@@ -76,110 +76,59 @@ $ curl -d 'hello world 2' 'http://127.0.0.1:4151/pub?topic=test'
 $ curl -d 'hello world 3' 'http://127.0.0.1:4151/pub?topic=test'
 ```
 7.可以打开nsaadmin查看所有详情http://127.0.0.1:4171/ ，同时也可以查看/tmp下面接受并写入的message (test.*.log)
-
-
-1.channel - monitor goroutine  
-
-```
-var deposits = make(chan int) // send amount to deposit
-var balances = make(chan int) // receive balance
-
-func Deposit(amount int) { deposits <- amount }
-func Balance() int       { return <-balances }
-
-func teller() {
-     var balance int // balance is confined to teller goroutine
-     for {
-         select {
-         case amount := <-deposits:
-              balance += amount
-         case balances <- balance:
-         }
-      }
-}
-func init() {
-     go teller() // start the monitor goroutine
-}
-```  
   
-2.channel - serial confinement  
-
+6.代码
+生产者代码:
 ```
-type Cake struct{ state string }
+package main
 
-func baker(cooked chan<- *Cake) {
-     for {
-             cake := new(Cake)
-             cake.state = "cooked"
-             cooked <- cake // baker never touches this cake again
-         } 
-}
+import (
+  "github.com/nsqio/go-nsq"
+  "log"
+)
 
-func icer(iced chan<- *Cake, cooked <-chan *Cake) {
-      for cake := range cooked {
-             cake.state = "iced"
-             iced <- cake // icer never touches this cake again
-      } 
-}
-```
-  
-3.mutual exclusion  
 
-```
-import "sync"
+func main() {
+  config := nsq.NewConfig()
+  w, _ := nsq.NewProducer("x.x.x.x:4150", config)
 
-var mu      sync.Mutex // guards balance
-var balance int
+  err := w.Publish("write_test", []byte("test"))
+  if err != nil {
+    log.Panic("Could not connect")
+  }
 
-func Deposit(amount int) {
-         mu.Lock()
-         balance = balance + amount
-         mu.Unlock()
-}
-
-func Balance() int {
-         mu.Lock()
-         defer mu.Unlock()
-         return balance
+  w.Stop()
 }
 ```
-
-4.mutual exclusion - RWMutex  
-
+消费者代码：
 ```
-import "sync"
+package main
 
-var mu      sync.RWMutex // guards balance
-var balance int
+import (
+  "fmt"
+  "github.com/nsqio/go-nsq"
+  "log"
+  "sync"
+)
 
-func Deposit(amount int) {
-         mu.Lock()
-         balance = balance + amount
-         mu.Unlock()
+func main() {
+
+  wg := &sync.WaitGroup{}
+  wg.Add(1)
+
+  config := nsq.NewConfig()
+  q, _ := nsq.NewConsumer("write_test", "ch", config)
+  q.AddHandler(nsq.HandlerFunc(func(message *nsq.Message) error {
+    fmt.Println(string(message.Body))
+    wg.Done()
+    return nil
+  }))
+  err := q.ConnectToNSQLookupd("x.x.x.x:4161")
+  if err != nil {
+    log.Panic("Could not connect")
+  }
+  wg.Wait()
+
 }
-
-func Balance() int {
-         mu.RLock() //readers lock
-         defer mu.RUnlock()
-         return balance
-}
-```
-RLock允许读取并行，写入和读取完全互斥，多次读取，一次写入  
-  
-5.Lazy Initialization - sync.Once  
-
-```
-var loadIconsOnce sync.Once
-var icons map[string]image.Image
-// Concurrency-safe.
-func Icon(name string) image.Image {
-     loadIconsOnce.Do(loadIcons)
-     return icons[name]
-}
-
 ```
 
-
-
-
- 
