@@ -38,6 +38,8 @@ NSQ由三个组件组成:
 6. 消费者建立channel和topic之间的订阅关系，通过channel向nsqd获取指定topic里面的消息  
 7. nsqd向所有订阅该topic的channel推送message， 然后其中一个消费者可以通过其中一个channel获取该topic的message  
   
+注意第4点，生产者为什么没有从nsqlookupd注册中心去寻找可以推送消息的nsqd呢？因为nsq的设计理念是将nsqd本地化，也就是说生产者直接推送消息到local-nsqd。这点和RocketMQ的设计理念不一样，RocketMQ的NameServer和nsqlookupd类似，但是设计上RocketMQ生产者会访问NameServer去寻找可用的MQ推送消息。  
+  
 ### 启动，注册过程:  
 ![](/assets/images/2019-06-24-golang-nsq-intro/startup.png)  
 
