@@ -2,7 +2,7 @@
 title: golang-NSQ讲明白
 author: ke
 layout: post
-tags: golang
+tags: programming
 ---
 
 

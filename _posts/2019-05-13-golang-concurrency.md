@@ -2,7 +2,7 @@
 title: golang实现协程安全的几种方式
 author: ke
 layout: post
-tags: golang
+tags: programming
 ---
 
 

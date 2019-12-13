@@ -2,7 +2,7 @@
 title: philosophy timeline
 author: ke
 layout: post
-tags: philosophy
+tags: eassy
 ---
 
 * philosophy timeline  
