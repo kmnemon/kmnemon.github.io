@@ -1,6 +1,6 @@
 ---
 layout: tagpage
-title: "--tricky"
+title: "tricky"
 tag: tricky
 robots: noindex
 order: 99
