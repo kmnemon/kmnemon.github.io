@@ -84,7 +84,7 @@ Concordion实例化需求：
 - 领域模型，领域的知识用领域模型反映，通过领域模型实现开发人员和领域专家理解一致性  
 - 通过富文本注释实现，代码不仅要自注释，而且通过图文并茂的富文本注释体现设计思路  
   
-![UT](/assets/images/2020-06-08-agile-document/ut.png)   
+![UT](/assets/images/2020-06-08-agile-document/ut.jpg)   
 ![领域模型](/assets/images/2020-06-08-agile-document/domain.png)   
 ![富文本注释](/assets/images/2020-06-08-agile-document/commit.png)   
   
