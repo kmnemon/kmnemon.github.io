@@ -1,4 +1,4 @@
-baseURL: "https://kmnemon.github.io/archives"
+baseURL: "https://kmnemon.github.io/"
 title: "小科夜未眠"
 paginate: 5
 theme: PaperMod
