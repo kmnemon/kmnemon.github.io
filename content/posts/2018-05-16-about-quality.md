@@ -16,22 +16,22 @@ three questiones to figture out:
 3. Do you need some help?(is there something to stuck the process?)  
   
 * KANBAN  
-the most important thing in a project is the Team have the whole and same piction. whatever u do is keep everybody in the same line. we use KANBAN to do this thing. see the follow:  
-![](/assets/images/2018-05-16-about-quality/KANBAN1.jpeg)  
-![](/assets/images/2018-05-16-about-quality/KANBAN2.jpeg)  
+the most important thing in a project is the Team have the whole and same picture. whatever u do is keep everybody in the same line. we use KANBAN to do this thing. see the follow:  
+![](/static/images/2018-05-16-about-quality/KANBAN1.jpeg)  
+![](/static/images/2018-05-16-about-quality/KANBAN2.jpeg)  
   
 everybody know a week's task, they know each other's job and can adjust the day of work to coodinate others.  
   
 * Retrospective Meeting  
-![](/assets/images/2018-05-16-about-quality/Retrospective.jpg)  
+![](/static/images/2018-05-16-about-quality/Retrospective.jpg)  
   
 
 * productivity tools  
 just one button of work  
 build + static check + auto deploy + auto test  
-![](/assets/images/2018-05-16-about-quality/jenkins.jpeg)  
-![](/assets/images/2018-05-16-about-quality/static_scan.jpeg)  
-![](/assets/images/2018-05-16-about-quality/testng.jpeg)  
+![](/static/images/2018-05-16-about-quality/jenkins.jpeg)  
+![](/static/images/2018-05-16-about-quality/static_scan.jpeg)  
+![](/static/images/2018-05-16-about-quality/testng.jpeg)  
 
 it's great to use productive tools make the team efficiency. click one button and it's done! build, code static scan, deploy, auto test, the developer and QA love to do the job smoothly. it's saving a lot of time. do not do the same thing manually.  
 we need to be 'lazy' as possible as we can.  
@@ -53,7 +53,7 @@ Most of research about code review reveal that it is the most efficient way to i
 the reason i think is **counter-intuitive**, **kpi-oriented**, and **deadline**. im the prefession developer, i reading others boring code and 200~400 per hour, do not have any advanced for the project yet. the trash i just read belong to the other code monkey, it's none of my bussiness. i have lots of features not done yet, i will coding my own code, meet the deliver time, go to the hell the other's code!   
 
 * focus and cooperate trade off  
-![](/assets/images/2018-05-16-about-quality/focus.jpg)  
+![](/static/images/2018-05-16-about-quality/focus.jpg)  
 programming need  
   
 * Process Capability Baseline  
@@ -63,7 +63,7 @@ the lack of data
   
 * hurry, not rush  
 Deliver the software to the market, we need to be hurry, but donot rush, if you rush, the software definite to be...
-![](/assets/images/2018-05-16-about-quality/crush.jpeg)  
+![](/static/images/2018-05-16-about-quality/crush.jpeg)  
 
 * They are not nerd, they are geeks  
 They can drive plane, they can play instrument, they are artisit.   
