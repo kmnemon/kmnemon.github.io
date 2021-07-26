@@ -50,7 +50,7 @@ Sprint Planning 2 会议，团队创建Sprint Backlog，并对迭代内要做的
 
 第二种是多团队之间有主PO（CPO），团队内部不再安排团队PO（TPO）。  
 
-![](/images/2020-10-25-agile-at-scale/less_team2.png)
+![](/images/2020-10-25-agile-at-scale/less_team2.jpg)
 
 第二种PO组织方式-CPO  
   
