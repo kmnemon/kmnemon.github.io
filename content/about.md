@@ -9,7 +9,7 @@ date: 2020-04-10
   
 微信（26元）
 
-<img src="/wechatpay.png" width = "60" height="60" />
+<img src="/wechatpay.png" width = "200" height="200" />
 
 
 联系我：  
