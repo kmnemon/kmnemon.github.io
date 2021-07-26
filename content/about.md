@@ -8,7 +8,12 @@ date: 2020-04-10
 写文章是有趣的事情，分享出来有人收益也是高兴的事情。如果你感谢兴趣并帮到你，可以买一杯咖啡给我：P  
   
 微信（26元）
-![](/wechatpay.png){:height="60px" width="60px"} 
+
+img[src*="#width"] {
+ width: 60%;
+}
+
+![](/wechatpay.png#width) 
 
 
 
