@@ -9,12 +9,7 @@ date: 2020-04-10
   
 微信（26元）
 
-img[src*="#width"] {
- width: 60%;
-}
-
-![](/wechatpay.png#width) 
-
+<img src="/wechatpay.png" width = "60%" />
 
 
 联系我：  
