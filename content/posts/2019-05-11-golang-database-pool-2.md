@@ -11,7 +11,7 @@ go driver -- 1.0.0
 
 * 简介  
   
-在上一篇《[用golang实现mongodb数据库连接池-基本篇](/2019/05/10/golang-database-pool.html)》我们实现了mongodb的golang driver按序使用的基本版，但还需要进一步提升效率和高并发安全。本篇张实现高效率协程安全版。  
+在上一篇《[用golang实现mongodb数据库连接池-基本篇](/posts/2019-05-10-golang-database-pool/)》我们实现了mongodb的golang driver按序使用的基本版，但还需要进一步提升效率和高并发安全。本篇张实现高效率协程安全版。  
   
 * data race  
   
@@ -54,7 +54,7 @@ A2 | "=200" |
 现在Alice账户剩余200，在data race中100被程序冲掉。  
   
 * 设计  
-我们使用mutual exclusion的方式进行协程安全设计，具体请参见《[golang实现协程安全的几种方式](/2019/05/13/golang-concurrency.html)》  
+我们使用mutual exclusion的方式进行协程安全设计，具体请参见《[golang实现协程安全的几种方式](/posts/2019-05-13-golang-concurrency/)》  
   
 * 核心代码  
   

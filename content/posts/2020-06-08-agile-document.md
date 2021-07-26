@@ -10,7 +10,7 @@ date: 2020-06-08
   
 # 敏捷开发和瀑布流程对文档的要求  
 我们知道敏捷开发和瀑布流程在开发周期时间上明显不同，一个是迭代开发，迭代周期（1～4周），一个是阶段-门限开发，周期（1～n月），在交付一个可运行的小功能上两种开发方式需要的时间明显不同。敏捷只需要几周，瀑布则需要按月来交付。这个周期时间的不同会导致在文档上花的时间的不同。  
-![](/assets/images/2020-06-08-agile-document/agile-document.png)   
+![](/images/2020-06-08-agile-document/agile-document.png)   
   
 如上图我们说敏捷开发是轻文档，而瀑布是重文档式的流程。  
   
@@ -24,7 +24,7 @@ date: 2020-06-08
   
 我们在一个产品或项目构建的早期，能想清楚所有要解决的用户问题，所有的功能，所有的技术依赖吗？ 经验说明根本不可能，不然变更控制委员会(CCB)设立来做什么？就是变更太多控制不住，需要一群人来控制。  
   
-![](/assets/images/2020-06-08-agile-document/requirment.png)   
+![](/images/2020-06-08-agile-document/requirment.png)   
 我们的业务，领域知识是随着产品不断的开发过程中，不断学习获得的，如果前期在缺乏大量产品知识的时候，我们要进行大量的需求设计，这时期会产生大量的低质量需求，大量错误的假设导致后期的返工。  
   
   
@@ -53,7 +53,7 @@ date: 2020-06-08
 敏捷里面提倡使用用户故事来描述需求，通过用户故事团队随时讨论，澄清需求，同时通过用户故事的验收标准（AC），帮助开发团队各角色明确需求的验收范围。  通过用户故事的INVEST原则，帮助我们提高交付效率，理解需求价值。 
   
 用户故事的INVEST原则  
-![](/assets/images/2020-06-08-agile-document/us.png)   
+![](/images/2020-06-08-agile-document/us.png)   
   
 ###### 实例化需求  
 敏捷里面提出了实例化需求的一组模式，帮助达到上述的目标，在实例化需求里面提倡：  
@@ -66,10 +66,10 @@ date: 2020-06-08
 前面几点还是比较容易理解，主要第5点很多产品经理觉得不可思议了，我写的需求还可以变为自动化验收测试系统？是的，现在有很多支持实例化需求的平台,如： Concordion,FitNesse.  
   
 Concordion实例化需求：  
-![](/assets/images/2020-06-08-agile-document/specification-by-example.png)   
+![](/images/2020-06-08-agile-document/specification-by-example.png)   
   
 自动化验收框架：  
-![](/assets/images/2020-06-08-agile-document/specification-by-example-frame.png)   
+![](/images/2020-06-08-agile-document/specification-by-example-frame.png)   
   
 这里不具体讲解实例化需求验收部分，这个以后专题讲解。  
    
@@ -82,9 +82,9 @@ Concordion实例化需求：
 - 领域模型，领域的知识用领域模型反映，通过领域模型实现开发人员和领域专家理解一致性  
 - 通过富文本注释实现，代码不仅要自注释，而且通过图文并茂的富文本注释体现设计思路  
   
-![UT](/assets/images/2020-06-08-agile-document/ut.jpg)   
-![领域模型](/assets/images/2020-06-08-agile-document/domain.png)   
-![富文本注释](/assets/images/2020-06-08-agile-document/commit.png)   
+![UT](/images/2020-06-08-agile-document/ut.jpg)   
+![领域模型](/images/2020-06-08-agile-document/domain.png)   
+![富文本注释](/images/2020-06-08-agile-document/commit.png)   
   
 
 ### 关于测试文档：  

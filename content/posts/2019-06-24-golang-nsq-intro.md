@@ -39,10 +39,10 @@ NSQ由三个组件组成:
 注意第4点，生产者为什么没有从nsqlookupd注册中心去寻找可以推送消息的nsqd呢？因为nsq的设计理念是将nsqd本地化，也就是说生产者直接推送消息到local-nsqd。这点和RocketMQ的设计理念不一样，RocketMQ的NameServer和nsqlookupd类似，但是设计上RocketMQ生产者会访问NameServer去寻找可用的MQ推送消息。  
   
 ### 启动，注册过程:  
-![](/assets/images/2019-06-24-golang-nsq-intro/startup.png)  
+![](/images/2019-06-24-golang-nsq-intro/startup.png)  
 
 ### 生产者，消费者:  
-![](/assets/images/2019-06-24-golang-nsq-intro/producer_consumer.png)  
+![](/images/2019-06-24-golang-nsq-intro/producer_consumer.png)  
 
 这就是nsq一个完整的使用流程，下面分别从客户端和代码两个方面介绍详细怎么使用  
 
