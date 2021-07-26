@@ -53,7 +53,7 @@ Most of research about code review reveal that it is the most efficient way to i
 the reason i think is **counter-intuitive**, **kpi-oriented**, and **deadline**. im the prefession developer, i reading others boring code and 200~400 per hour, do not have any advanced for the project yet. the trash i just read belong to the other code monkey, it's none of my bussiness. i have lots of features not done yet, i will coding my own code, meet the deliver time, go to the hell the other's code!   
 
 * focus and cooperate trade off  
-![](/static/images/2018-05-16-about-quality/focus.jpg)  
+![](/images/2018-05-16-about-quality/focus.jpg)  
 programming need  
   
 * Process Capability Baseline  
