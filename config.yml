@@ -34,7 +34,7 @@ languages:
  #               - name: Series
  #                 url: series
  #                 weight: 10
-                - name: 关于
+                - name: 咖啡
                   url: "about"
 
 outputs:
