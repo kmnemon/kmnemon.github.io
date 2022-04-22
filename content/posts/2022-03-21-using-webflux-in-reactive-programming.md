@@ -10,8 +10,8 @@ date: 2022-03-21
 
 * <strong>处理者(The Processor):</strong>处理者是一个响应式实体，他能够消费发布者的数据，并进行再加工，然后发布自己的数据，上面的例子并未体现这层逻辑。举个例子，排序处理者，他可以作为订阅者获取发布者的随机序数据，然后进行排序，然后作为发布者生产出排序后的数据。
   
-一个典型的响应式交互如下：  
 
+一个典型的响应式交互如下：  
 ![](/images/2022-03-21-using-webflux-in-reactive-programming/weflux-1.png)
 
 订阅者和发布者签订订阅契约(Publisher.subscribe),一旦契约签订完成，订阅者向发布者请求数据(Subscription.request),发布者准备好数据后传输数据给订阅者(调用订阅者onNext)，订阅者再次请求新数据(request)，直到发布者告诉订阅者数据已经发送完成(onComplete)，本次契约完成。  
@@ -31,6 +31,7 @@ WebFlux Maven依赖如下：
       <artifactId>spring-boot-starter-webflux</artifactId>
   </dependency>
 ```
+  
   
 **发布者（Publisher）**  
 WebFlux底层使用Project Reactor，所以我们这里使用Project Reactor的命名来介绍。  
@@ -77,6 +78,7 @@ public class EmployeeController {
     }
 }
 ```
+  
   
 model：  
 很简单的领域模型Employee包含id和name两个字段  
