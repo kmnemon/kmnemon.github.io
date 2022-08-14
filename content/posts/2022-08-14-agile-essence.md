@@ -12,10 +12,10 @@ date: 2022-08-14
 
 
 敏捷首要解决的问题是小团队开发，两个披萨可以喂饱的团队（6～12个人），如下图敏捷的核心实践，都是针对小团队的一系列活动：
-![](/images/2022-08-14-agile-essence/xp)
+![](/images/2022-08-14-agile-essence/xp.png)
 
 我认为整个敏捷开发活动最重要的是BDD和TDD两个实践，再辅以过程透明化，快速反馈与持续改进。
-![](/images/2022-08-14-agile-essence/agile-essence)
+![](/images/2022-08-14-agile-essence/agile-essence.png)
 
 为什么这两个实践如此重要，整个软件开发活动中我们要解决的三个核心问题是：
 
