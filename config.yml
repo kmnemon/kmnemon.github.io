@@ -65,7 +65,7 @@ params:
 
     profileMode:
         enabled: true
-        title: "小科夜未眠" # optional default will be site title
+        title: "科的无流派" # optional default will be site title
         subtitle: ""
         imageUrl: "/avatar.jpg" # optional
         imageTitle: "" # optional
