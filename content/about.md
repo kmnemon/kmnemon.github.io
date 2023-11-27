@@ -13,4 +13,4 @@ date: 2020-04-10
   
   
 联系我：  
-<a href="mailto:kmnemon@gmail.com">发邮件给我</a>
+<a href="mailto:kmnemon@outlook.com">发邮件给我</a>
