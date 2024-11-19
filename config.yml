@@ -25,9 +25,9 @@ languages:
                 - name: 文章
                   url: archives
                   weight: 5
-                - name: 未发表
-                  url: https://keliu.substack.com/
-                  weight: 10
+                # - name: 未发表
+                #   url: 
+                #   weight: 10
  #               - name: Categories
  #                 url: categories
  #                 weight: 10
