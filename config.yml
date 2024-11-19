@@ -1,5 +1,5 @@
 baseURL: "https://kmnemon.github.io/"
-title: "科无流派"
+title: "科的随思录"
 paginate: 5
 theme: PaperMod
 defaultContentLanguage: "zh-cn"
@@ -65,7 +65,7 @@ params:
 
     profileMode:
         enabled: true
-        title: "科无流派" # optional default will be site title
+        title: "科的随思录" # optional default will be site title
         subtitle: ""
         imageUrl: "/avatar.jpg" # optional
         imageTitle: "" # optional
@@ -76,7 +76,7 @@ params:
         - name: Github
           url: "https://github.com/kmnemon"
         - name: Email
-          url: "mailto:kmnemon@gmail.com"
+          url: "mailto:kmnemon@outlook.com"
         - name: RSS
           url: "index.xml"
 
