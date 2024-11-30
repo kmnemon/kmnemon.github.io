@@ -233,7 +233,7 @@ struct ContentView: View {
 
 ### 用途
 1.解决Observable Object没有使用@State warpper,因此没有projectedValue,无法使用$value进行唯一源绑定,如下示例使用Bindable可以直接传递model对象进Counter
-2.@Binable 构建了projectedValue, 如下例可以在Counter里面使用 $语法糖进行object property的绑定
+2.@Binable 构建了projectedValue, 如下例可以在Counter里面使用$语法糖进行object property的绑定
 
 
 ### 使用方式
@@ -286,6 +286,16 @@ struct Counter: View {
 }
 ```
 使用动态成员查找语法projectedValue[dynamicMember: \.value],查找需要修改的object property
+
+# 怎么选择
+
+1. 优先选择不使用任何property wrapper,如果我们只是传递值给view, view并不需要改变这个值
+2. 关于value,如果view需要改变这个值,view自己管理对象使用@State,由外部传入使用@Binding
+3. 关于object,view自己管理对象使用@State, @Observable, 如果由外部传入使用@Observable
+4. 关于object由外部传入使用@Observable, 还想进行后续使用$进行关联,还需使用@Bindable
+
+
+
 
 
 
