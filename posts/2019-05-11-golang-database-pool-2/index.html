@@ -1,0 +1,238 @@
+<!doctype html><html lang=zh-cn dir=auto><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>用golang实现mongodb数据库连接池-高级篇-协程安全 | 科的随思录</title>
+<meta name=keywords content><meta name=description content='
+
+版本
+golang &ndash; 1.12.4
+mongodb &ndash; 4.0
+go driver &ndash; 1.0.0
+
+
+简介
+
+
+在上一篇《用golang实现mongodb数据库连接池-基本篇》我们实现了mongodb的golang driver按序使用的基本版，但还需要进一步提升效率和高并发安全。本篇张实现高效率协程安全版。
+
+data race
+
+什么是data race，考虑如下代码：
+var balance int
+func Deposit(amount int){ balance = balance + amount}
+func Balance() int { return balance}
+
+//Alice:
+go func(){
+	bank.Deposit(200)                // A1
+	fmt.Println("=", bank.Balance()) // A2
+}()
+
+//Bob
+go bank.Deposit(100)                  // B
+当alice和bob同时执行如上的操作，最后的存款有几种可能性？
+根据直觉会有3种可能：
+
+  
+      
+          alice first
+          bob first
+          alice/bob/alice
+      
+  
+  
+      
+          0
+          0
+          0
+      
+      
+          A1 200
+          B 100
+          A1 200
+      
+      
+          A2 &ldquo;=200&rdquo;
+          A1 300
+          B 300
+      
+      
+          B 300
+          A2 &ldquo;=300&rdquo;
+          A2 &ldquo;=300&rdquo;
+      
+  
+
+这个结果最后存款都是剩余300似乎也没什么问题，但是这里还有第4种可能，那就是bob的存款操作发生在A1的balance + amount之后，但是在A1的balance =之前，那么会出现什么？'><meta name=author content><link rel=canonical href=https://kmnemon.github.io/posts/2019-05-11-golang-database-pool-2/><link crossorigin=anonymous href=/assets/css/stylesheet.d6fcd20a4fb86efa4dfac8ec95da60244cc8871042183da1ef28e3a762ad79c8.css integrity="sha256-1vzSCk+4bvpN+sjsldpgJEzIhxBCGD2h7yjjp2Ktecg=" rel="preload stylesheet" as=style><link rel=icon href=https://kmnemon.github.io/favicon.ico><link rel=icon type=image/png sizes=16x16 href=https://kmnemon.github.io/favicon-16x16.png><link rel=icon type=image/png sizes=32x32 href=https://kmnemon.github.io/favicon-32x32.png><link rel=apple-touch-icon href=https://kmnemon.github.io/apple-touch-icon.png><link rel=mask-icon href=https://kmnemon.github.io/safari-pinned-tab.svg><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><link rel=alternate hreflang=zh-cn href=https://kmnemon.github.io/posts/2019-05-11-golang-database-pool-2/><noscript><style>#theme-toggle,.top-link{display:none}</style></noscript><meta property="og:url" content="https://kmnemon.github.io/posts/2019-05-11-golang-database-pool-2/"><meta property="og:site_name" content="科的随思录"><meta property="og:title" content="用golang实现mongodb数据库连接池-高级篇-协程安全"><meta property="og:description" content=' 版本
+golang – 1.12.4
+mongodb – 4.0
+go driver – 1.0.0
+简介
+在上一篇《用golang实现mongodb数据库连接池-基本篇》我们实现了mongodb的golang driver按序使用的基本版，但还需要进一步提升效率和高并发安全。本篇张实现高效率协程安全版。
+data race 什么是data race，考虑如下代码：
+var balance intfunc Deposit(amount int){ balance = balance + amount}func Balance() int { return balance}//Alice:go func(){bank.Deposit(200) // A1fmt.Println("=", bank.Balance()) // A2}()//Bobgo bank.Deposit(100) // B 当alice和bob同时执行如上的操作，最后的存款有几种可能性？
+根据直觉会有3种可能：
+alice first bob first alice/bob/alice 0 0 0 A1 200 B 100 A1 200 A2 “=200” A1 300 B 300 B 300 A2 “=300” A2 “=300” 这个结果最后存款都是剩余300似乎也没什么问题，但是这里还有第4种可能，那就是bob的存款操作发生在A1的balance + amount之后，但是在A1的balance =之前，那么会出现什么？'><meta property="og:locale" content="zh-cn"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-05-11T00:00:00+00:00"><meta property="article:modified_time" content="2019-05-11T00:00:00+00:00"><meta property="og:image" content="https://kmnemon.github.io/papermod-cover.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://kmnemon.github.io/papermod-cover.png"><meta name=twitter:title content="用golang实现mongodb数据库连接池-高级篇-协程安全"><meta name=twitter:description content='
+
+版本
+golang &ndash; 1.12.4
+mongodb &ndash; 4.0
+go driver &ndash; 1.0.0
+
+
+简介
+
+
+在上一篇《用golang实现mongodb数据库连接池-基本篇》我们实现了mongodb的golang driver按序使用的基本版，但还需要进一步提升效率和高并发安全。本篇张实现高效率协程安全版。
+
+data race
+
+什么是data race，考虑如下代码：
+var balance int
+func Deposit(amount int){ balance = balance + amount}
+func Balance() int { return balance}
+
+//Alice:
+go func(){
+	bank.Deposit(200)                // A1
+	fmt.Println("=", bank.Balance()) // A2
+}()
+
+//Bob
+go bank.Deposit(100)                  // B
+当alice和bob同时执行如上的操作，最后的存款有几种可能性？
+根据直觉会有3种可能：
+
+  
+      
+          alice first
+          bob first
+          alice/bob/alice
+      
+  
+  
+      
+          0
+          0
+          0
+      
+      
+          A1 200
+          B 100
+          A1 200
+      
+      
+          A2 &ldquo;=200&rdquo;
+          A1 300
+          B 300
+      
+      
+          B 300
+          A2 &ldquo;=300&rdquo;
+          A2 &ldquo;=300&rdquo;
+      
+  
+
+这个结果最后存款都是剩余300似乎也没什么问题，但是这里还有第4种可能，那就是bob的存款操作发生在A1的balance + amount之后，但是在A1的balance =之前，那么会出现什么？'><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Posts","item":"https://kmnemon.github.io/posts/"},{"@type":"ListItem","position":2,"name":"用golang实现mongodb数据库连接池-高级篇-协程安全","item":"https://kmnemon.github.io/posts/2019-05-11-golang-database-pool-2/"}]}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"用golang实现mongodb数据库连接池-高级篇-协程安全","name":"用golang实现mongodb数据库连接池-高级篇-协程安全","description":" 版本\ngolang \u0026ndash; 1.12.4\nmongodb \u0026ndash; 4.0\ngo driver \u0026ndash; 1.0.0\n简介\n在上一篇《用golang实现mongodb数据库连接池-基本篇》我们实现了mongodb的golang driver按序使用的基本版，但还需要进一步提升效率和高并发安全。本篇张实现高效率协程安全版。\ndata race 什么是data race，考虑如下代码：\nvar balance int\rfunc Deposit(amount int){ balance = balance + amount}\rfunc Balance() int { return balance}\r//Alice:\rgo func(){\rbank.Deposit(200) // A1\rfmt.Println(\u0026#34;=\u0026#34;, bank.Balance()) // A2\r}()\r//Bob\rgo bank.Deposit(100) // B 当alice和bob同时执行如上的操作，最后的存款有几种可能性？\n根据直觉会有3种可能：\nalice first bob first alice/bob/alice 0 0 0 A1 200 B 100 A1 200 A2 \u0026ldquo;=200\u0026rdquo; A1 300 B 300 B 300 A2 \u0026ldquo;=300\u0026rdquo; A2 \u0026ldquo;=300\u0026rdquo; 这个结果最后存款都是剩余300似乎也没什么问题，但是这里还有第4种可能，那就是bob的存款操作发生在A1的balance + amount之后，但是在A1的balance =之前，那么会出现什么？\n","keywords":[],"articleBody":" 版本\ngolang – 1.12.4\nmongodb – 4.0\ngo driver – 1.0.0\n简介\n在上一篇《用golang实现mongodb数据库连接池-基本篇》我们实现了mongodb的golang driver按序使用的基本版，但还需要进一步提升效率和高并发安全。本篇张实现高效率协程安全版。\ndata race 什么是data race，考虑如下代码：\nvar balance int\rfunc Deposit(amount int){ balance = balance + amount}\rfunc Balance() int { return balance}\r//Alice:\rgo func(){\rbank.Deposit(200) // A1\rfmt.Println(\"=\", bank.Balance()) // A2\r}()\r//Bob\rgo bank.Deposit(100) // B 当alice和bob同时执行如上的操作，最后的存款有几种可能性？\n根据直觉会有3种可能：\nalice first bob first alice/bob/alice 0 0 0 A1 200 B 100 A1 200 A2 “=200” A1 300 B 300 B 300 A2 “=300” A2 “=300” 这个结果最后存款都是剩余300似乎也没什么问题，但是这里还有第4种可能，那就是bob的存款操作发生在A1的balance + amount之后，但是在A1的balance =之前，那么会出现什么？\nData race 0 A1r 0 …=balance + amount B 100 A1w 200 balace = … A2 “=200” 现在Alice账户剩余200，在data race中100被程序冲掉。\n设计\n我们使用mutual exclusion的方式进行协程安全设计，具体请参见《golang实现协程安全的几种方式》\n核心代码\nconst(\rMAX_CONNECTION = 10\rINITIAL_CONNECTION = 4\rAVAILABLE = false\rUSED = true\r)\r/*\r代码取了一个巧，用实际存放数据库指针的大小ClientPool.size和mongodata.flag来表示上述a，b两个状态\r如果mongodata.flag都为USED，那么需要新申请个数据库连接: size++\rclientList: the client pool\rclientAvailable: the available flag, means the location and available flag in the client pool\rsize: the size of allocated client pool \u003c= MAX_CONNECTION\r*/\rtype mongodata struct{\rclient *mongo.Client\rpos int\rflag bool\r}\rtype ClientPool struct{\rclientList [MAX_CONNECTION]mongodata\rsize int\r}\r//create a new database connection to the pool\rfunc (cp *ClientPool) allocateCToPool(pos int) (err error){\rcp.clientList[pos].client, err = Dbconnect()\rif err != nil {\rutils.Logger.SetPrefix(\"WARNING \")\rutils.Logger.Println(\"allocateCToPool - allocateCToPool failed,position: \", pos, err)\rreturn err\r}\rcp.clientList[pos].flag = USED\rcp.clientList[pos].pos = pos\rreturn nil\r}\r//apply a connection from the pool\rfunc (cp *ClientPool) getCToPool(pos int){\rcp.clientList[pos].flag = USED\r}\r//free a connection back to the pool\rfunc (cp *ClientPool) putCBackPool(pos int){\rcp.clientList[pos].flag = AVAILABLE\r}\r//program apply a database connection\rfunc GetClient() (mongoclient *mongodata, err error) {\rmu.RLock()\rfor i:=1; i","wordCount":"341","inLanguage":"zh-cn","image":"https://kmnemon.github.io/papermod-cover.png","datePublished":"2019-05-11T00:00:00Z","dateModified":"2019-05-11T00:00:00Z","mainEntityOfPage":{"@type":"WebPage","@id":"https://kmnemon.github.io/posts/2019-05-11-golang-database-pool-2/"},"publisher":{"@type":"Organization","name":"科的随思录","logo":{"@type":"ImageObject","url":"https://kmnemon.github.io/favicon.ico"}}}</script></head><body id=top><script>localStorage.getItem("pref-theme")==="dark"&&document.body.classList.add("dark")</script><header class=header><nav class=nav><div class=logo><a href=https://kmnemon.github.io/ accesskey=h title="科的随思录 (Alt + H)">科的随思录</a><div class=logo-switches><button id=theme-toggle accesskey=t title="(Alt + T)"><svg id="moon" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg id="sun" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button></div></div><ul id=menu><li><a href=https://kmnemon.github.io/archives title=文章><span>文章</span></a></li><li><a href=https://kmnemon.github.io/about title=咖啡><span>咖啡</span></a></li></ul></nav></header><main class=main><article class=post-single><header class=post-header><div class=breadcrumbs><a href=https://kmnemon.github.io/>Home</a>&nbsp;»&nbsp;<a href=https://kmnemon.github.io/posts/>Posts</a></div><h1 class="post-title entry-hint-parent">用golang实现mongodb数据库连接池-高级篇-协程安全</h1><div class=post-meta><span title='2019-05-11 00:00:00 +0000 UTC'>May 11, 2019</span></div></header><div class=post-content><ul><li><p>版本<br>golang &ndash; 1.12.4<br>mongodb &ndash; 4.0<br>go driver &ndash; 1.0.0</p></li><li><p>简介</p></li></ul><p>在上一篇《<a href=/posts/2019-05-10-golang-database-pool/>用golang实现mongodb数据库连接池-基本篇</a>》我们实现了mongodb的golang driver按序使用的基本版，但还需要进一步提升效率和高并发安全。本篇张实现高效率协程安全版。</p><ul><li>data race</li></ul><p>什么是data race，考虑如下代码：</p><pre tabindex=0><code>var balance int
+func Deposit(amount int){ balance = balance + amount}
+func Balance() int { return balance}
+
+//Alice:
+go func(){
+	bank.Deposit(200)                // A1
+	fmt.Println(&#34;=&#34;, bank.Balance()) // A2
+}()
+
+//Bob
+go bank.Deposit(100)                  // B
+</code></pre><p>当alice和bob同时执行如上的操作，最后的存款有几种可能性？<br>根据直觉会有3种可能：</p><table><thead><tr><th style=text-align:center>alice first</th><th style=text-align:center>bob first</th><th style=text-align:left>alice/bob/alice</th></tr></thead><tbody><tr><td style=text-align:center>0</td><td style=text-align:center>0</td><td style=text-align:left>0</td></tr><tr><td style=text-align:center>A1 200</td><td style=text-align:center>B 100</td><td style=text-align:left>A1 200</td></tr><tr><td style=text-align:center>A2 &ldquo;=200&rdquo;</td><td style=text-align:center>A1 300</td><td style=text-align:left>B 300</td></tr><tr><td style=text-align:center>B 300</td><td style=text-align:center>A2 &ldquo;=300&rdquo;</td><td style=text-align:left>A2 &ldquo;=300&rdquo;</td></tr></tbody></table><p>这个结果最后存款都是剩余300似乎也没什么问题，但是这里还有第4种可能，那就是bob的存款操作发生在A1的balance + amount之后，但是在A1的balance =之前，那么会出现什么？</p><table><thead><tr><th style=text-align:center>Data</th><th style=text-align:center>race</th><th></th></tr></thead><tbody><tr><td style=text-align:center>0</td><td></td><td></td></tr><tr><td style=text-align:center>A1r</td><td style=text-align:center>0</td><td style=text-align:left>&mldr;=balance + amount</td></tr><tr><td style=text-align:center>B</td><td style=text-align:center>100</td><td></td></tr><tr><td style=text-align:center>A1w</td><td style=text-align:center>200</td><td style=text-align:left>balace = &mldr;</td></tr><tr><td style=text-align:center>A2</td><td style=text-align:center>&ldquo;=200&rdquo;</td><td></td></tr></tbody></table><p>现在Alice账户剩余200，在data race中100被程序冲掉。</p><ul><li><p>设计<br>我们使用mutual exclusion的方式进行协程安全设计，具体请参见《<a href=/posts/2019-05-13-golang-concurrency/>golang实现协程安全的几种方式</a>》</p></li><li><p>核心代码</p></li></ul><pre tabindex=0><code>const(
+	MAX_CONNECTION = 10
+	INITIAL_CONNECTION = 4
+	AVAILABLE = false
+	USED = true
+
+)
+
+/*
+代码取了一个巧，用实际存放数据库指针的大小ClientPool.size和mongodata.flag来表示上述a，b两个状态
+如果mongodata.flag都为USED，那么需要新申请个数据库连接: size++
+clientList: the client pool
+clientAvailable: the available flag, means the location and available flag in the  client pool
+size: the size of allocated client pool &lt;= MAX_CONNECTION
+*/
+type mongodata struct{
+	client *mongo.Client
+	pos int
+	flag bool
+
+}
+
+type ClientPool struct{
+	clientList [MAX_CONNECTION]mongodata
+	size int
+}
+
+//create a new database connection to the pool
+func (cp *ClientPool) allocateCToPool(pos int) (err error){
+	cp.clientList[pos].client, err = Dbconnect()
+	if err != nil {
+		utils.Logger.SetPrefix(&#34;WARNING &#34;)
+		utils.Logger.Println(&#34;allocateCToPool - allocateCToPool failed,position: &#34;, pos, err)
+		return err
+	}
+
+	cp.clientList[pos].flag = USED
+	cp.clientList[pos].pos = pos
+	return nil
+}
+
+//apply a connection from the pool
+func (cp *ClientPool) getCToPool(pos int){
+	cp.clientList[pos].flag = USED
+}
+
+//free a connection back to the pool
+func (cp *ClientPool) putCBackPool(pos int){
+	cp.clientList[pos].flag = AVAILABLE
+}
+
+//program apply a database connection
+func GetClient() (mongoclient *mongodata,  err error) {
+	mu.RLock()
+	for i:=1; i&lt;cp.size; i++ {
+		if cp.clientList[i].flag == AVAILABLE{
+			return &amp;cp.clientList[i], nil
+		}
+	}
+	mu.RUnlock()
+
+	mu.Lock()
+	defer mu.Unlock()
+	if cp.size &lt; MAX_CONNECTION{
+		err = cp.allocateCToPool(cp.size)
+		if err != nil {
+			utils.Logger.SetPrefix(&#34;WARNING &#34;)
+			utils.Logger.Println(&#34;GetClient - DB pooling allocate failed&#34;, err)
+			return nil, err
+		}
+
+		pos := cp.size
+		cp.size++
+		return &amp;cp.clientList[pos], nil
+	} else {
+		utils.Logger.SetPrefix(&#34;WARNING &#34;)
+		utils.Logger.Println(&#34;GetClient - DB pooling is fulled&#34;)
+		return nil, errors.New(&#34;DB pooling is fulled&#34;)
+	}
+
+}
+
+//program release a connection
+func ReleaseClient(mongoclient *mongodata){
+	mu.Lock()
+	cp.putCBackPool(mongoclient.pos)
+	mu.Unlock()
+}
+</code></pre><p>这样我们就完成了一个高效率协程安全的设计，完整代码地址: <a href=https://github.com/kmnemon/golang-mongodb-pool>https://github.com/kmnemon/golang-mongodb-pool</a></p></div><footer class=post-footer><ul class=post-tags></ul><nav class=paginav><a class=prev href=https://kmnemon.github.io/posts/2019-05-13-golang-concurrency/><span class=title>«</span><br><span>golang实现协程安全的几种方式</span>
+</a><a class=next href=https://kmnemon.github.io/posts/2019-05-10-golang-database-pool/><span class=title>»</span><br><span>用golang实现mongodb数据库连接池-基本篇</span></a></nav></footer></article></main><footer class=footer><span>&copy; 2025 <a href=https://kmnemon.github.io/>科的随思录</a></span> ·
+<span>Powered by
+<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
+        <a href=https://github.com/adityatelange/hugo-PaperMod/ rel=noopener target=_blank>PaperMod</a></span></footer><a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg viewBox="0 0 12 6" fill="currentcolor"><path d="M12 6H0l6-6z"/></svg>
+</a><script>let menu=document.getElementById("menu");menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(e){e.preventDefault();var t=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView({behavior:"smooth"}),t==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${t}`)})})</script><script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script><script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove("dark"),localStorage.setItem("pref-theme","light")):(document.body.classList.add("dark"),localStorage.setItem("pref-theme","dark"))})</script><script>document.querySelectorAll("pre > code").forEach(e=>{const n=e.parentNode.parentNode,t=document.createElement("button");t.classList.add("copy-code"),t.innerHTML="copy";function s(){t.innerHTML="copied!",setTimeout(()=>{t.innerHTML="copy"},2e3)}t.addEventListener("click",t=>{if("clipboard"in navigator){navigator.clipboard.writeText(e.textContent),s();return}const n=document.createRange();n.selectNodeContents(e);const o=window.getSelection();o.removeAllRanges(),o.addRange(n);try{document.execCommand("copy"),s()}catch{}o.removeRange(n)}),n.classList.contains("highlight")?n.appendChild(t):n.parentNode.firstChild==n||(e.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?e.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(t):e.parentNode.appendChild(t))})</script></body></html>

@@ -1,0 +1,285 @@
+<!doctype html><html lang=zh-cn dir=auto><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>程序语言中内存管理-DO NOT STOP THE WORLD | 科的随思录</title>
+<meta name=keywords content><meta name=description content='类似枪械有手动步枪-M1903春田，半自动步枪-M1，自动步枪-M16之分，程序语言的内存管理也有手动、半自动和全自动三种方式。手动内存管理的代表语言：C、C++，半自动内存管理的代码语言：Modern C++，Swift，Rust，全自动的代表语言：Java，C#，Go，Python。本文通过不同程序语言来描述三种内存管理方式，以及如何应对循环引用的典型场景。
+手动内存管理：
+为了实现代码的极致效率以及灵活性C和C++语言采用了手动内存管理方式，通过自己编写代码实现堆上的内存分配与回收。
+//C++代码示例
+export class Manual {
+public:
+  Manual(int s) :elem{ new double[s] }, sz{ s } {}
+
+  ~Manual() {
+    delete[] elem;
+  }
+
+private:
+  double* elem;
+  int sz;
+};
+半自动内存管理：
+内存泄漏是手动内存管理遇到最大的挑战，在复杂的场景下可能出现分配的内存没有释放，导致程序在特殊的情况下内存耗尽停止工作。为了保证内存安全，新一代语言为了不牺牲效率采用编译时期来分析内存的分配与释放，典型的方式是自动引用计数（Automatic Reference Counting ）
+//swift代码示例
+class ARC {
+    
+}
+
+func usingARC() {
+    var ref1: ARC? = ARC()
+    var ref2: ARC? = ref1
+
+    ref1 = nil
+    ref2 = nil
+    //ref1、ref2 已释放
+}
+//Modern C++
+export class SmartPointers {
+public:
+  //represents unique ownership (its destructor destroys its object)
+  void uniquePtr() {
+    std::unique_ptr<X> sp{ new X };
+    std::unique_ptr<X> sp3 = std::make_unique<X>();
+
+    std::unique_ptr<X> sp2 = std::move(sp);
+  }
+
+  //represents shared ownership (the last shared pointer¡¯s destructor destroys the object)
+  void sharedPtr() {
+    std::shared_ptr<X> sp = std::make_shared<X>();
+    std::shared_ptr<X> sp2 = sp;
+
+    sp.reset();
+    sp2.reset();
+  }
+
+  //A pointer to an object owned by a shared_ptr
+  void weakPtr() {
+    std::shared_ptr<X> sharedPtr = std::make_shared<X>();
+
+    // Creating a weak pointer from the shared pointer
+    std::weak_ptr<X> weakPtr = sharedPtr;
+
+    // Using the weak pointer to access the object
+    if (auto ptr = weakPtr.lock()) {
+    }
+    else {
+      std::cout << "Weak pointer is expired." << std::endl;
+    }
+
+    // Resetting the shared pointer
+    sharedPtr.reset();
+
+    // Using the weak pointer again after resetting the shared pointer
+    if (auto ptr = weakPtr.lock()) {
+    }
+    else {
+      std::cout << "Weak pointer is expired." << std::endl;
+    }
+  }
+};
+全自动内存管理：
+同样保证内存安全，同时减少内存管理心智负担，还有一种全自动内存管理-垃圾回收机制（GC）。但这种方式引入了臭名昭著的STOP THE WORLD。'><meta name=author content><link rel=canonical href=https://kmnemon.github.io/posts/2024-03-26-do-not-stop-the-world/><link crossorigin=anonymous href=/assets/css/stylesheet.d6fcd20a4fb86efa4dfac8ec95da60244cc8871042183da1ef28e3a762ad79c8.css integrity="sha256-1vzSCk+4bvpN+sjsldpgJEzIhxBCGD2h7yjjp2Ktecg=" rel="preload stylesheet" as=style><link rel=icon href=https://kmnemon.github.io/favicon.ico><link rel=icon type=image/png sizes=16x16 href=https://kmnemon.github.io/favicon-16x16.png><link rel=icon type=image/png sizes=32x32 href=https://kmnemon.github.io/favicon-32x32.png><link rel=apple-touch-icon href=https://kmnemon.github.io/apple-touch-icon.png><link rel=mask-icon href=https://kmnemon.github.io/safari-pinned-tab.svg><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><link rel=alternate hreflang=zh-cn href=https://kmnemon.github.io/posts/2024-03-26-do-not-stop-the-world/><noscript><style>#theme-toggle,.top-link{display:none}</style></noscript><meta property="og:url" content="https://kmnemon.github.io/posts/2024-03-26-do-not-stop-the-world/"><meta property="og:site_name" content="科的随思录"><meta property="og:title" content="程序语言中内存管理-DO NOT STOP THE WORLD"><meta property="og:description" content='类似枪械有手动步枪-M1903春田，半自动步枪-M1，自动步枪-M16之分，程序语言的内存管理也有手动、半自动和全自动三种方式。手动内存管理的代表语言：C、C++，半自动内存管理的代码语言：Modern C++，Swift，Rust，全自动的代表语言：Java，C#，Go，Python。本文通过不同程序语言来描述三种内存管理方式，以及如何应对循环引用的典型场景。
+手动内存管理： 为了实现代码的极致效率以及灵活性C和C++语言采用了手动内存管理方式，通过自己编写代码实现堆上的内存分配与回收。
+//C++代码示例export class Manual {public:Manual(int s) :elem{ new double[s] }, sz{ s } {}~Manual() {delete[] elem;}private:double* elem;int sz;}; 半自动内存管理： 内存泄漏是手动内存管理遇到最大的挑战，在复杂的场景下可能出现分配的内存没有释放，导致程序在特殊的情况下内存耗尽停止工作。为了保证内存安全，新一代语言为了不牺牲效率采用编译时期来分析内存的分配与释放，典型的方式是自动引用计数（Automatic Reference Counting ）
+//swift代码示例class ARC {}func usingARC() {var ref1: ARC? = ARC()var ref2: ARC? = ref1ref1 = nilref2 = nil//ref1、ref2 已释放} //Modern C++export class SmartPointers {public://represents unique ownership (its destructor destroys its object)void uniquePtr() {std::unique_ptr<X> sp{ new X };std::unique_ptr<X> sp3 = std::make_unique<X>();std::unique_ptr<X> sp2 = std::move(sp);}//represents shared ownership (the last shared pointer¡¯s destructor destroys the object)void sharedPtr() {std::shared_ptr<X> sp = std::make_shared<X>();std::shared_ptr<X> sp2 = sp;sp.reset();sp2.reset();}//A pointer to an object owned by a shared_ptrvoid weakPtr() {std::shared_ptr<X> sharedPtr = std::make_shared<X>();// Creating a weak pointer from the shared pointerstd::weak_ptr<X> weakPtr = sharedPtr;// Using the weak pointer to access the objectif (auto ptr = weakPtr.lock()) {}else {std::cout << "Weak pointer is expired." << std::endl;}// Resetting the shared pointersharedPtr.reset();// Using the weak pointer again after resetting the shared pointerif (auto ptr = weakPtr.lock()) {}else {std::cout << "Weak pointer is expired." << std::endl;}}}; 全自动内存管理： 同样保证内存安全，同时减少内存管理心智负担，还有一种全自动内存管理-垃圾回收机制（GC）。但这种方式引入了臭名昭著的STOP THE WORLD。'><meta property="og:locale" content="zh-cn"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2024-03-26T00:00:00+00:00"><meta property="article:modified_time" content="2024-03-26T00:00:00+00:00"><meta property="og:image" content="https://kmnemon.github.io/papermod-cover.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://kmnemon.github.io/papermod-cover.png"><meta name=twitter:title content="程序语言中内存管理-DO NOT STOP THE WORLD"><meta name=twitter:description content='类似枪械有手动步枪-M1903春田，半自动步枪-M1，自动步枪-M16之分，程序语言的内存管理也有手动、半自动和全自动三种方式。手动内存管理的代表语言：C、C++，半自动内存管理的代码语言：Modern C++，Swift，Rust，全自动的代表语言：Java，C#，Go，Python。本文通过不同程序语言来描述三种内存管理方式，以及如何应对循环引用的典型场景。
+手动内存管理：
+为了实现代码的极致效率以及灵活性C和C++语言采用了手动内存管理方式，通过自己编写代码实现堆上的内存分配与回收。
+//C++代码示例
+export class Manual {
+public:
+  Manual(int s) :elem{ new double[s] }, sz{ s } {}
+
+  ~Manual() {
+    delete[] elem;
+  }
+
+private:
+  double* elem;
+  int sz;
+};
+半自动内存管理：
+内存泄漏是手动内存管理遇到最大的挑战，在复杂的场景下可能出现分配的内存没有释放，导致程序在特殊的情况下内存耗尽停止工作。为了保证内存安全，新一代语言为了不牺牲效率采用编译时期来分析内存的分配与释放，典型的方式是自动引用计数（Automatic Reference Counting ）
+//swift代码示例
+class ARC {
+    
+}
+
+func usingARC() {
+    var ref1: ARC? = ARC()
+    var ref2: ARC? = ref1
+
+    ref1 = nil
+    ref2 = nil
+    //ref1、ref2 已释放
+}
+//Modern C++
+export class SmartPointers {
+public:
+  //represents unique ownership (its destructor destroys its object)
+  void uniquePtr() {
+    std::unique_ptr<X> sp{ new X };
+    std::unique_ptr<X> sp3 = std::make_unique<X>();
+
+    std::unique_ptr<X> sp2 = std::move(sp);
+  }
+
+  //represents shared ownership (the last shared pointer¡¯s destructor destroys the object)
+  void sharedPtr() {
+    std::shared_ptr<X> sp = std::make_shared<X>();
+    std::shared_ptr<X> sp2 = sp;
+
+    sp.reset();
+    sp2.reset();
+  }
+
+  //A pointer to an object owned by a shared_ptr
+  void weakPtr() {
+    std::shared_ptr<X> sharedPtr = std::make_shared<X>();
+
+    // Creating a weak pointer from the shared pointer
+    std::weak_ptr<X> weakPtr = sharedPtr;
+
+    // Using the weak pointer to access the object
+    if (auto ptr = weakPtr.lock()) {
+    }
+    else {
+      std::cout << "Weak pointer is expired." << std::endl;
+    }
+
+    // Resetting the shared pointer
+    sharedPtr.reset();
+
+    // Using the weak pointer again after resetting the shared pointer
+    if (auto ptr = weakPtr.lock()) {
+    }
+    else {
+      std::cout << "Weak pointer is expired." << std::endl;
+    }
+  }
+};
+全自动内存管理：
+同样保证内存安全，同时减少内存管理心智负担，还有一种全自动内存管理-垃圾回收机制（GC）。但这种方式引入了臭名昭著的STOP THE WORLD。'><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Posts","item":"https://kmnemon.github.io/posts/"},{"@type":"ListItem","position":2,"name":"程序语言中内存管理-DO NOT STOP THE WORLD","item":"https://kmnemon.github.io/posts/2024-03-26-do-not-stop-the-world/"}]}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"程序语言中内存管理-DO NOT STOP THE WORLD","name":"程序语言中内存管理-DO NOT STOP THE WORLD","description":"类似枪械有手动步枪-M1903春田，半自动步枪-M1，自动步枪-M16之分，程序语言的内存管理也有手动、半自动和全自动三种方式。手动内存管理的代表语言：C、C++，半自动内存管理的代码语言：Modern C++，Swift，Rust，全自动的代表语言：Java，C#，Go，Python。本文通过不同程序语言来描述三种内存管理方式，以及如何应对循环引用的典型场景。\n手动内存管理： 为了实现代码的极致效率以及灵活性C和C++语言采用了手动内存管理方式，通过自己编写代码实现堆上的内存分配与回收。\n//C++代码示例\rexport class Manual {\rpublic:\rManual(int s) :elem{ new double[s] }, sz{ s } {}\r~Manual() {\rdelete[] elem;\r}\rprivate:\rdouble* elem;\rint sz;\r}; 半自动内存管理： 内存泄漏是手动内存管理遇到最大的挑战，在复杂的场景下可能出现分配的内存没有释放，导致程序在特殊的情况下内存耗尽停止工作。为了保证内存安全，新一代语言为了不牺牲效率采用编译时期来分析内存的分配与释放，典型的方式是自动引用计数（Automatic Reference Counting ）\n//swift代码示例\rclass ARC {\r}\rfunc usingARC() {\rvar ref1: ARC? = ARC()\rvar ref2: ARC? = ref1\rref1 = nil\rref2 = nil\r//ref1、ref2 已释放\r} //Modern C++\rexport class SmartPointers {\rpublic:\r//represents unique ownership (its destructor destroys its object)\rvoid uniquePtr() {\rstd::unique_ptr\u0026lt;X\u0026gt; sp{ new X };\rstd::unique_ptr\u0026lt;X\u0026gt; sp3 = std::make_unique\u0026lt;X\u0026gt;();\rstd::unique_ptr\u0026lt;X\u0026gt; sp2 = std::move(sp);\r}\r//represents shared ownership (the last shared pointer¡¯s destructor destroys the object)\rvoid sharedPtr() {\rstd::shared_ptr\u0026lt;X\u0026gt; sp = std::make_shared\u0026lt;X\u0026gt;();\rstd::shared_ptr\u0026lt;X\u0026gt; sp2 = sp;\rsp.reset();\rsp2.reset();\r}\r//A pointer to an object owned by a shared_ptr\rvoid weakPtr() {\rstd::shared_ptr\u0026lt;X\u0026gt; sharedPtr = std::make_shared\u0026lt;X\u0026gt;();\r// Creating a weak pointer from the shared pointer\rstd::weak_ptr\u0026lt;X\u0026gt; weakPtr = sharedPtr;\r// Using the weak pointer to access the object\rif (auto ptr = weakPtr.lock()) {\r}\relse {\rstd::cout \u0026lt;\u0026lt; \u0026#34;Weak pointer is expired.\u0026#34; \u0026lt;\u0026lt; std::endl;\r}\r// Resetting the shared pointer\rsharedPtr.reset();\r// Using the weak pointer again after resetting the shared pointer\rif (auto ptr = weakPtr.lock()) {\r}\relse {\rstd::cout \u0026lt;\u0026lt; \u0026#34;Weak pointer is expired.\u0026#34; \u0026lt;\u0026lt; std::endl;\r}\r}\r}; 全自动内存管理： 同样保证内存安全，同时减少内存管理心智负担，还有一种全自动内存管理-垃圾回收机制（GC）。但这种方式引入了臭名昭著的STOP THE WORLD。\n","keywords":[],"articleBody":"类似枪械有手动步枪-M1903春田，半自动步枪-M1，自动步枪-M16之分，程序语言的内存管理也有手动、半自动和全自动三种方式。手动内存管理的代表语言：C、C++，半自动内存管理的代码语言：Modern C++，Swift，Rust，全自动的代表语言：Java，C#，Go，Python。本文通过不同程序语言来描述三种内存管理方式，以及如何应对循环引用的典型场景。\n手动内存管理： 为了实现代码的极致效率以及灵活性C和C++语言采用了手动内存管理方式，通过自己编写代码实现堆上的内存分配与回收。\n//C++代码示例\rexport class Manual {\rpublic:\rManual(int s) :elem{ new double[s] }, sz{ s } {}\r~Manual() {\rdelete[] elem;\r}\rprivate:\rdouble* elem;\rint sz;\r}; 半自动内存管理： 内存泄漏是手动内存管理遇到最大的挑战，在复杂的场景下可能出现分配的内存没有释放，导致程序在特殊的情况下内存耗尽停止工作。为了保证内存安全，新一代语言为了不牺牲效率采用编译时期来分析内存的分配与释放，典型的方式是自动引用计数（Automatic Reference Counting ）\n//swift代码示例\rclass ARC {\r}\rfunc usingARC() {\rvar ref1: ARC? = ARC()\rvar ref2: ARC? = ref1\rref1 = nil\rref2 = nil\r//ref1、ref2 已释放\r} //Modern C++\rexport class SmartPointers {\rpublic:\r//represents unique ownership (its destructor destroys its object)\rvoid uniquePtr() {\rstd::unique_ptr sp{ new X };\rstd::unique_ptr sp3 = std::make_unique();\rstd::unique_ptr sp2 = std::move(sp);\r}\r//represents shared ownership (the last shared pointer¡¯s destructor destroys the object)\rvoid sharedPtr() {\rstd::shared_ptr sp = std::make_shared();\rstd::shared_ptr sp2 = sp;\rsp.reset();\rsp2.reset();\r}\r//A pointer to an object owned by a shared_ptr\rvoid weakPtr() {\rstd::shared_ptr sharedPtr = std::make_shared();\r// Creating a weak pointer from the shared pointer\rstd::weak_ptr weakPtr = sharedPtr;\r// Using the weak pointer to access the object\rif (auto ptr = weakPtr.lock()) {\r}\relse {\rstd::cout \u003c\u003c \"Weak pointer is expired.\" \u003c\u003c std::endl;\r}\r// Resetting the shared pointer\rsharedPtr.reset();\r// Using the weak pointer again after resetting the shared pointer\rif (auto ptr = weakPtr.lock()) {\r}\relse {\rstd::cout \u003c\u003c \"Weak pointer is expired.\" \u003c\u003c std::endl;\r}\r}\r}; 全自动内存管理： 同样保证内存安全，同时减少内存管理心智负担，还有一种全自动内存管理-垃圾回收机制（GC）。但这种方式引入了臭名昭著的STOP THE WORLD。\n//Go代码示例\rtype Automate struct {\r}\rfunc usingGC() {\ra := Automate{}\rfmt.Println(a)\r} 循环引用问题： 两个类的成员相互引用对方，导致内存分配永远无法释放。\nclass A {\rvar b: B?\r}\rclass B {\rvar a: A?\r}\rfunc rc() {\rvar ca: A? = A()\rvar cb: B? = B()\rca!.b = cb\rcb!.a = ca\rca = nil\rcb = nil\r//ca、cb并未释放\r} 该场景其实是半自动内存管理引入的问题，因为手动内存管理不管有没有循环引用只要代码进行delete就会释放内存，而全自动内存管理会自己分析出循环引用在GC的时候释放掉相应的内存。\n半自动内存管理这方面加重了程序员的心智负担，需要开发者分析出循环引用场景，并采用弱引用的方式打破循环引用。\n//通过引入weak弱引用关键字来解决循环引用问题\rclass Person {\rvar apartment: Apartment?\rdeinit { print(\"Person deinit\") }\r}\rclass Apartment {\rweak var tenant: Person?\rdeinit { print(\"Apartment deinit\") }\r}\rfunc weakReference() {\rvar tom: Person? = Person()\rvar apartment: Apartment? = Apartment()\rtom?.apartment = apartment\rapartment?.tenant = tom\rtom = nil\r//Person deinit\rapartment = nil\r//Apartment deinit\r} ","wordCount":"332","inLanguage":"zh-cn","image":"https://kmnemon.github.io/papermod-cover.png","datePublished":"2024-03-26T00:00:00Z","dateModified":"2024-03-26T00:00:00Z","mainEntityOfPage":{"@type":"WebPage","@id":"https://kmnemon.github.io/posts/2024-03-26-do-not-stop-the-world/"},"publisher":{"@type":"Organization","name":"科的随思录","logo":{"@type":"ImageObject","url":"https://kmnemon.github.io/favicon.ico"}}}</script></head><body id=top><script>localStorage.getItem("pref-theme")==="dark"&&document.body.classList.add("dark")</script><header class=header><nav class=nav><div class=logo><a href=https://kmnemon.github.io/ accesskey=h title="科的随思录 (Alt + H)">科的随思录</a><div class=logo-switches><button id=theme-toggle accesskey=t title="(Alt + T)"><svg id="moon" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg id="sun" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button></div></div><ul id=menu><li><a href=https://kmnemon.github.io/archives title=文章><span>文章</span></a></li><li><a href=https://kmnemon.github.io/about title=咖啡><span>咖啡</span></a></li></ul></nav></header><main class=main><article class=post-single><header class=post-header><div class=breadcrumbs><a href=https://kmnemon.github.io/>Home</a>&nbsp;»&nbsp;<a href=https://kmnemon.github.io/posts/>Posts</a></div><h1 class="post-title entry-hint-parent">程序语言中内存管理-DO NOT STOP THE WORLD</h1><div class=post-meta><span title='2024-03-26 00:00:00 +0000 UTC'>March 26, 2024</span></div></header><div class=toc><details open><summary accesskey=c title="(Alt + C)"><span class=details>Table of Contents</span></summary><div class=inner><ul><li><a href=#%e6%89%8b%e5%8a%a8%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86 aria-label=手动内存管理：>手动内存管理：</a></li><li><a href=#%e5%8d%8a%e8%87%aa%e5%8a%a8%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86 aria-label=半自动内存管理：>半自动内存管理：</a></li><li><a href=#%e5%85%a8%e8%87%aa%e5%8a%a8%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86 aria-label=全自动内存管理：>全自动内存管理：</a></li><li><a href=#%e5%be%aa%e7%8e%af%e5%bc%95%e7%94%a8%e9%97%ae%e9%a2%98 aria-label=循环引用问题：>循环引用问题：</a></li></ul></div></details></div><div class=post-content><p>类似枪械有手动步枪-M1903春田，半自动步枪-M1，自动步枪-M16之分，程序语言的内存管理也有手动、半自动和全自动三种方式。手动内存管理的代表语言：C、C++，半自动内存管理的代码语言：Modern C++，Swift，Rust，全自动的代表语言：Java，C#，Go，Python。本文通过不同程序语言来描述三种内存管理方式，以及如何应对循环引用的典型场景。</p><h1 id=手动内存管理>手动内存管理：<a hidden class=anchor aria-hidden=true href=#手动内存管理>#</a></h1><p>为了实现代码的极致效率以及灵活性C和C++语言采用了手动内存管理方式，通过自己编写代码实现堆上的内存分配与回收。</p><pre tabindex=0><code>//C++代码示例
+export class Manual {
+public:
+  Manual(int s) :elem{ new double[s] }, sz{ s } {}
+
+  ~Manual() {
+    delete[] elem;
+  }
+
+private:
+  double* elem;
+  int sz;
+};
+</code></pre><h1 id=半自动内存管理>半自动内存管理：<a hidden class=anchor aria-hidden=true href=#半自动内存管理>#</a></h1><p>内存泄漏是手动内存管理遇到最大的挑战，在复杂的场景下可能出现分配的内存没有释放，导致程序在特殊的情况下内存耗尽停止工作。为了保证内存安全，新一代语言为了不牺牲效率采用编译时期来分析内存的分配与释放，典型的方式是自动引用计数（Automatic Reference Counting ）</p><pre tabindex=0><code>//swift代码示例
+class ARC {
+    
+}
+
+func usingARC() {
+    var ref1: ARC? = ARC()
+    var ref2: ARC? = ref1
+
+    ref1 = nil
+    ref2 = nil
+    //ref1、ref2 已释放
+}
+</code></pre><pre tabindex=0><code>//Modern C++
+export class SmartPointers {
+public:
+  //represents unique ownership (its destructor destroys its object)
+  void uniquePtr() {
+    std::unique_ptr&lt;X&gt; sp{ new X };
+    std::unique_ptr&lt;X&gt; sp3 = std::make_unique&lt;X&gt;();
+
+    std::unique_ptr&lt;X&gt; sp2 = std::move(sp);
+  }
+
+  //represents shared ownership (the last shared pointer¡¯s destructor destroys the object)
+  void sharedPtr() {
+    std::shared_ptr&lt;X&gt; sp = std::make_shared&lt;X&gt;();
+    std::shared_ptr&lt;X&gt; sp2 = sp;
+
+    sp.reset();
+    sp2.reset();
+  }
+
+  //A pointer to an object owned by a shared_ptr
+  void weakPtr() {
+    std::shared_ptr&lt;X&gt; sharedPtr = std::make_shared&lt;X&gt;();
+
+    // Creating a weak pointer from the shared pointer
+    std::weak_ptr&lt;X&gt; weakPtr = sharedPtr;
+
+    // Using the weak pointer to access the object
+    if (auto ptr = weakPtr.lock()) {
+    }
+    else {
+      std::cout &lt;&lt; &#34;Weak pointer is expired.&#34; &lt;&lt; std::endl;
+    }
+
+    // Resetting the shared pointer
+    sharedPtr.reset();
+
+    // Using the weak pointer again after resetting the shared pointer
+    if (auto ptr = weakPtr.lock()) {
+    }
+    else {
+      std::cout &lt;&lt; &#34;Weak pointer is expired.&#34; &lt;&lt; std::endl;
+    }
+  }
+};
+</code></pre><h1 id=全自动内存管理>全自动内存管理：<a hidden class=anchor aria-hidden=true href=#全自动内存管理>#</a></h1><p>同样保证内存安全，同时减少内存管理心智负担，还有一种全自动内存管理-垃圾回收机制（GC）。但这种方式引入了臭名昭著的STOP THE WORLD。</p><pre tabindex=0><code>//Go代码示例
+type Automate struct {
+}
+
+func usingGC() {
+  a := Automate{}
+  fmt.Println(a)
+}
+</code></pre><h1 id=循环引用问题>循环引用问题：<a hidden class=anchor aria-hidden=true href=#循环引用问题>#</a></h1><p>两个类的成员相互引用对方，导致内存分配永远无法释放。</p><pre tabindex=0><code>class A {
+    var b: B?
+}
+
+class B {
+    var a: A?
+}
+
+func rc() {
+    var ca: A? = A()
+    var cb: B? = B()
+    ca!.b = cb
+    cb!.a = ca
+    
+    ca = nil
+    cb = nil
+    //ca、cb并未释放
+}
+</code></pre><p>该场景其实是半自动内存管理引入的问题，因为手动内存管理不管有没有循环引用只要代码进行delete就会释放内存，而全自动内存管理会自己分析出循环引用在GC的时候释放掉相应的内存。</p><p>半自动内存管理这方面加重了程序员的心智负担，需要开发者分析出循环引用场景，并采用弱引用的方式打破循环引用。</p><pre tabindex=0><code>//通过引入weak弱引用关键字来解决循环引用问题
+class Person {
+    var apartment: Apartment?
+    deinit { print(&#34;Person deinit&#34;) }
+}
+
+class Apartment {
+    weak var tenant: Person?
+    deinit { print(&#34;Apartment deinit&#34;) }
+}
+
+func weakReference() {
+    var tom: Person? = Person()
+    var apartment: Apartment? = Apartment()
+    
+    tom?.apartment = apartment
+    apartment?.tenant = tom
+    
+    tom = nil
+    //Person deinit
+    
+    apartment = nil
+    //Apartment deinit
+}
+</code></pre></div><footer class=post-footer><ul class=post-tags></ul><nav class=paginav><a class=prev href=https://kmnemon.github.io/posts/2024-11-19-does-compilor-do-to-much/><span class=title>«</span><br><span>编译器是否帮我们做的过多？</span>
+</a><a class=next href=https://kmnemon.github.io/posts/2024-01-05-programming-monster-dance-copy/><span class=title>»</span><br><span>编程语言，群魔乱舞的时代</span></a></nav></footer></article></main><footer class=footer><span>&copy; 2025 <a href=https://kmnemon.github.io/>科的随思录</a></span> ·
+<span>Powered by
+<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
+        <a href=https://github.com/adityatelange/hugo-PaperMod/ rel=noopener target=_blank>PaperMod</a></span></footer><a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg viewBox="0 0 12 6" fill="currentcolor"><path d="M12 6H0l6-6z"/></svg>
+</a><script>let menu=document.getElementById("menu");menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(e){e.preventDefault();var t=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView({behavior:"smooth"}),t==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${t}`)})})</script><script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script><script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove("dark"),localStorage.setItem("pref-theme","light")):(document.body.classList.add("dark"),localStorage.setItem("pref-theme","dark"))})</script><script>document.querySelectorAll("pre > code").forEach(e=>{const n=e.parentNode.parentNode,t=document.createElement("button");t.classList.add("copy-code"),t.innerHTML="copy";function s(){t.innerHTML="copied!",setTimeout(()=>{t.innerHTML="copy"},2e3)}t.addEventListener("click",t=>{if("clipboard"in navigator){navigator.clipboard.writeText(e.textContent),s();return}const n=document.createRange();n.selectNodeContents(e);const o=window.getSelection();o.removeAllRanges(),o.addRange(n);try{document.execCommand("copy"),s()}catch{}o.removeRange(n)}),n.classList.contains("highlight")?n.appendChild(t):n.parentNode.firstChild==n||(e.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?e.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(t):e.parentNode.appendChild(t))})</script></body></html>

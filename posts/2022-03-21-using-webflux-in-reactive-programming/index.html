@@ -1,0 +1,259 @@
+<!doctype html><html lang=zh-cn dir=auto><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>使用WebFlux进行响应式编程（using webflux in reactive programming) | 科的随思录</title>
+<meta name=keywords content><meta name=description content='上一篇文章《理解响应式编程（reactive programming)》我们谈到响应式编程四个核心概念：
+
+
+发布者(The Publisher): 发布者就是数据的生产者，这个是为系统生产数据的组件，这里的服务B就是一个发布者，他收到服务A的请求后就开始生产数据。
+
+
+订阅者(The Subscriber): 订阅者订阅发布者生产的数据。这里服务A就是订阅者，他订阅来自服务B的数据。
+
+
+订阅过程(The Subscription):订阅过程是一份服务之间的合约（contract)，它被用于订阅者获取数据，或者取消订阅。
+
+
+处理者(The Processor):处理者是一个响应式实体，他能够消费发布者的数据，并进行再加工，然后发布自己的数据，上面的例子并未体现这层逻辑。举个例子，排序处理者，他可以作为订阅者获取发布者的随机序数据，然后进行排序，然后作为发布者生产出排序后的数据。
+
+
+一个典型的响应式交互如下：
+
+订阅者和发布者签订订阅契约(Publisher.subscribe),一旦契约签订完成，订阅者向发布者请求数据(Subscription.request),发布者准备好数据后传输数据给订阅者(调用订阅者onNext)，订阅者再次请求新数据(request)，直到发布者告诉订阅者数据已经发送完成(onComplete)，本次契约完成。
+Reactive REST Appplication
+现在我们使用WebFlux开始构建一个简单的响应式应用.
+
+使用一个简单的领域模型-Employee
+使用RestController返回发布者生产的数据
+使用WebClient构建订阅者获取发布者数据
+
+WebFlux Maven依赖如下：
+  <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webflux</artifactId>
+  </dependency>
+发布者（Publisher）
+WebFlux底层使用Project Reactor，所以我们这里使用Project Reactor的命名来介绍。
+发布者有两个类型：
+
+Mono类型表示生产0个或者至多1个数据
+Flux类型表示生产多个数据
+
+示例代码分为三层分别是：
+
+controller-获取REST请求，并返回订阅数据
+model-包含Employee领域模型
+repository-构建内存数据库（采用HashMap)
+
+controller:
+可以看到方法返回类型为Mono或者Flux，表示生产者会生产对应类型个数的数据
+@RestController
+@RequestMapping("/employees")
+public class EmployeeController {
+    private static final Logger logger = LoggerFactory.getLogger(EmployeeController.class);
+
+    private final EmployeeRepository employeeRepository;
+
+    public EmployeeController(EmployeeRepository employeeRepository) {
+        this.employeeRepository = employeeRepository;
+    }
+
+    @GetMapping("/{id}")
+    private Mono<Employee> getEmployeeById(@PathVariable String id) {
+        logger.debug("getEmplyeeById controller get called");
+        return employeeRepository.findEmployeeById(id);
+    }
+
+    @GetMapping
+    private Flux<Employee> getAllEmployees() {
+        logger.debug("getAllEmployees controller get called");
+        return employeeRepository.findAllEmployees();
+    }
+
+    @PostMapping("/update")
+    private Mono<Employee> updateEmployee(@RequestBody Employee employee) {
+        return employeeRepository.updateEmployee(employee);
+    }
+}
+model：
+很简单的领域模型Employee包含id和name两个字段'><meta name=author content><link rel=canonical href=https://kmnemon.github.io/posts/2022-03-21-using-webflux-in-reactive-programming/><link crossorigin=anonymous href=/assets/css/stylesheet.d6fcd20a4fb86efa4dfac8ec95da60244cc8871042183da1ef28e3a762ad79c8.css integrity="sha256-1vzSCk+4bvpN+sjsldpgJEzIhxBCGD2h7yjjp2Ktecg=" rel="preload stylesheet" as=style><link rel=icon href=https://kmnemon.github.io/favicon.ico><link rel=icon type=image/png sizes=16x16 href=https://kmnemon.github.io/favicon-16x16.png><link rel=icon type=image/png sizes=32x32 href=https://kmnemon.github.io/favicon-32x32.png><link rel=apple-touch-icon href=https://kmnemon.github.io/apple-touch-icon.png><link rel=mask-icon href=https://kmnemon.github.io/safari-pinned-tab.svg><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><link rel=alternate hreflang=zh-cn href=https://kmnemon.github.io/posts/2022-03-21-using-webflux-in-reactive-programming/><noscript><style>#theme-toggle,.top-link{display:none}</style></noscript><meta property="og:url" content="https://kmnemon.github.io/posts/2022-03-21-using-webflux-in-reactive-programming/"><meta property="og:site_name" content="科的随思录"><meta property="og:title" content="使用WebFlux进行响应式编程（using webflux in reactive programming)"><meta property="og:description" content='上一篇文章《理解响应式编程（reactive programming)》我们谈到响应式编程四个核心概念：
+发布者(The Publisher): 发布者就是数据的生产者，这个是为系统生产数据的组件，这里的服务B就是一个发布者，他收到服务A的请求后就开始生产数据。
+订阅者(The Subscriber): 订阅者订阅发布者生产的数据。这里服务A就是订阅者，他订阅来自服务B的数据。
+订阅过程(The Subscription):订阅过程是一份服务之间的合约（contract)，它被用于订阅者获取数据，或者取消订阅。
+处理者(The Processor):处理者是一个响应式实体，他能够消费发布者的数据，并进行再加工，然后发布自己的数据，上面的例子并未体现这层逻辑。举个例子，排序处理者，他可以作为订阅者获取发布者的随机序数据，然后进行排序，然后作为发布者生产出排序后的数据。
+一个典型的响应式交互如下：
+订阅者和发布者签订订阅契约(Publisher.subscribe),一旦契约签订完成，订阅者向发布者请求数据(Subscription.request),发布者准备好数据后传输数据给订阅者(调用订阅者onNext)，订阅者再次请求新数据(request)，直到发布者告诉订阅者数据已经发送完成(onComplete)，本次契约完成。
+Reactive REST Appplication
+现在我们使用WebFlux开始构建一个简单的响应式应用.
+使用一个简单的领域模型-Employee 使用RestController返回发布者生产的数据 使用WebClient构建订阅者获取发布者数据 WebFlux Maven依赖如下：
+<dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-webflux</artifactId></dependency> 发布者（Publisher）
+WebFlux底层使用Project Reactor，所以我们这里使用Project Reactor的命名来介绍。
+发布者有两个类型：
+Mono类型表示生产0个或者至多1个数据 Flux类型表示生产多个数据 示例代码分为三层分别是：
+controller-获取REST请求，并返回订阅数据 model-包含Employee领域模型 repository-构建内存数据库（采用HashMap) controller:
+可以看到方法返回类型为Mono或者Flux，表示生产者会生产对应类型个数的数据
+@RestController@RequestMapping("/employees")public class EmployeeController {private static final Logger logger = LoggerFactory.getLogger(EmployeeController.class);private final EmployeeRepository employeeRepository;public EmployeeController(EmployeeRepository employeeRepository) {this.employeeRepository = employeeRepository;}@GetMapping("/{id}")private Mono<Employee> getEmployeeById(@PathVariable String id) {logger.debug("getEmplyeeById controller get called");return employeeRepository.findEmployeeById(id);}@GetMappingprivate Flux<Employee> getAllEmployees() {logger.debug("getAllEmployees controller get called");return employeeRepository.findAllEmployees();}@PostMapping("/update")private Mono<Employee> updateEmployee(@RequestBody Employee employee) {return employeeRepository.updateEmployee(employee);}} model：
+很简单的领域模型Employee包含id和name两个字段'><meta property="og:locale" content="zh-cn"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2022-03-21T00:00:00+00:00"><meta property="article:modified_time" content="2022-03-21T00:00:00+00:00"><meta property="og:image" content="https://kmnemon.github.io/papermod-cover.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://kmnemon.github.io/papermod-cover.png"><meta name=twitter:title content="使用WebFlux进行响应式编程（using webflux in reactive programming)"><meta name=twitter:description content='上一篇文章《理解响应式编程（reactive programming)》我们谈到响应式编程四个核心概念：
+
+
+发布者(The Publisher): 发布者就是数据的生产者，这个是为系统生产数据的组件，这里的服务B就是一个发布者，他收到服务A的请求后就开始生产数据。
+
+
+订阅者(The Subscriber): 订阅者订阅发布者生产的数据。这里服务A就是订阅者，他订阅来自服务B的数据。
+
+
+订阅过程(The Subscription):订阅过程是一份服务之间的合约（contract)，它被用于订阅者获取数据，或者取消订阅。
+
+
+处理者(The Processor):处理者是一个响应式实体，他能够消费发布者的数据，并进行再加工，然后发布自己的数据，上面的例子并未体现这层逻辑。举个例子，排序处理者，他可以作为订阅者获取发布者的随机序数据，然后进行排序，然后作为发布者生产出排序后的数据。
+
+
+一个典型的响应式交互如下：
+
+订阅者和发布者签订订阅契约(Publisher.subscribe),一旦契约签订完成，订阅者向发布者请求数据(Subscription.request),发布者准备好数据后传输数据给订阅者(调用订阅者onNext)，订阅者再次请求新数据(request)，直到发布者告诉订阅者数据已经发送完成(onComplete)，本次契约完成。
+Reactive REST Appplication
+现在我们使用WebFlux开始构建一个简单的响应式应用.
+
+使用一个简单的领域模型-Employee
+使用RestController返回发布者生产的数据
+使用WebClient构建订阅者获取发布者数据
+
+WebFlux Maven依赖如下：
+  <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webflux</artifactId>
+  </dependency>
+发布者（Publisher）
+WebFlux底层使用Project Reactor，所以我们这里使用Project Reactor的命名来介绍。
+发布者有两个类型：
+
+Mono类型表示生产0个或者至多1个数据
+Flux类型表示生产多个数据
+
+示例代码分为三层分别是：
+
+controller-获取REST请求，并返回订阅数据
+model-包含Employee领域模型
+repository-构建内存数据库（采用HashMap)
+
+controller:
+可以看到方法返回类型为Mono或者Flux，表示生产者会生产对应类型个数的数据
+@RestController
+@RequestMapping("/employees")
+public class EmployeeController {
+    private static final Logger logger = LoggerFactory.getLogger(EmployeeController.class);
+
+    private final EmployeeRepository employeeRepository;
+
+    public EmployeeController(EmployeeRepository employeeRepository) {
+        this.employeeRepository = employeeRepository;
+    }
+
+    @GetMapping("/{id}")
+    private Mono<Employee> getEmployeeById(@PathVariable String id) {
+        logger.debug("getEmplyeeById controller get called");
+        return employeeRepository.findEmployeeById(id);
+    }
+
+    @GetMapping
+    private Flux<Employee> getAllEmployees() {
+        logger.debug("getAllEmployees controller get called");
+        return employeeRepository.findAllEmployees();
+    }
+
+    @PostMapping("/update")
+    private Mono<Employee> updateEmployee(@RequestBody Employee employee) {
+        return employeeRepository.updateEmployee(employee);
+    }
+}
+model：
+很简单的领域模型Employee包含id和name两个字段'><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Posts","item":"https://kmnemon.github.io/posts/"},{"@type":"ListItem","position":2,"name":"使用WebFlux进行响应式编程（using webflux in reactive programming)","item":"https://kmnemon.github.io/posts/2022-03-21-using-webflux-in-reactive-programming/"}]}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"使用WebFlux进行响应式编程（using webflux in reactive programming)","name":"使用WebFlux进行响应式编程（using webflux in reactive programming)","description":"上一篇文章《理解响应式编程（reactive programming)》我们谈到响应式编程四个核心概念：\n发布者(The Publisher): 发布者就是数据的生产者，这个是为系统生产数据的组件，这里的服务B就是一个发布者，他收到服务A的请求后就开始生产数据。\n订阅者(The Subscriber): 订阅者订阅发布者生产的数据。这里服务A就是订阅者，他订阅来自服务B的数据。\n订阅过程(The Subscription):订阅过程是一份服务之间的合约（contract)，它被用于订阅者获取数据，或者取消订阅。\n处理者(The Processor):处理者是一个响应式实体，他能够消费发布者的数据，并进行再加工，然后发布自己的数据，上面的例子并未体现这层逻辑。举个例子，排序处理者，他可以作为订阅者获取发布者的随机序数据，然后进行排序，然后作为发布者生产出排序后的数据。\n一个典型的响应式交互如下：\n订阅者和发布者签订订阅契约(Publisher.subscribe),一旦契约签订完成，订阅者向发布者请求数据(Subscription.request),发布者准备好数据后传输数据给订阅者(调用订阅者onNext)，订阅者再次请求新数据(request)，直到发布者告诉订阅者数据已经发送完成(onComplete)，本次契约完成。\nReactive REST Appplication\n现在我们使用WebFlux开始构建一个简单的响应式应用.\n使用一个简单的领域模型-Employee 使用RestController返回发布者生产的数据 使用WebClient构建订阅者获取发布者数据 WebFlux Maven依赖如下：\n\u0026lt;dependency\u0026gt;\r\u0026lt;groupId\u0026gt;org.springframework.boot\u0026lt;/groupId\u0026gt;\r\u0026lt;artifactId\u0026gt;spring-boot-starter-webflux\u0026lt;/artifactId\u0026gt;\r\u0026lt;/dependency\u0026gt; 发布者（Publisher）\nWebFlux底层使用Project Reactor，所以我们这里使用Project Reactor的命名来介绍。\n发布者有两个类型：\nMono类型表示生产0个或者至多1个数据 Flux类型表示生产多个数据 示例代码分为三层分别是：\ncontroller-获取REST请求，并返回订阅数据 model-包含Employee领域模型 repository-构建内存数据库（采用HashMap) controller:\n可以看到方法返回类型为Mono或者Flux，表示生产者会生产对应类型个数的数据\n@RestController\r@RequestMapping(\u0026#34;/employees\u0026#34;)\rpublic class EmployeeController {\rprivate static final Logger logger = LoggerFactory.getLogger(EmployeeController.class);\rprivate final EmployeeRepository employeeRepository;\rpublic EmployeeController(EmployeeRepository employeeRepository) {\rthis.employeeRepository = employeeRepository;\r}\r@GetMapping(\u0026#34;/{id}\u0026#34;)\rprivate Mono\u0026lt;Employee\u0026gt; getEmployeeById(@PathVariable String id) {\rlogger.debug(\u0026#34;getEmplyeeById controller get called\u0026#34;);\rreturn employeeRepository.findEmployeeById(id);\r}\r@GetMapping\rprivate Flux\u0026lt;Employee\u0026gt; getAllEmployees() {\rlogger.debug(\u0026#34;getAllEmployees controller get called\u0026#34;);\rreturn employeeRepository.findAllEmployees();\r}\r@PostMapping(\u0026#34;/update\u0026#34;)\rprivate Mono\u0026lt;Employee\u0026gt; updateEmployee(@RequestBody Employee employee) {\rreturn employeeRepository.updateEmployee(employee);\r}\r} model：\n很简单的领域模型Employee包含id和name两个字段\n","keywords":[],"articleBody":"上一篇文章《理解响应式编程（reactive programming)》我们谈到响应式编程四个核心概念：\n发布者(The Publisher): 发布者就是数据的生产者，这个是为系统生产数据的组件，这里的服务B就是一个发布者，他收到服务A的请求后就开始生产数据。\n订阅者(The Subscriber): 订阅者订阅发布者生产的数据。这里服务A就是订阅者，他订阅来自服务B的数据。\n订阅过程(The Subscription):订阅过程是一份服务之间的合约（contract)，它被用于订阅者获取数据，或者取消订阅。\n处理者(The Processor):处理者是一个响应式实体，他能够消费发布者的数据，并进行再加工，然后发布自己的数据，上面的例子并未体现这层逻辑。举个例子，排序处理者，他可以作为订阅者获取发布者的随机序数据，然后进行排序，然后作为发布者生产出排序后的数据。\n一个典型的响应式交互如下：\n订阅者和发布者签订订阅契约(Publisher.subscribe),一旦契约签订完成，订阅者向发布者请求数据(Subscription.request),发布者准备好数据后传输数据给订阅者(调用订阅者onNext)，订阅者再次请求新数据(request)，直到发布者告诉订阅者数据已经发送完成(onComplete)，本次契约完成。\nReactive REST Appplication\n现在我们使用WebFlux开始构建一个简单的响应式应用.\n使用一个简单的领域模型-Employee 使用RestController返回发布者生产的数据 使用WebClient构建订阅者获取发布者数据 WebFlux Maven依赖如下：\norg.springframework.boot\rspring-boot-starter-webflux\r发布者（Publisher）\nWebFlux底层使用Project Reactor，所以我们这里使用Project Reactor的命名来介绍。\n发布者有两个类型：\nMono类型表示生产0个或者至多1个数据 Flux类型表示生产多个数据 示例代码分为三层分别是：\ncontroller-获取REST请求，并返回订阅数据 model-包含Employee领域模型 repository-构建内存数据库（采用HashMap) controller:\n可以看到方法返回类型为Mono或者Flux，表示生产者会生产对应类型个数的数据\n@RestController\r@RequestMapping(\"/employees\")\rpublic class EmployeeController {\rprivate static final Logger logger = LoggerFactory.getLogger(EmployeeController.class);\rprivate final EmployeeRepository employeeRepository;\rpublic EmployeeController(EmployeeRepository employeeRepository) {\rthis.employeeRepository = employeeRepository;\r}\r@GetMapping(\"/{id}\")\rprivate Mono getEmployeeById(@PathVariable String id) {\rlogger.debug(\"getEmplyeeById controller get called\");\rreturn employeeRepository.findEmployeeById(id);\r}\r@GetMapping\rprivate Flux getAllEmployees() {\rlogger.debug(\"getAllEmployees controller get called\");\rreturn employeeRepository.findAllEmployees();\r}\r@PostMapping(\"/update\")\rprivate Mono updateEmployee(@RequestBody Employee employee) {\rreturn employeeRepository.updateEmployee(employee);\r}\r} model：\n很简单的领域模型Employee包含id和name两个字段\n@Data\r@AllArgsConstructor\r@NoArgsConstructor\rpublic class Employee {\rprivate String id;\rprivate String name;\r// standard getters and setters\r} repository:\n这里不是重点记住使用HashMap内存数据库.\n@Repository\rpublic class EmployeeRepository {\rstatic Map employeeData;\rstatic Map employeeAccessData;\r...\r} 订阅者(Subscriber)\n订阅者订阅发布者数据，有三种情况会通知订阅者：1.发布者准备好数据后，2.错误发生时，3.发布者生产完数据.\n所以订阅者有三个数据通道，每一个通道都是订阅者的内部方法：\nOnNext-当发布者有1个或多个数据生产出来会调用这个方法 OnError-当发布者在生产过程中出现错误会调用这个方法，注意当这个方法被调用，发布者将不再生产数据。 OnComplete-当发布者数据生产完成会调用订阅者这个方法。 订阅者我们使用WebClient是一个非阻塞客户端并支持响应式流。\n在订阅者服务，我们自定义consumeMono方法来订阅单个数据，consumeFlux订阅多个数据。\n在consumeMono方法里面，我们在签订契约的时候(employeeMono.subscribe)只定义了OnNext数据通道(employee -\u003e logger.debug(“Employee: {}”, employee)) 在consumeFlux方法里，我们在签订契约的时候(employeeFlux.subscribe)定义了上述的三个数据通道: OnNext-employee -\u003e logger.debug(“Employee: {}”, employee)\nOnError-err -\u003e err.printStackTrace()\nOnComplete-() -\u003e logger.debug(“completed”) public class EmployeeWebClient {\rprivate static final Logger logger = LoggerFactory.getLogger(EmployeeWebClient.class);\rWebClient client = WebClient.create(\"http://localhost:8071\");\rpublic void consumeMono() {\rMono employeeMono = client.get()\r.uri(\"/employees/{id}\", \"1\")\r.retrieve()\r.bodyToMono(Employee.class);\remployeeMono.subscribe(employee -\u003e logger.debug(\"Employee: {}\", employee));\rlogger.debug(\"comsumeMono thread continue\");\r}\rpublic void consumeFlux() {\rFlux employeeFlux = client.get()\r.uri(\"/employees\")\r.retrieve()\r.bodyToFlux(Employee.class);\remployeeFlux.subscribe(employee -\u003e logger.debug(\"Employee: {}\", employee),\rerr -\u003e err.printStackTrace(),\r() -\u003e logger.debug(\"completed\"));\r}\r} 当我们调用consumeMono方法签订契约消费发布者数据，会得到：\n主线程签订完契约后继续执行后续逻辑，不被发布者阻塞，打印输出“comsumeMono thread continue”\n发布者生产数据后，订阅者OnNext方法被调用，订阅者消费数据打印 “Employee: Employee(id=1, name=Employee 1)”.\n背压机制(Backpressure Mechanism)\n上篇文章说到，背压有三种策略：\n控制发布者发送数据的速率（推荐） 订阅者使用缓存来存储暂时无法处理的数据 订阅者丢弃所有无法处理的数据 我们聚焦第一种策略（控制发布者发送数据的速率）有三种实现方式：\n拉取方式-订阅者请求数据的时候发布者才发送 限制推送方式-限制发布者发布速率 取消订阅-订阅者可以随时取消订阅，待后续有消费能力后再次订阅 拉取方式代码示例. 我们使用subscription.request(2)每次请求2个数据.\nemployeeFlux.subscribe(employee -\u003e logger.debug(\"Employee: {}\", employee),\rerr -\u003e err.printStackTrace(),\r() -\u003e logger.debug(\"completed\"),\rsubscription -\u003e {\rfor (int i = 0; i \u003c 5; i++) {\rlogger.debug(\"Requesting the next 2 elements!!!\");\rsubscription.request(2);\r}\r}\r); 这里我们完成了一个简单的具有背压的响应式代码示例。\n结束语 响应式编程作为利用现有物理资源，提供了有效提升服务响应效率的方式，通过两篇文章介绍了响应式编程的原理和WebFlux代码示例，使我们可以继续深入研究响应式编程，以便在大规模请求场景采用响应式编程作为解决用户体验的有效解决方案。\n","wordCount":"282","inLanguage":"zh-cn","image":"https://kmnemon.github.io/papermod-cover.png","datePublished":"2022-03-21T00:00:00Z","dateModified":"2022-03-21T00:00:00Z","mainEntityOfPage":{"@type":"WebPage","@id":"https://kmnemon.github.io/posts/2022-03-21-using-webflux-in-reactive-programming/"},"publisher":{"@type":"Organization","name":"科的随思录","logo":{"@type":"ImageObject","url":"https://kmnemon.github.io/favicon.ico"}}}</script></head><body id=top><script>localStorage.getItem("pref-theme")==="dark"&&document.body.classList.add("dark")</script><header class=header><nav class=nav><div class=logo><a href=https://kmnemon.github.io/ accesskey=h title="科的随思录 (Alt + H)">科的随思录</a><div class=logo-switches><button id=theme-toggle accesskey=t title="(Alt + T)"><svg id="moon" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg id="sun" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button></div></div><ul id=menu><li><a href=https://kmnemon.github.io/archives title=文章><span>文章</span></a></li><li><a href=https://kmnemon.github.io/about title=咖啡><span>咖啡</span></a></li></ul></nav></header><main class=main><article class=post-single><header class=post-header><div class=breadcrumbs><a href=https://kmnemon.github.io/>Home</a>&nbsp;»&nbsp;<a href=https://kmnemon.github.io/posts/>Posts</a></div><h1 class="post-title entry-hint-parent">使用WebFlux进行响应式编程（using webflux in reactive programming)</h1><div class=post-meta><span title='2022-03-21 00:00:00 +0000 UTC'>March 21, 2022</span></div></header><div class=post-content><p>上一篇文章《理解响应式编程（reactive programming)》我们谈到响应式编程四个核心概念：</p><ul><li><p><strong>发布者(The Publisher): </strong>发布者就是数据的生产者，这个是为系统生产数据的组件，这里的服务B就是一个发布者，他收到服务A的请求后就开始生产数据。</p></li><li><p><strong>订阅者(The Subscriber): </strong>订阅者订阅发布者生产的数据。这里服务A就是订阅者，他订阅来自服务B的数据。</p></li><li><p><strong>订阅过程(The Subscription):</strong>订阅过程是一份服务之间的合约（contract)，它被用于订阅者获取数据，或者取消订阅。</p></li><li><p><strong>处理者(The Processor):</strong>处理者是一个响应式实体，他能够消费发布者的数据，并进行再加工，然后发布自己的数据，上面的例子并未体现这层逻辑。举个例子，排序处理者，他可以作为订阅者获取发布者的随机序数据，然后进行排序，然后作为发布者生产出排序后的数据。</p></li></ul><p>一个典型的响应式交互如下：<br><img loading=lazy src=/images/2022-03-21-using-webflux-in-reactive-programming/weflux-1.png></p><p>订阅者和发布者签订订阅契约(Publisher.subscribe),一旦契约签订完成，订阅者向发布者请求数据(Subscription.request),发布者准备好数据后传输数据给订阅者(调用订阅者onNext)，订阅者再次请求新数据(request)，直到发布者告诉订阅者数据已经发送完成(onComplete)，本次契约完成。</p><p><strong>Reactive REST Appplication</strong><br>现在我们使用WebFlux开始构建一个简单的响应式应用.</p><ul><li>使用一个简单的领域模型-Employee</li><li>使用RestController返回发布者生产的数据</li><li>使用WebClient构建订阅者获取发布者数据</li></ul><p>WebFlux Maven依赖如下：</p><pre tabindex=0><code>  &lt;dependency&gt;
+      &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+      &lt;artifactId&gt;spring-boot-starter-webflux&lt;/artifactId&gt;
+  &lt;/dependency&gt;
+</code></pre><p><strong>发布者（Publisher）</strong><br>WebFlux底层使用Project Reactor，所以我们这里使用Project Reactor的命名来介绍。</p><p>发布者有两个类型：</p><ul><li>Mono类型表示生产0个或者至多1个数据</li><li>Flux类型表示生产多个数据</li></ul><p>示例代码分为三层分别是：</p><ul><li>controller-获取REST请求，并返回订阅数据</li><li>model-包含Employee领域模型</li><li>repository-构建内存数据库（采用HashMap)</li></ul><p>controller:<br>可以看到方法返回类型为Mono或者Flux，表示生产者会生产对应类型个数的数据</p><pre tabindex=0><code>@RestController
+@RequestMapping(&#34;/employees&#34;)
+public class EmployeeController {
+    private static final Logger logger = LoggerFactory.getLogger(EmployeeController.class);
+
+    private final EmployeeRepository employeeRepository;
+
+    public EmployeeController(EmployeeRepository employeeRepository) {
+        this.employeeRepository = employeeRepository;
+    }
+
+    @GetMapping(&#34;/{id}&#34;)
+    private Mono&lt;Employee&gt; getEmployeeById(@PathVariable String id) {
+        logger.debug(&#34;getEmplyeeById controller get called&#34;);
+        return employeeRepository.findEmployeeById(id);
+    }
+
+    @GetMapping
+    private Flux&lt;Employee&gt; getAllEmployees() {
+        logger.debug(&#34;getAllEmployees controller get called&#34;);
+        return employeeRepository.findAllEmployees();
+    }
+
+    @PostMapping(&#34;/update&#34;)
+    private Mono&lt;Employee&gt; updateEmployee(@RequestBody Employee employee) {
+        return employeeRepository.updateEmployee(employee);
+    }
+}
+</code></pre><p>model：<br>很简单的领域模型Employee包含id和name两个字段</p><pre tabindex=0><code>@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class Employee {
+    private String id;
+    private String name;
+    // standard getters and setters
+}
+</code></pre><p>repository:<br>这里不是重点记住使用HashMap内存数据库.</p><pre tabindex=0><code>@Repository
+public class EmployeeRepository {
+    static Map&lt;String, Employee&gt; employeeData;
+    static Map&lt;String, String&gt; employeeAccessData;
+    ...
+}
+</code></pre><p><strong>订阅者(Subscriber)</strong><br>订阅者订阅发布者数据，有三种情况会通知订阅者：1.发布者准备好数据后，2.错误发生时，3.发布者生产完数据.</p><p>所以订阅者有三个数据通道，每一个通道都是订阅者的内部方法：</p><ul><li>OnNext-当发布者有1个或多个数据生产出来会调用这个方法</li><li>OnError-当发布者在生产过程中出现错误会调用这个方法，注意当这个方法被调用，发布者将不再生产数据。</li><li>OnComplete-当发布者数据生产完成会调用订阅者这个方法。</li></ul><p>订阅者我们使用WebClient是一个非阻塞客户端并支持响应式流。<br>在订阅者服务，我们自定义consumeMono方法来订阅单个数据，consumeFlux订阅多个数据。</p><ul><li>在consumeMono方法里面，我们在签订契约的时候(employeeMono.subscribe)只定义了OnNext数据通道(employee -> logger.debug(&ldquo;Employee: {}&rdquo;, employee))</li><li>在consumeFlux方法里，我们在签订契约的时候(employeeFlux.subscribe)定义了上述的三个数据通道:
+OnNext-employee -> logger.debug(&ldquo;Employee: {}&rdquo;, employee)<br>OnError-err -> err.printStackTrace()<br>OnComplete-() -> logger.debug(&ldquo;completed&rdquo;)</li></ul><pre tabindex=0><code>public class EmployeeWebClient {
+
+    private static final Logger logger = LoggerFactory.getLogger(EmployeeWebClient.class);
+    
+    WebClient client = WebClient.create(&#34;http://localhost:8071&#34;);
+    
+    public void consumeMono() {
+        Mono&lt;Employee&gt; employeeMono = client.get()
+            .uri(&#34;/employees/{id}&#34;, &#34;1&#34;)
+            .retrieve()
+            .bodyToMono(Employee.class);
+
+        employeeMono.subscribe(employee -&gt; logger.debug(&#34;Employee: {}&#34;, employee));
+        logger.debug(&#34;comsumeMono thread continue&#34;);
+    }
+
+    public void consumeFlux() {
+        Flux&lt;Employee&gt; employeeFlux = client.get()
+            .uri(&#34;/employees&#34;)
+            .retrieve()
+            .bodyToFlux(Employee.class);
+
+        employeeFlux.subscribe(employee -&gt; logger.debug(&#34;Employee: {}&#34;, employee),
+                err -&gt; err.printStackTrace(),
+                () -&gt; logger.debug(&#34;completed&#34;));
+    }
+  } 
+</code></pre><p>当我们调用consumeMono方法签订契约消费发布者数据，会得到：</p><p>主线程签订完契约后继续执行后续逻辑，不被发布者阻塞，打印输出“comsumeMono thread continue”<br>发布者生产数据后，订阅者OnNext方法被调用，订阅者消费数据打印
+“Employee: Employee(id=1, name=Employee 1)”.</p><p><strong>背压机制(Backpressure Mechanism)</strong><br>上篇文章说到，背压有三种策略：</p><ul><li>控制发布者发送数据的速率（推荐）</li><li>订阅者使用缓存来存储暂时无法处理的数据</li><li>订阅者丢弃所有无法处理的数据</li></ul><p>我们聚焦第一种策略（控制发布者发送数据的速率）有三种实现方式：</p><ul><li>拉取方式-订阅者请求数据的时候发布者才发送</li><li>限制推送方式-限制发布者发布速率</li><li>取消订阅-订阅者可以随时取消订阅，待后续有消费能力后再次订阅</li></ul><p>拉取方式代码示例.
+我们使用subscription.request(2)每次请求2个数据.</p><pre tabindex=0><code>employeeFlux.subscribe(employee -&gt; logger.debug(&#34;Employee: {}&#34;, employee),
+                err -&gt; err.printStackTrace(),
+                () -&gt; logger.debug(&#34;completed&#34;),
+                subscription -&gt; {
+                    for (int i = 0; i &lt; 5; i++) {
+                        logger.debug(&#34;Requesting the next 2 elements!!!&#34;);
+                        subscription.request(2);
+                    }
+                }
+              );
+</code></pre><p>这里我们完成了一个简单的具有背压的响应式代码示例。</p><p><strong>结束语</strong>
+响应式编程作为利用现有物理资源，提供了有效提升服务响应效率的方式，通过两篇文章介绍了响应式编程的原理和WebFlux代码示例，使我们可以继续深入研究响应式编程，以便在大规模请求场景采用响应式编程作为解决用户体验的有效解决方案。</p></div><footer class=post-footer><ul class=post-tags></ul><nav class=paginav><a class=prev href=https://kmnemon.github.io/posts/2022-03-23-intermittent-fasting/><span class=title>«</span><br><span>断食·轻断食</span>
+</a><a class=next href=https://kmnemon.github.io/posts/2022-03-20-understanding-reactive-programming/><span class=title>»</span><br><span>理解响应式编程（reactive programming)</span></a></nav></footer></article></main><footer class=footer><span>&copy; 2025 <a href=https://kmnemon.github.io/>科的随思录</a></span> ·
+<span>Powered by
+<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
+        <a href=https://github.com/adityatelange/hugo-PaperMod/ rel=noopener target=_blank>PaperMod</a></span></footer><a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg viewBox="0 0 12 6" fill="currentcolor"><path d="M12 6H0l6-6z"/></svg>
+</a><script>let menu=document.getElementById("menu");menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(e){e.preventDefault();var t=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView({behavior:"smooth"}),t==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${t}`)})})</script><script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script><script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove("dark"),localStorage.setItem("pref-theme","light")):(document.body.classList.add("dark"),localStorage.setItem("pref-theme","dark"))})</script><script>document.querySelectorAll("pre > code").forEach(e=>{const n=e.parentNode.parentNode,t=document.createElement("button");t.classList.add("copy-code"),t.innerHTML="copy";function s(){t.innerHTML="copied!",setTimeout(()=>{t.innerHTML="copy"},2e3)}t.addEventListener("click",t=>{if("clipboard"in navigator){navigator.clipboard.writeText(e.textContent),s();return}const n=document.createRange();n.selectNodeContents(e);const o=window.getSelection();o.removeAllRanges(),o.addRange(n);try{document.execCommand("copy"),s()}catch{}o.removeRange(n)}),n.classList.contains("highlight")?n.appendChild(t):n.parentNode.firstChild==n||(e.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?e.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(t):e.parentNode.appendChild(t))})</script></body></html>
