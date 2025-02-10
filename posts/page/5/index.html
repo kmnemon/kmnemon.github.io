@@ -1,0 +1,144 @@
+<!doctype html><html lang=zh-cn dir=auto><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>Posts | 科的随思录</title>
+<meta name=keywords content><meta name=description content="Posts - 科的随思录"><meta name=author content><link rel=canonical href=https://kmnemon.github.io/posts/><link crossorigin=anonymous href=/assets/css/stylesheet.d6fcd20a4fb86efa4dfac8ec95da60244cc8871042183da1ef28e3a762ad79c8.css integrity="sha256-1vzSCk+4bvpN+sjsldpgJEzIhxBCGD2h7yjjp2Ktecg=" rel="preload stylesheet" as=style><link rel=icon href=https://kmnemon.github.io/favicon.ico><link rel=icon type=image/png sizes=16x16 href=https://kmnemon.github.io/favicon-16x16.png><link rel=icon type=image/png sizes=32x32 href=https://kmnemon.github.io/favicon-32x32.png><link rel=apple-touch-icon href=https://kmnemon.github.io/apple-touch-icon.png><link rel=mask-icon href=https://kmnemon.github.io/safari-pinned-tab.svg><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><link rel=alternate type=application/rss+xml href=https://kmnemon.github.io/posts/index.xml><link rel=alternate hreflang=zh-cn href=https://kmnemon.github.io/posts/><noscript><style>#theme-toggle,.top-link{display:none}</style></noscript><meta property="og:url" content="https://kmnemon.github.io/posts/"><meta property="og:site_name" content="科的随思录"><meta property="og:title" content="Posts"><meta property="og:locale" content="zh-cn"><meta property="og:type" content="website"><meta property="og:image" content="https://kmnemon.github.io/papermod-cover.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://kmnemon.github.io/papermod-cover.png"><meta name=twitter:title content="Posts"><meta name=twitter:description content><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Posts","item":"https://kmnemon.github.io/posts/"}]}</script></head><body class=list id=top><script>localStorage.getItem("pref-theme")==="dark"&&document.body.classList.add("dark")</script><header class=header><nav class=nav><div class=logo><a href=https://kmnemon.github.io/ accesskey=h title="科的随思录 (Alt + H)">科的随思录</a><div class=logo-switches><button id=theme-toggle accesskey=t title="(Alt + T)"><svg id="moon" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg id="sun" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button></div></div><ul id=menu><li><a href=https://kmnemon.github.io/archives title=文章><span>文章</span></a></li><li><a href=https://kmnemon.github.io/about title=咖啡><span>咖啡</span></a></li></ul></nav></header><main class=main><header class=page-header><div class=breadcrumbs><a href=https://kmnemon.github.io/>Home</a></div><h1>Posts</h1></header><article class=post-entry><header class=entry-header><h2 class=entry-hint-parent>golang-NSQ讲明白</h2></header><div class=entry-content><p>版本 golang – 1.12.4
+nsq-1.1.0.linux-amd64.go1.10.3.tar.gz
+什么是NSQ 一句话讲NSQ是一个简单队列，类似于java经常使用的activeMQ或者RocketMQ,一般在同步分离成异步，发送消息和接受消息解耦的地方使用到。
+NSQ有以下特性:
+支持拓扑的高可用性和避免单点故障(SPOFs)。 更强的消息递交保证 为单次处理绑定着内存的足迹(通过把一些持久话的消息放入磁盘) 对生产者和消费者的配置进行极大的简化 提供直接的升级路径 提升效率 NSQ组成 NSQ由三个组件组成:
+nsqd 用于接收消息，排队消息，投递消息，我们的客户端(生产者，消费者)主要和它打交道 nsqlookupd 管理nsqd,nsqadmin拓扑信息。 我们的客户端(消费者)询问此组件来发现nsqd等 nsqadmin web UI 查询各种NSQ组件的信息，消息信息 NSQ使用步骤 启动nsqlookupd组件 启动nsqd并向nsqlookupd注册 启动nsqadmin并向nsqlookupd注册 生产者推送一个message到其中一个nsqd，并将此消息设置到一个topic里面 消费者向nsqlookupd询问指定topic的消息，nsqlookupd把有此topic的nsqd地址给到消费者 消费者建立channel和topic之间的订阅关系，通过channel向nsqd获取指定topic里面的消息 nsqd向所有订阅该topic的channel推送message， 然后其中一个消费者可以通过其中一个channel获取该topic的message 注意第4点，生产者为什么没有从nsqlookupd注册中心去寻找可以推送消息的nsqd呢？因为nsq的设计理念是将nsqd本地化，也就是说生产者直接推送消息到local-nsqd。这点和RocketMQ的设计理念不一样，RocketMQ的NameServer和nsqlookupd类似，但是设计上RocketMQ生产者会访问NameServer去寻找可用的MQ推送消息。
+启动，注册过程: 生产者，消费者: 这就是nsq一个完整的使用流程，下面分别从客户端和代码两个方面介绍详细怎么使用
+客户端使用 启动nsqlookup
+$ nsqlookupd 在另一个shell启动一个nsqd,并在lookupd注册,注意-broadcast-address一定是消费者可以访问的地址
+$ nsqd --lookupd-tcp-address=127.0.0.1:4160 -broadcast-address="x.x.x.x" -tcp-address="0.0.0.0:4150" 启动nsqadmin，并在lookupd注册:
+$ nsqadmin --lookupd-http-address=127.0.0.1:4161 生产者生产一个message，并创建该消息的topic
+$ curl -d 'hello world 1' 'http://127.0.0.1:4151/pub?topic=test' 消费者通过lookupd查找对应的topic的nsq并绑定topic和channel，通过channel接受该topic的message
+$ nsq_to_file --topic=test --output-dir=/tmp --lookupd-http-address=127.0.0.1:4161 生产者生产更多消息
+$ curl -d 'hello world 2' 'http://127.0.0.1:4151/pub?topic=test'
+$ curl -d 'hello world 3' 'http://127.0.0.1:4151/pub?topic=test' 可以打开nsaadmin查看所有详情http://127.0.0.1:4171/ ，同时也可以查看/tmp下面接收并写入的message (test.*.log)
+...</p></div><footer class=entry-footer><span title='2019-06-24 00:00:00 +0000 UTC'>June 24, 2019</span></footer><a class=entry-link aria-label="post link to golang-NSQ讲明白" href=https://kmnemon.github.io/posts/2019-06-24-golang-nsq-intro/></a></article><article class=post-entry><header class=entry-header><h2 class=entry-hint-parent>golang实现协程安全的几种方式</h2></header><div class=entry-content><p>版本
+golang – 1.12.4
+golang协程同步
+1.channel - monitor goroutine
+var deposits = make(chan int) // send amount to deposit
+var balances = make(chan int) // receive balance
+func Deposit(amount int) { deposits &lt;- amount }
+func Balance() int { return &lt;-balances }
+func teller() {
+var balance int // balance is confined to teller goroutine
+for {
+select {
+case amount := &lt;-deposits:
+balance += amount
+case balances &lt;- balance:
+}
+}
+}
+func init() {
+go teller() // start the monitor goroutine
+} 2.channel - serial confinement
+...</p></div><footer class=entry-footer><span title='2019-05-13 00:00:00 +0000 UTC'>May 13, 2019</span></footer><a class=entry-link aria-label="post link to golang实现协程安全的几种方式" href=https://kmnemon.github.io/posts/2019-05-13-golang-concurrency/></a></article><article class=post-entry><header class=entry-header><h2 class=entry-hint-parent>用golang实现mongodb数据库连接池-高级篇-协程安全</h2></header><div class=entry-content><p>版本
+golang – 1.12.4
+mongodb – 4.0
+go driver – 1.0.0
+简介
+在上一篇《用golang实现mongodb数据库连接池-基本篇》我们实现了mongodb的golang driver按序使用的基本版，但还需要进一步提升效率和高并发安全。本篇张实现高效率协程安全版。
+data race 什么是data race，考虑如下代码：
+var balance int
+func Deposit(amount int){ balance = balance + amount}
+func Balance() int { return balance}
+//Alice:
+go func(){
+bank.Deposit(200) // A1
+fmt.Println("=", bank.Balance()) // A2
+}()
+//Bob
+go bank.Deposit(100) // B 当alice和bob同时执行如上的操作，最后的存款有几种可能性？
+根据直觉会有3种可能：
+alice first bob first alice/bob/alice 0 0 0 A1 200 B 100 A1 200 A2 “=200” A1 300 B 300 B 300 A2 “=300” A2 “=300” 这个结果最后存款都是剩余300似乎也没什么问题，但是这里还有第4种可能，那就是bob的存款操作发生在A1的balance + amount之后，但是在A1的balance =之前，那么会出现什么？
+...</p></div><footer class=entry-footer><span title='2019-05-11 00:00:00 +0000 UTC'>May 11, 2019</span></footer><a class=entry-link aria-label="post link to 用golang实现mongodb数据库连接池-高级篇-协程安全" href=https://kmnemon.github.io/posts/2019-05-11-golang-database-pool-2/></a></article><article class=post-entry><header class=entry-header><h2 class=entry-hint-parent>用golang实现mongodb数据库连接池-基本篇</h2></header><div class=entry-content><p>版本
+golang – 1.12.4
+mongodb – 4.0
+go driver – 1.0.0
+简介
+mongodb的数据库driver在官方文档里面明确写明所有的数据库连接需要自己建立和释放，而且建议尽量复用已有的建立，那么也就是说driver里面并未实现连接池的功能。在我们实际应用中就需要自己实现这套数据库连接池提升程序和数据库之间的执行效率。
+设计思路 用一个数组来存放数据库连接的指针，并记录每一个指针两个状态: a.是否申请了数据库连接 b.这个连接是否已经给系统在使用中。举个例子就比较好理解了:
+申请一个用于存放数据连接的数组，一开始空的什么都没有
+程序需要一个数据库连接，连接池把数组第一个位置建立一个数据库连接，并把这个连接的状态置为：a.已申请 b.已给系统
+程序使用完释放数据库连接，现在数据库指针状态为：a.已申请 b.未使用
+程序需要新申请一个数据库连接，那么就回到了第2的状态。
+核心代码 const(
+MAX_CONNECTION = 10
+INITIAL_CONNECTION = 4
+AVAILABLE = false
+USED = true
+)
+/*
+代码取了一个巧，用实际存放数据库指针的大小ClientPool.size和mongodata.flag来表示上述a，b两个状态
+如果mongodata.flag都为USED，那么需要新申请个数据库连接: size++
+clientList: the client pool
+clientAvailable: the available flag, means the location and available flag in the client pool
+size: the size of allocated client pool &lt;= MAX_CONNECTION
+*/
+type mongodata struct{
+client *mongo.Client
+pos int
+flag bool
+}
+type ClientPool struct{
+clientList [MAX_CONNECTION]mongodata
+size int
+}
+//create a new database connection to the pool
+func (cp *ClientPool) allocateCToPool(pos int) (err error){
+cp.clientList[pos].client, err = Dbconnect()
+if err != nil {
+utils.Logger.SetPrefix("WARNING ")
+utils.Logger.Println("allocateCToPool - allocateCToPool failed,position: ", pos, err)
+return err
+}
+cp.clientList[pos].flag = USED
+cp.clientList[pos].pos = pos
+return nil
+}
+//apply a connection from the pool
+func (cp *ClientPool) getCToPool(pos int){
+cp.clientList[pos].flag = USED
+}
+//free a connection back to the pool
+func (cp *ClientPool) putCBackPool(pos int){
+cp.clientList[pos].flag = AVAILABLE
+}
+//program apply a database connection
+func GetClient() (mongoclient *mongodata, err error) {
+for i:=1; i&lt;cp.size; i++ {
+if cp.clientList[i].flag == AVAILABLE{
+return &amp;cp.clientList[i], nil
+}
+}
+if cp.size &lt; MAX_CONNECTION{
+err = cp.allocateCToPool(cp.size)
+if err != nil {
+utils.Logger.SetPrefix("WARNING ")
+utils.Logger.Println("GetClient - DB pooling allocate failed", err)
+return nil, err
+}
+pos := cp.size
+cp.size++
+return &amp;cp.clientList[pos], nil
+} else {
+utils.Logger.SetPrefix("WARNING ")
+utils.Logger.Println("GetClient - DB pooling is fulled")
+return nil, errors.New("DB pooling is fulled")
+}
+}
+//program release a connection
+func ReleaseClient(mongoclient *mongodata){
+cp.putCBackPool(mongoclient.pos)
+} 以上就是核心代码实现，但是这个代码有一个问题，就是在高并发下并非协程安全，这个留在下一篇《用golang实现mongodb数据库连接池-高级篇-协程安全》来优化。
+...</p></div><footer class=entry-footer><span title='2019-05-10 00:00:00 +0000 UTC'>May 10, 2019</span></footer><a class=entry-link aria-label="post link to 用golang实现mongodb数据库连接池-基本篇" href=https://kmnemon.github.io/posts/2019-05-10-golang-database-pool/></a></article><article class=post-entry><header class=entry-header><h2 class=entry-hint-parent>about quality</h2></header><div class=entry-content><p>The company invited me to do a training crouse about the software’s quality, it’s an old topic every project book talk about it, every quality master discuss it, the cmmi and agile process have such a huge practices about it, what should i do about it? maybe i just list what i thought is important for the quality and what’s wrong with our modern software development process.
+the passion
+i think most of us going to the industry is because we love this, we love the feel of change something through the finger.if you have this feeling, then you are good damn of it
+...</p></div><footer class=entry-footer><span title='2018-05-16 00:00:00 +0000 UTC'>May 16, 2018</span></footer><a class=entry-link aria-label="post link to about quality" href=https://kmnemon.github.io/posts/2018-05-16-about-quality/></a></article><footer class=page-footer><nav class=pagination><a class=prev href=https://kmnemon.github.io/posts/page/4/>«&nbsp;&nbsp;</a></nav></footer></main><footer class=footer><span>&copy; 2025 <a href=https://kmnemon.github.io/>科的随思录</a></span> ·
+<span>Powered by
+<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
+        <a href=https://github.com/adityatelange/hugo-PaperMod/ rel=noopener target=_blank>PaperMod</a></span></footer><a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg viewBox="0 0 12 6" fill="currentcolor"><path d="M12 6H0l6-6z"/></svg>
+</a><script>let menu=document.getElementById("menu");menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(e){e.preventDefault();var t=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView({behavior:"smooth"}),t==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${t}`)})})</script><script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script><script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove("dark"),localStorage.setItem("pref-theme","light")):(document.body.classList.add("dark"),localStorage.setItem("pref-theme","dark"))})</script></body></html>

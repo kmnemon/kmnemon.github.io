@@ -1,0 +1,196 @@
+<!doctype html><html lang=zh-cn dir=auto><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>Go stream让go流动起来～ | 科的随思录</title>
+<meta name=keywords content><meta name=description content='Java的Stream编程
+自从Java 8将函数式编程引入语言后，该语言通过Lambda表达式和Stream库两者的结合，展现了全新的编码方式。实现了简洁，高效，以及类似声明式的编码风格。
+举个例子，如我们有个集合里面存放的是颜色的标签，我们想在集合中找出以“b”字符开头的标签，并进行排序，然后转换成大写字符标签，最后输出。如果用Java 8以前的编码方式，我们会进行多次轮询，最后输出结果：
+public static void main(String[] args) {
+        List<String> colors = Arrays.asList("blue", "green", "brown", "grey", "red", "white", "black", "beige", "purple");
+        List<String> filteredAndSortedColors = new ArrayList<>();
+
+        for (String color : colors) {
+            if (color.startsWith("b")) {
+                filteredAndSortedColors.add(color);
+            }
+        }
+
+        Collections.sort(filteredAndSortedColors);
+
+        for (String color : filteredAndSortedColors) {
+            System.out.println(color.toUpperCase());
+        }
+}
+如果用Java 8的Lambda、Stream来实现，则代码会更加简洁、易懂，执行效率也会提高：
+public static void main(String args[]) {
+      Stream.of("blue", "green", "brown", "grey", "red", "white", "black", "beige", "purple")
+      .filter(s -> s.startsWith("b"))
+      .sorted()
+      .map(s -> s.toUpperCase())
+      .forEach(System.out::println);
+}
+Go的Stream编程
+go语言中函数是第一公民，理论上我们可以实现更简洁的Stream框架。Stream的核心有以下几个方面：'><meta name=author content><link rel=canonical href=https://kmnemon.github.io/posts/2023-12-29-go-stream-flow/><link crossorigin=anonymous href=/assets/css/stylesheet.d6fcd20a4fb86efa4dfac8ec95da60244cc8871042183da1ef28e3a762ad79c8.css integrity="sha256-1vzSCk+4bvpN+sjsldpgJEzIhxBCGD2h7yjjp2Ktecg=" rel="preload stylesheet" as=style><link rel=icon href=https://kmnemon.github.io/favicon.ico><link rel=icon type=image/png sizes=16x16 href=https://kmnemon.github.io/favicon-16x16.png><link rel=icon type=image/png sizes=32x32 href=https://kmnemon.github.io/favicon-32x32.png><link rel=apple-touch-icon href=https://kmnemon.github.io/apple-touch-icon.png><link rel=mask-icon href=https://kmnemon.github.io/safari-pinned-tab.svg><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><link rel=alternate hreflang=zh-cn href=https://kmnemon.github.io/posts/2023-12-29-go-stream-flow/><noscript><style>#theme-toggle,.top-link{display:none}</style></noscript><meta property="og:url" content="https://kmnemon.github.io/posts/2023-12-29-go-stream-flow/"><meta property="og:site_name" content="科的随思录"><meta property="og:title" content="Go stream让go流动起来～"><meta property="og:description" content='Java的Stream编程 自从Java 8将函数式编程引入语言后，该语言通过Lambda表达式和Stream库两者的结合，展现了全新的编码方式。实现了简洁，高效，以及类似声明式的编码风格。
+举个例子，如我们有个集合里面存放的是颜色的标签，我们想在集合中找出以“b”字符开头的标签，并进行排序，然后转换成大写字符标签，最后输出。如果用Java 8以前的编码方式，我们会进行多次轮询，最后输出结果：
+public static void main(String[] args) {List<String> colors = Arrays.asList("blue", "green", "brown", "grey", "red", "white", "black", "beige", "purple");List<String> filteredAndSortedColors = new ArrayList<>();for (String color : colors) {if (color.startsWith("b")) {filteredAndSortedColors.add(color);}}Collections.sort(filteredAndSortedColors);for (String color : filteredAndSortedColors) {System.out.println(color.toUpperCase());}} 如果用Java 8的Lambda、Stream来实现，则代码会更加简洁、易懂，执行效率也会提高：
+public static void main(String args[]) {Stream.of("blue", "green", "brown", "grey", "red", "white", "black", "beige", "purple").filter(s -> s.startsWith("b")).sorted().map(s -> s.toUpperCase()).forEach(System.out::println);} Go的Stream编程 go语言中函数是第一公民，理论上我们可以实现更简洁的Stream框架。Stream的核心有以下几个方面：'><meta property="og:locale" content="zh-cn"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2023-12-28T00:00:00+00:00"><meta property="article:modified_time" content="2023-12-28T00:00:00+00:00"><meta property="og:image" content="https://kmnemon.github.io/papermod-cover.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://kmnemon.github.io/papermod-cover.png"><meta name=twitter:title content="Go stream让go流动起来～"><meta name=twitter:description content='Java的Stream编程
+自从Java 8将函数式编程引入语言后，该语言通过Lambda表达式和Stream库两者的结合，展现了全新的编码方式。实现了简洁，高效，以及类似声明式的编码风格。
+举个例子，如我们有个集合里面存放的是颜色的标签，我们想在集合中找出以“b”字符开头的标签，并进行排序，然后转换成大写字符标签，最后输出。如果用Java 8以前的编码方式，我们会进行多次轮询，最后输出结果：
+public static void main(String[] args) {
+        List<String> colors = Arrays.asList("blue", "green", "brown", "grey", "red", "white", "black", "beige", "purple");
+        List<String> filteredAndSortedColors = new ArrayList<>();
+
+        for (String color : colors) {
+            if (color.startsWith("b")) {
+                filteredAndSortedColors.add(color);
+            }
+        }
+
+        Collections.sort(filteredAndSortedColors);
+
+        for (String color : filteredAndSortedColors) {
+            System.out.println(color.toUpperCase());
+        }
+}
+如果用Java 8的Lambda、Stream来实现，则代码会更加简洁、易懂，执行效率也会提高：
+public static void main(String args[]) {
+      Stream.of("blue", "green", "brown", "grey", "red", "white", "black", "beige", "purple")
+      .filter(s -> s.startsWith("b"))
+      .sorted()
+      .map(s -> s.toUpperCase())
+      .forEach(System.out::println);
+}
+Go的Stream编程
+go语言中函数是第一公民，理论上我们可以实现更简洁的Stream框架。Stream的核心有以下几个方面：'><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Posts","item":"https://kmnemon.github.io/posts/"},{"@type":"ListItem","position":2,"name":"Go stream让go流动起来～","item":"https://kmnemon.github.io/posts/2023-12-29-go-stream-flow/"}]}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"Go stream让go流动起来～","name":"Go stream让go流动起来～","description":"Java的Stream编程 自从Java 8将函数式编程引入语言后，该语言通过Lambda表达式和Stream库两者的结合，展现了全新的编码方式。实现了简洁，高效，以及类似声明式的编码风格。\n举个例子，如我们有个集合里面存放的是颜色的标签，我们想在集合中找出以“b”字符开头的标签，并进行排序，然后转换成大写字符标签，最后输出。如果用Java 8以前的编码方式，我们会进行多次轮询，最后输出结果：\npublic static void main(String[] args) {\rList\u0026lt;String\u0026gt; colors = Arrays.asList(\u0026#34;blue\u0026#34;, \u0026#34;green\u0026#34;, \u0026#34;brown\u0026#34;, \u0026#34;grey\u0026#34;, \u0026#34;red\u0026#34;, \u0026#34;white\u0026#34;, \u0026#34;black\u0026#34;, \u0026#34;beige\u0026#34;, \u0026#34;purple\u0026#34;);\rList\u0026lt;String\u0026gt; filteredAndSortedColors = new ArrayList\u0026lt;\u0026gt;();\rfor (String color : colors) {\rif (color.startsWith(\u0026#34;b\u0026#34;)) {\rfilteredAndSortedColors.add(color);\r}\r}\rCollections.sort(filteredAndSortedColors);\rfor (String color : filteredAndSortedColors) {\rSystem.out.println(color.toUpperCase());\r}\r} 如果用Java 8的Lambda、Stream来实现，则代码会更加简洁、易懂，执行效率也会提高：\npublic static void main(String args[]) {\rStream.of(\u0026#34;blue\u0026#34;, \u0026#34;green\u0026#34;, \u0026#34;brown\u0026#34;, \u0026#34;grey\u0026#34;, \u0026#34;red\u0026#34;, \u0026#34;white\u0026#34;, \u0026#34;black\u0026#34;, \u0026#34;beige\u0026#34;, \u0026#34;purple\u0026#34;)\r.filter(s -\u0026gt; s.startsWith(\u0026#34;b\u0026#34;))\r.sorted()\r.map(s -\u0026gt; s.toUpperCase())\r.forEach(System.out::println);\r} Go的Stream编程 go语言中函数是第一公民，理论上我们可以实现更简洁的Stream框架。Stream的核心有以下几个方面：\n","keywords":[],"articleBody":"Java的Stream编程 自从Java 8将函数式编程引入语言后，该语言通过Lambda表达式和Stream库两者的结合，展现了全新的编码方式。实现了简洁，高效，以及类似声明式的编码风格。\n举个例子，如我们有个集合里面存放的是颜色的标签，我们想在集合中找出以“b”字符开头的标签，并进行排序，然后转换成大写字符标签，最后输出。如果用Java 8以前的编码方式，我们会进行多次轮询，最后输出结果：\npublic static void main(String[] args) {\rList colors = Arrays.asList(\"blue\", \"green\", \"brown\", \"grey\", \"red\", \"white\", \"black\", \"beige\", \"purple\");\rList filteredAndSortedColors = new ArrayList\u003c\u003e();\rfor (String color : colors) {\rif (color.startsWith(\"b\")) {\rfilteredAndSortedColors.add(color);\r}\r}\rCollections.sort(filteredAndSortedColors);\rfor (String color : filteredAndSortedColors) {\rSystem.out.println(color.toUpperCase());\r}\r} 如果用Java 8的Lambda、Stream来实现，则代码会更加简洁、易懂，执行效率也会提高：\npublic static void main(String args[]) {\rStream.of(\"blue\", \"green\", \"brown\", \"grey\", \"red\", \"white\", \"black\", \"beige\", \"purple\")\r.filter(s -\u003e s.startsWith(\"b\"))\r.sorted()\r.map(s -\u003e s.toUpperCase())\r.forEach(System.out::println);\r} Go的Stream编程 go语言中函数是第一公民，理论上我们可以实现更简洁的Stream框架。Stream的核心有以下几个方面：\n基于流的操作 支持并行计算 声明式编程风格 基于流的操作 是指数据不断流入，对每个数据依次执行相应的操作并得到最后结果，然后再处理下一个数据，直到所有数据处理完成，最终程序结束。举例说明比较直观，我们有数据集Z，对应操作A，B，C。以前我们对数据的处理方式是对整个数据集Z进行遍历执行操作A得到数据集Z1，然后再对数据集Z1进行遍历执行操作B得到Z2，遍历Z2执行操作C得到最后结果Z3，这里我们有多少操作就需要遍历多少次。基于流的操作方式针对数据集只需遍历一次，对数据集Z进行遍历，对遍历到的第一个数据执行A、B、C三个操作，然后依次对后面的数据执行同样的操作，直至遍历完成。\n在实现中这里有两个难点：\n每个stage怎么连接起来，操作怎么连接起来？ 操作怎样惰性求值？ 在go stream的实现中，建立了一个pipeline结构体代表stage，这个结构体是一个双向链表同时指向前一个和后一个stage。在每个pipeline初始化的时候通过链表指针指向了前后的stage，这样就把所有操作的stage连接起来。\ntype pipeline[T any] struct {\rpreviousStage *pipeline[T]\rnextStage *pipeline[T]\rsourceStage *pipeline[T]\rdepth int\rstreamOpFlag stateType\rstreamSink sink[T]\rsourceData []T\r}\rfunc (p *pipeline[T]) init(previousStage *pipeline[T], opFlag stateType, sink sink[T]) {\rif opFlag == head {\rp.previousStage = nil\rp.sourceStage = p\rp.depth = 0\r} else {\rp.previousStage = previousStage\rp.previousStage.nextStage = p\rp.sourceStage = previousStage.sourceStage\rp.depth = p.previousStage.depth + 1\rp.streamSink = sink\r}\rp.streamOpFlag = opFlag\r} 那我们操作怎么惰性求值的呢？注意在pipeline结构体里面有个sink[T]接口，实现这个接口的结构体含有具体的操作。我们以map操作为例，map操作里的pipeline实现了mapSink[T any]这个结构体，结构体里面mapper函数就是具体对数据集里数据的操作。\ntype sink[T any] interface {\rbegin(int)\raccept(T)\rend()\risCancellationWasRequested() bool\rcancellationRequested() bool\rcanParallel() bool\rsetDownStreamSink(sink[T])\r}\rtype mapSink[T any] struct {\rmapper func(T) T\rdownstream sink[T]\r} 在最后一个stage里，我们会调用evaluate函数，这个函数会对所有的sink结构体进行叠加，这里只进行wrap操作，等所有sink都叠加完成后，调用copyInto函数遍历每个数据进行sink操作的真正执行。这样我们就完成了惰性求值。\nfunc (p *pipeline[T]) evaluate(s sink[T]) {\rp.copyInto(p.wrapSink(s), p.sourceStage.sourceData)\r}\rfunc (p *pipeline[T]) wrapSink(sink sink[T]) sink[T] {\rfor ; p.depth \u003e 0; p = p.previousStage {\rsink = p.opWrapSink(sink)\r}\rreturn sink\r}\rfunc (p *pipeline[T]) copyInto(wrapSink sink[T], slice []T) {\r....\rwrapSink.begin(len(slice))\rif !wrapSink.isCancellationWasRequested() {\rfor _, v := range slice {\rwrapSink.accept(v)\r}\r} else {\rfor _, v := range slice {\rif wrapSink.cancellationRequested() {\rbreak\r}\rwrapSink.accept(v)\r}\r}\rwrapSink.end()\r} 支持并行计算 有了上面基于流的操作，以及go协程的强大，并行计算就采用协程来实现。在go stream中新增方法Parallel()来表示要对数据集进行并行计算。在并行计算中监测当前平台具备多少核心的CPU，通过把数据集按核心数等分，调用go协程并行执行流的操作来加快整个计算速度。\nfunc (s *parallelSink[T]) end() {\rif s.canparallel {\rvar wg sync.WaitGroup\rcores := runtime.NumCPU()\rfor _, slice := range splitSlice(s.list, cores) {\rwg.Add(1)\rgo func(slice []T) {\rdefer wg.Done()\rfor _, v := range slice {\rs.downstream.accept(v)\r}\r}(slice)\r}\rwg.Wait()\r}\rs.downstream.end()\r} 声明式编程风格 stream带来编程风格的转变，便是这种声明式的编程风格，你告诉程序需要对数据集进行什么样的操作，比如filter，sort，然后你再给它需要的规则filter里哪些特征的数据为true，sort里数据大小比较规则等，不用关注内部算法细节，框架自己完成整个计算过程。这里我们通过stream接口定义了整个操作集。\ntype stream[T any] interface {\rParallel() stream[T]\rMap(func(T) T) stream[T]\rReduce(func(T, T) T) T\rReduceWithInitValue(T, func(T, T) T) T\rForEach(func(T))\rSorted() stream[T]\rSortedWith(func(T, T) bool) stream[T]\rFilter(func(T) bool) stream[T]\rLimit(int) stream[T]\rFindFirst() T\rToList() []T\rDistinct() stream[T]\rDistinctWith(func(T, T) bool) stream[T]\r} 上面我针对go stream这个框架，介绍了基于流的操作，怎样支持并行计算，以及声明式编程风格。这个框架我在实现时并行计算部分实现采用了比较基础的方式，还可以再进一步实现更多的功能，改进算法得到更高的效率。大家有兴趣可以一起研究。\n该项目开源地址：gostream\n基于Go-1.18实现\n","wordCount":"356","inLanguage":"zh-cn","image":"https://kmnemon.github.io/papermod-cover.png","datePublished":"2023-12-28T00:00:00Z","dateModified":"2023-12-28T00:00:00Z","mainEntityOfPage":{"@type":"WebPage","@id":"https://kmnemon.github.io/posts/2023-12-29-go-stream-flow/"},"publisher":{"@type":"Organization","name":"科的随思录","logo":{"@type":"ImageObject","url":"https://kmnemon.github.io/favicon.ico"}}}</script></head><body id=top><script>localStorage.getItem("pref-theme")==="dark"&&document.body.classList.add("dark")</script><header class=header><nav class=nav><div class=logo><a href=https://kmnemon.github.io/ accesskey=h title="科的随思录 (Alt + H)">科的随思录</a><div class=logo-switches><button id=theme-toggle accesskey=t title="(Alt + T)"><svg id="moon" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg id="sun" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button></div></div><ul id=menu><li><a href=https://kmnemon.github.io/archives title=文章><span>文章</span></a></li><li><a href=https://kmnemon.github.io/about title=咖啡><span>咖啡</span></a></li></ul></nav></header><main class=main><article class=post-single><header class=post-header><div class=breadcrumbs><a href=https://kmnemon.github.io/>Home</a>&nbsp;»&nbsp;<a href=https://kmnemon.github.io/posts/>Posts</a></div><h1 class="post-title entry-hint-parent">Go stream让go流动起来～</h1><div class=post-meta><span title='2023-12-28 00:00:00 +0000 UTC'>December 28, 2023</span></div></header><div class=toc><details open><summary accesskey=c title="(Alt + C)"><span class=details>Table of Contents</span></summary><div class=inner><ul><li><a href=#java%e7%9a%84stream%e7%bc%96%e7%a8%8b aria-label=Java的Stream编程>Java的Stream编程</a></li><li><a href=#go%e7%9a%84stream%e7%bc%96%e7%a8%8b aria-label=Go的Stream编程>Go的Stream编程</a></li><li><a href=#%e5%9f%ba%e4%ba%8e%e6%b5%81%e7%9a%84%e6%93%8d%e4%bd%9c aria-label=基于流的操作>基于流的操作</a></li><li><a href=#%e6%94%af%e6%8c%81%e5%b9%b6%e8%a1%8c%e8%ae%a1%e7%ae%97 aria-label=支持并行计算>支持并行计算</a></li><li><a href=#%e5%a3%b0%e6%98%8e%e5%bc%8f%e7%bc%96%e7%a8%8b%e9%a3%8e%e6%a0%bc aria-label=声明式编程风格>声明式编程风格</a></li></ul></div></details></div><div class=post-content><h1 id=java的stream编程>Java的Stream编程<a hidden class=anchor aria-hidden=true href=#java的stream编程>#</a></h1><p>自从Java 8将函数式编程引入语言后，该语言通过Lambda表达式和Stream库两者的结合，展现了全新的编码方式。实现了简洁，高效，以及类似声明式的编码风格。</p><p>举个例子，如我们有个集合里面存放的是颜色的标签，我们想在集合中找出以“b”字符开头的标签，并进行排序，然后转换成大写字符标签，最后输出。如果用Java 8以前的编码方式，我们会进行多次轮询，最后输出结果：</p><pre tabindex=0><code>public static void main(String[] args) {
+        List&lt;String&gt; colors = Arrays.asList(&#34;blue&#34;, &#34;green&#34;, &#34;brown&#34;, &#34;grey&#34;, &#34;red&#34;, &#34;white&#34;, &#34;black&#34;, &#34;beige&#34;, &#34;purple&#34;);
+        List&lt;String&gt; filteredAndSortedColors = new ArrayList&lt;&gt;();
+
+        for (String color : colors) {
+            if (color.startsWith(&#34;b&#34;)) {
+                filteredAndSortedColors.add(color);
+            }
+        }
+
+        Collections.sort(filteredAndSortedColors);
+
+        for (String color : filteredAndSortedColors) {
+            System.out.println(color.toUpperCase());
+        }
+}
+</code></pre><p>如果用Java 8的Lambda、Stream来实现，则代码会更加简洁、易懂，执行效率也会提高：</p><pre tabindex=0><code>public static void main(String args[]) {
+      Stream.of(&#34;blue&#34;, &#34;green&#34;, &#34;brown&#34;, &#34;grey&#34;, &#34;red&#34;, &#34;white&#34;, &#34;black&#34;, &#34;beige&#34;, &#34;purple&#34;)
+      .filter(s -&gt; s.startsWith(&#34;b&#34;))
+      .sorted()
+      .map(s -&gt; s.toUpperCase())
+      .forEach(System.out::println);
+}
+</code></pre><h1 id=go的stream编程>Go的Stream编程<a hidden class=anchor aria-hidden=true href=#go的stream编程>#</a></h1><p>go语言中函数是第一公民，理论上我们可以实现更简洁的Stream框架。Stream的核心有以下几个方面：</p><ul><li>基于流的操作</li><li>支持并行计算</li><li>声明式编程风格</li></ul><h1 id=基于流的操作>基于流的操作<a hidden class=anchor aria-hidden=true href=#基于流的操作>#</a></h1><p>是指数据不断流入，对每个数据依次执行相应的操作并得到最后结果，然后再处理下一个数据，直到所有数据处理完成，最终程序结束。举例说明比较直观，我们有数据集Z，对应操作A，B，C。以前我们对数据的处理方式是对整个数据集Z进行遍历执行操作A得到数据集Z1，然后再对数据集Z1进行遍历执行操作B得到Z2，遍历Z2执行操作C得到最后结果Z3，这里我们有多少操作就需要遍历多少次。基于流的操作方式针对数据集只需遍历一次，对数据集Z进行遍历，对遍历到的第一个数据执行A、B、C三个操作，然后依次对后面的数据执行同样的操作，直至遍历完成。</p><p><img loading=lazy src=/images/2023-12-28-golangstream/gostream.jpg></p><p>在实现中这里有两个难点：</p><ul><li>每个stage怎么连接起来，操作怎么连接起来？</li><li>操作怎样惰性求值？</li></ul><p>在go stream的实现中，建立了一个pipeline结构体代表stage，这个结构体是一个双向链表同时指向前一个和后一个stage。在每个pipeline初始化的时候通过链表指针指向了前后的stage，这样就把所有操作的stage连接起来。</p><pre tabindex=0><code>type pipeline[T any] struct {
+	previousStage *pipeline[T]
+	nextStage     *pipeline[T]
+	sourceStage   *pipeline[T]
+	depth         int
+	streamOpFlag  stateType
+	streamSink    sink[T]
+	sourceData    []T
+}
+
+func (p *pipeline[T]) init(previousStage *pipeline[T], opFlag stateType, sink sink[T]) {
+	if opFlag == head {
+		p.previousStage = nil
+		p.sourceStage = p
+		p.depth = 0
+	} else {
+		p.previousStage = previousStage
+		p.previousStage.nextStage = p
+		p.sourceStage = previousStage.sourceStage
+		p.depth = p.previousStage.depth + 1
+		p.streamSink = sink
+	}
+
+	p.streamOpFlag = opFlag
+
+}
+</code></pre><p>那我们操作怎么惰性求值的呢？注意在pipeline结构体里面有个sink[T]接口，实现这个接口的结构体含有具体的操作。我们以map操作为例，map操作里的pipeline实现了mapSink[T any]这个结构体，结构体里面mapper函数就是具体对数据集里数据的操作。</p><pre tabindex=0><code>type sink[T any] interface {
+	begin(int)
+	accept(T)
+	end()
+	isCancellationWasRequested() bool
+	cancellationRequested() bool
+	canParallel() bool
+
+	setDownStreamSink(sink[T])
+}
+
+type mapSink[T any] struct {
+	mapper     func(T) T
+	downstream sink[T]
+}
+</code></pre><p>在最后一个stage里，我们会调用evaluate函数，这个函数会对所有的sink结构体进行叠加，这里只进行wrap操作，等所有sink都叠加完成后，调用copyInto函数遍历每个数据进行sink操作的真正执行。这样我们就完成了惰性求值。</p><pre tabindex=0><code>func (p *pipeline[T]) evaluate(s sink[T]) {
+	p.copyInto(p.wrapSink(s), p.sourceStage.sourceData)
+}
+
+func (p *pipeline[T]) wrapSink(sink sink[T]) sink[T] {
+	for ; p.depth &gt; 0; p = p.previousStage {
+		sink = p.opWrapSink(sink)
+	}
+
+	return sink
+}
+
+func (p *pipeline[T]) copyInto(wrapSink sink[T], slice []T) {
+	....
+
+	wrapSink.begin(len(slice))
+	if !wrapSink.isCancellationWasRequested() {
+		for _, v := range slice {
+			wrapSink.accept(v)
+		}
+	} else {
+		for _, v := range slice {
+			if wrapSink.cancellationRequested() {
+				break
+			}
+			wrapSink.accept(v)
+		}
+	}
+
+	wrapSink.end()
+}
+</code></pre><h1 id=支持并行计算>支持并行计算<a hidden class=anchor aria-hidden=true href=#支持并行计算>#</a></h1><p>有了上面基于流的操作，以及go协程的强大，并行计算就采用协程来实现。在go stream中新增方法Parallel()来表示要对数据集进行并行计算。在并行计算中监测当前平台具备多少核心的CPU，通过把数据集按核心数等分，调用go协程并行执行流的操作来加快整个计算速度。</p><pre tabindex=0><code>func (s *parallelSink[T]) end() {
+	if s.canparallel {
+		var wg sync.WaitGroup
+		cores := runtime.NumCPU()
+		for _, slice := range splitSlice(s.list, cores) {
+			wg.Add(1)
+			go func(slice []T) {
+				defer wg.Done()
+				for _, v := range slice {
+					s.downstream.accept(v)
+				}
+			}(slice)
+		}
+
+		wg.Wait()
+	}
+
+	s.downstream.end()
+
+}
+</code></pre><h1 id=声明式编程风格>声明式编程风格<a hidden class=anchor aria-hidden=true href=#声明式编程风格>#</a></h1><p>stream带来编程风格的转变，便是这种声明式的编程风格，你告诉程序需要对数据集进行什么样的操作，比如filter，sort，然后你再给它需要的规则filter里哪些特征的数据为true，sort里数据大小比较规则等，不用关注内部算法细节，框架自己完成整个计算过程。这里我们通过stream接口定义了整个操作集。</p><pre tabindex=0><code>type stream[T any] interface {
+	Parallel() stream[T]
+	Map(func(T) T) stream[T]
+	Reduce(func(T, T) T) T
+	ReduceWithInitValue(T, func(T, T) T) T
+	ForEach(func(T))
+	Sorted() stream[T]
+	SortedWith(func(T, T) bool) stream[T]
+	Filter(func(T) bool) stream[T]
+	Limit(int) stream[T]
+	FindFirst() T
+	ToList() []T
+	Distinct() stream[T]
+	DistinctWith(func(T, T) bool) stream[T]
+}
+</code></pre><p>上面我针对go stream这个框架，介绍了基于流的操作，怎样支持并行计算，以及声明式编程风格。这个框架我在实现时并行计算部分实现采用了比较基础的方式，还可以再进一步实现更多的功能，改进算法得到更高的效率。大家有兴趣可以一起研究。</p><p>该项目开源地址：<a href=https://github.com/kmnemon/gostream.git>gostream</a></p><p>基于Go-1.18实现</p></div><footer class=post-footer><ul class=post-tags></ul><nav class=paginav><a class=prev href=https://kmnemon.github.io/posts/2024-01-05-programming-monster-dance-copy/><span class=title>«</span><br><span>编程语言，群魔乱舞的时代</span>
+</a><a class=next href=https://kmnemon.github.io/posts/2023-01-03-agile-waterfall/><span class=title>»</span><br><span>“敏捷”与“瀑布”，在中国还真相遇过，只不过不是你认为的方式</span></a></nav></footer></article></main><footer class=footer><span>&copy; 2025 <a href=https://kmnemon.github.io/>科的随思录</a></span> ·
+<span>Powered by
+<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
+        <a href=https://github.com/adityatelange/hugo-PaperMod/ rel=noopener target=_blank>PaperMod</a></span></footer><a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg viewBox="0 0 12 6" fill="currentcolor"><path d="M12 6H0l6-6z"/></svg>
+</a><script>let menu=document.getElementById("menu");menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(e){e.preventDefault();var t=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView({behavior:"smooth"}),t==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${t}`)})})</script><script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script><script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove("dark"),localStorage.setItem("pref-theme","light")):(document.body.classList.add("dark"),localStorage.setItem("pref-theme","dark"))})</script><script>document.querySelectorAll("pre > code").forEach(e=>{const n=e.parentNode.parentNode,t=document.createElement("button");t.classList.add("copy-code"),t.innerHTML="copy";function s(){t.innerHTML="copied!",setTimeout(()=>{t.innerHTML="copy"},2e3)}t.addEventListener("click",t=>{if("clipboard"in navigator){navigator.clipboard.writeText(e.textContent),s();return}const n=document.createRange();n.selectNodeContents(e);const o=window.getSelection();o.removeAllRanges(),o.addRange(n);try{document.execCommand("copy"),s()}catch{}o.removeRange(n)}),n.classList.contains("highlight")?n.appendChild(t):n.parentNode.firstChild==n||(e.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?e.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(t):e.parentNode.appendChild(t))})</script></body></html>

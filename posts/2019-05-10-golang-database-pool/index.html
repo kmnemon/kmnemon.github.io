@@ -1,0 +1,336 @@
+<!doctype html><html lang=zh-cn dir=auto><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>用golang实现mongodb数据库连接池-基本篇 | 科的随思录</title>
+<meta name=keywords content><meta name=description content='
+
+版本
+golang &ndash; 1.12.4
+mongodb &ndash; 4.0
+go driver &ndash; 1.0.0
+
+
+简介
+
+
+mongodb的数据库driver在官方文档里面明确写明所有的数据库连接需要自己建立和释放，而且建议尽量复用已有的建立，那么也就是说driver里面并未实现连接池的功能。在我们实际应用中就需要自己实现这套数据库连接池提升程序和数据库之间的执行效率。
+
+设计思路
+
+用一个数组来存放数据库连接的指针，并记录每一个指针两个状态: a.是否申请了数据库连接 b.这个连接是否已经给系统在使用中。举个例子就比较好理解了:
+
+
+申请一个用于存放数据连接的数组，一开始空的什么都没有
+
+
+
+程序需要一个数据库连接，连接池把数组第一个位置建立一个数据库连接，并把这个连接的状态置为：a.已申请 b.已给系统
+
+
+
+程序使用完释放数据库连接，现在数据库指针状态为：a.已申请 b.未使用
+
+
+
+程序需要新申请一个数据库连接，那么就回到了第2的状态。
+
+
+
+核心代码
+
+const(
+	MAX_CONNECTION = 10
+	INITIAL_CONNECTION = 4
+	AVAILABLE = false
+	USED = true
+
+)
+
+/*
+代码取了一个巧，用实际存放数据库指针的大小ClientPool.size和mongodata.flag来表示上述a，b两个状态
+如果mongodata.flag都为USED，那么需要新申请个数据库连接: size++
+clientList: the client pool
+clientAvailable: the available flag, means the location and available flag in the  client pool
+size: the size of allocated client pool <= MAX_CONNECTION
+*/
+type mongodata struct{
+	client *mongo.Client
+	pos int
+	flag bool
+
+}
+
+type ClientPool struct{
+	clientList [MAX_CONNECTION]mongodata
+	size int
+}
+
+//create a new database connection to the pool
+func (cp *ClientPool) allocateCToPool(pos int) (err error){
+	cp.clientList[pos].client, err = Dbconnect()
+	if err != nil {
+		utils.Logger.SetPrefix("WARNING ")
+		utils.Logger.Println("allocateCToPool - allocateCToPool failed,position: ", pos, err)
+		return err
+	}
+
+	cp.clientList[pos].flag = USED
+	cp.clientList[pos].pos = pos
+	return nil
+}
+
+//apply a connection from the pool
+func (cp *ClientPool) getCToPool(pos int){
+	cp.clientList[pos].flag = USED
+}
+
+//free a connection back to the pool
+func (cp *ClientPool) putCBackPool(pos int){
+	cp.clientList[pos].flag = AVAILABLE
+}
+
+//program apply a database connection
+func GetClient() (mongoclient *mongodata,  err error) {
+	for i:=1; i<cp.size; i++ {
+		if cp.clientList[i].flag == AVAILABLE{
+			return &amp;cp.clientList[i], nil
+		}
+	}
+
+	if cp.size < MAX_CONNECTION{
+		err = cp.allocateCToPool(cp.size)
+		if err != nil {
+			utils.Logger.SetPrefix("WARNING ")
+			utils.Logger.Println("GetClient - DB pooling allocate failed", err)
+			return nil, err
+		}
+
+		pos := cp.size
+		cp.size++
+		return &amp;cp.clientList[pos], nil
+	} else {
+		utils.Logger.SetPrefix("WARNING ")
+		utils.Logger.Println("GetClient - DB pooling is fulled")
+		return nil, errors.New("DB pooling is fulled")
+	}
+
+}
+
+//program release a connection
+func ReleaseClient(mongoclient *mongodata){
+	cp.putCBackPool(mongoclient.pos)
+}
+以上就是核心代码实现，但是这个代码有一个问题，就是在高并发下并非协程安全，这个留在下一篇《用golang实现mongodb数据库连接池-高级篇-协程安全》来优化。'><meta name=author content><link rel=canonical href=https://kmnemon.github.io/posts/2019-05-10-golang-database-pool/><link crossorigin=anonymous href=/assets/css/stylesheet.d6fcd20a4fb86efa4dfac8ec95da60244cc8871042183da1ef28e3a762ad79c8.css integrity="sha256-1vzSCk+4bvpN+sjsldpgJEzIhxBCGD2h7yjjp2Ktecg=" rel="preload stylesheet" as=style><link rel=icon href=https://kmnemon.github.io/favicon.ico><link rel=icon type=image/png sizes=16x16 href=https://kmnemon.github.io/favicon-16x16.png><link rel=icon type=image/png sizes=32x32 href=https://kmnemon.github.io/favicon-32x32.png><link rel=apple-touch-icon href=https://kmnemon.github.io/apple-touch-icon.png><link rel=mask-icon href=https://kmnemon.github.io/safari-pinned-tab.svg><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><link rel=alternate hreflang=zh-cn href=https://kmnemon.github.io/posts/2019-05-10-golang-database-pool/><noscript><style>#theme-toggle,.top-link{display:none}</style></noscript><meta property="og:url" content="https://kmnemon.github.io/posts/2019-05-10-golang-database-pool/"><meta property="og:site_name" content="科的随思录"><meta property="og:title" content="用golang实现mongodb数据库连接池-基本篇"><meta property="og:description" content=' 版本
+golang – 1.12.4
+mongodb – 4.0
+go driver – 1.0.0
+简介
+mongodb的数据库driver在官方文档里面明确写明所有的数据库连接需要自己建立和释放，而且建议尽量复用已有的建立，那么也就是说driver里面并未实现连接池的功能。在我们实际应用中就需要自己实现这套数据库连接池提升程序和数据库之间的执行效率。
+设计思路 用一个数组来存放数据库连接的指针，并记录每一个指针两个状态: a.是否申请了数据库连接 b.这个连接是否已经给系统在使用中。举个例子就比较好理解了:
+申请一个用于存放数据连接的数组，一开始空的什么都没有
+程序需要一个数据库连接，连接池把数组第一个位置建立一个数据库连接，并把这个连接的状态置为：a.已申请 b.已给系统
+程序使用完释放数据库连接，现在数据库指针状态为：a.已申请 b.未使用
+程序需要新申请一个数据库连接，那么就回到了第2的状态。
+核心代码 const(MAX_CONNECTION = 10INITIAL_CONNECTION = 4AVAILABLE = falseUSED = true)/*代码取了一个巧，用实际存放数据库指针的大小ClientPool.size和mongodata.flag来表示上述a，b两个状态如果mongodata.flag都为USED，那么需要新申请个数据库连接: size++clientList: the client poolclientAvailable: the available flag, means the location and available flag in the client poolsize: the size of allocated client pool <= MAX_CONNECTION*/type mongodata struct{client *mongo.Clientpos intflag bool}type ClientPool struct{clientList [MAX_CONNECTION]mongodatasize int}//create a new database connection to the poolfunc (cp *ClientPool) allocateCToPool(pos int) (err error){cp.clientList[pos].client, err = Dbconnect()if err != nil {utils.Logger.SetPrefix("WARNING ")utils.Logger.Println("allocateCToPool - allocateCToPool failed,position: ", pos, err)return err}cp.clientList[pos].flag = USEDcp.clientList[pos].pos = posreturn nil}//apply a connection from the poolfunc (cp *ClientPool) getCToPool(pos int){cp.clientList[pos].flag = USED}//free a connection back to the poolfunc (cp *ClientPool) putCBackPool(pos int){cp.clientList[pos].flag = AVAILABLE}//program apply a database connectionfunc GetClient() (mongoclient *mongodata, err error) {for i:=1; i<cp.size; i++ {if cp.clientList[i].flag == AVAILABLE{return &amp;cp.clientList[i], nil}}if cp.size < MAX_CONNECTION{err = cp.allocateCToPool(cp.size)if err != nil {utils.Logger.SetPrefix("WARNING ")utils.Logger.Println("GetClient - DB pooling allocate failed", err)return nil, err}pos := cp.sizecp.size++return &amp;cp.clientList[pos], nil} else {utils.Logger.SetPrefix("WARNING ")utils.Logger.Println("GetClient - DB pooling is fulled")return nil, errors.New("DB pooling is fulled")}}//program release a connectionfunc ReleaseClient(mongoclient *mongodata){cp.putCBackPool(mongoclient.pos)} 以上就是核心代码实现，但是这个代码有一个问题，就是在高并发下并非协程安全，这个留在下一篇《用golang实现mongodb数据库连接池-高级篇-协程安全》来优化。'><meta property="og:locale" content="zh-cn"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-05-10T00:00:00+00:00"><meta property="article:modified_time" content="2019-05-10T00:00:00+00:00"><meta property="og:image" content="https://kmnemon.github.io/papermod-cover.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://kmnemon.github.io/papermod-cover.png"><meta name=twitter:title content="用golang实现mongodb数据库连接池-基本篇"><meta name=twitter:description content='
+
+版本
+golang &ndash; 1.12.4
+mongodb &ndash; 4.0
+go driver &ndash; 1.0.0
+
+
+简介
+
+
+mongodb的数据库driver在官方文档里面明确写明所有的数据库连接需要自己建立和释放，而且建议尽量复用已有的建立，那么也就是说driver里面并未实现连接池的功能。在我们实际应用中就需要自己实现这套数据库连接池提升程序和数据库之间的执行效率。
+
+设计思路
+
+用一个数组来存放数据库连接的指针，并记录每一个指针两个状态: a.是否申请了数据库连接 b.这个连接是否已经给系统在使用中。举个例子就比较好理解了:
+
+
+申请一个用于存放数据连接的数组，一开始空的什么都没有
+
+
+
+程序需要一个数据库连接，连接池把数组第一个位置建立一个数据库连接，并把这个连接的状态置为：a.已申请 b.已给系统
+
+
+
+程序使用完释放数据库连接，现在数据库指针状态为：a.已申请 b.未使用
+
+
+
+程序需要新申请一个数据库连接，那么就回到了第2的状态。
+
+
+
+核心代码
+
+const(
+	MAX_CONNECTION = 10
+	INITIAL_CONNECTION = 4
+	AVAILABLE = false
+	USED = true
+
+)
+
+/*
+代码取了一个巧，用实际存放数据库指针的大小ClientPool.size和mongodata.flag来表示上述a，b两个状态
+如果mongodata.flag都为USED，那么需要新申请个数据库连接: size++
+clientList: the client pool
+clientAvailable: the available flag, means the location and available flag in the  client pool
+size: the size of allocated client pool <= MAX_CONNECTION
+*/
+type mongodata struct{
+	client *mongo.Client
+	pos int
+	flag bool
+
+}
+
+type ClientPool struct{
+	clientList [MAX_CONNECTION]mongodata
+	size int
+}
+
+//create a new database connection to the pool
+func (cp *ClientPool) allocateCToPool(pos int) (err error){
+	cp.clientList[pos].client, err = Dbconnect()
+	if err != nil {
+		utils.Logger.SetPrefix("WARNING ")
+		utils.Logger.Println("allocateCToPool - allocateCToPool failed,position: ", pos, err)
+		return err
+	}
+
+	cp.clientList[pos].flag = USED
+	cp.clientList[pos].pos = pos
+	return nil
+}
+
+//apply a connection from the pool
+func (cp *ClientPool) getCToPool(pos int){
+	cp.clientList[pos].flag = USED
+}
+
+//free a connection back to the pool
+func (cp *ClientPool) putCBackPool(pos int){
+	cp.clientList[pos].flag = AVAILABLE
+}
+
+//program apply a database connection
+func GetClient() (mongoclient *mongodata,  err error) {
+	for i:=1; i<cp.size; i++ {
+		if cp.clientList[i].flag == AVAILABLE{
+			return &amp;cp.clientList[i], nil
+		}
+	}
+
+	if cp.size < MAX_CONNECTION{
+		err = cp.allocateCToPool(cp.size)
+		if err != nil {
+			utils.Logger.SetPrefix("WARNING ")
+			utils.Logger.Println("GetClient - DB pooling allocate failed", err)
+			return nil, err
+		}
+
+		pos := cp.size
+		cp.size++
+		return &amp;cp.clientList[pos], nil
+	} else {
+		utils.Logger.SetPrefix("WARNING ")
+		utils.Logger.Println("GetClient - DB pooling is fulled")
+		return nil, errors.New("DB pooling is fulled")
+	}
+
+}
+
+//program release a connection
+func ReleaseClient(mongoclient *mongodata){
+	cp.putCBackPool(mongoclient.pos)
+}
+以上就是核心代码实现，但是这个代码有一个问题，就是在高并发下并非协程安全，这个留在下一篇《用golang实现mongodb数据库连接池-高级篇-协程安全》来优化。'><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Posts","item":"https://kmnemon.github.io/posts/"},{"@type":"ListItem","position":2,"name":"用golang实现mongodb数据库连接池-基本篇","item":"https://kmnemon.github.io/posts/2019-05-10-golang-database-pool/"}]}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"用golang实现mongodb数据库连接池-基本篇","name":"用golang实现mongodb数据库连接池-基本篇","description":" 版本\ngolang \u0026ndash; 1.12.4\nmongodb \u0026ndash; 4.0\ngo driver \u0026ndash; 1.0.0\n简介\nmongodb的数据库driver在官方文档里面明确写明所有的数据库连接需要自己建立和释放，而且建议尽量复用已有的建立，那么也就是说driver里面并未实现连接池的功能。在我们实际应用中就需要自己实现这套数据库连接池提升程序和数据库之间的执行效率。\n设计思路 用一个数组来存放数据库连接的指针，并记录每一个指针两个状态: a.是否申请了数据库连接 b.这个连接是否已经给系统在使用中。举个例子就比较好理解了:\n申请一个用于存放数据连接的数组，一开始空的什么都没有\n程序需要一个数据库连接，连接池把数组第一个位置建立一个数据库连接，并把这个连接的状态置为：a.已申请 b.已给系统\n程序使用完释放数据库连接，现在数据库指针状态为：a.已申请 b.未使用\n程序需要新申请一个数据库连接，那么就回到了第2的状态。\n核心代码 const(\rMAX_CONNECTION = 10\rINITIAL_CONNECTION = 4\rAVAILABLE = false\rUSED = true\r)\r/*\r代码取了一个巧，用实际存放数据库指针的大小ClientPool.size和mongodata.flag来表示上述a，b两个状态\r如果mongodata.flag都为USED，那么需要新申请个数据库连接: size++\rclientList: the client pool\rclientAvailable: the available flag, means the location and available flag in the client pool\rsize: the size of allocated client pool \u0026lt;= MAX_CONNECTION\r*/\rtype mongodata struct{\rclient *mongo.Client\rpos int\rflag bool\r}\rtype ClientPool struct{\rclientList [MAX_CONNECTION]mongodata\rsize int\r}\r//create a new database connection to the pool\rfunc (cp *ClientPool) allocateCToPool(pos int) (err error){\rcp.clientList[pos].client, err = Dbconnect()\rif err != nil {\rutils.Logger.SetPrefix(\u0026#34;WARNING \u0026#34;)\rutils.Logger.Println(\u0026#34;allocateCToPool - allocateCToPool failed,position: \u0026#34;, pos, err)\rreturn err\r}\rcp.clientList[pos].flag = USED\rcp.clientList[pos].pos = pos\rreturn nil\r}\r//apply a connection from the pool\rfunc (cp *ClientPool) getCToPool(pos int){\rcp.clientList[pos].flag = USED\r}\r//free a connection back to the pool\rfunc (cp *ClientPool) putCBackPool(pos int){\rcp.clientList[pos].flag = AVAILABLE\r}\r//program apply a database connection\rfunc GetClient() (mongoclient *mongodata, err error) {\rfor i:=1; i\u0026lt;cp.size; i++ {\rif cp.clientList[i].flag == AVAILABLE{\rreturn \u0026amp;cp.clientList[i], nil\r}\r}\rif cp.size \u0026lt; MAX_CONNECTION{\rerr = cp.allocateCToPool(cp.size)\rif err != nil {\rutils.Logger.SetPrefix(\u0026#34;WARNING \u0026#34;)\rutils.Logger.Println(\u0026#34;GetClient - DB pooling allocate failed\u0026#34;, err)\rreturn nil, err\r}\rpos := cp.size\rcp.size++\rreturn \u0026amp;cp.clientList[pos], nil\r} else {\rutils.Logger.SetPrefix(\u0026#34;WARNING \u0026#34;)\rutils.Logger.Println(\u0026#34;GetClient - DB pooling is fulled\u0026#34;)\rreturn nil, errors.New(\u0026#34;DB pooling is fulled\u0026#34;)\r}\r}\r//program release a connection\rfunc ReleaseClient(mongoclient *mongodata){\rcp.putCBackPool(mongoclient.pos)\r} 以上就是核心代码实现，但是这个代码有一个问题，就是在高并发下并非协程安全，这个留在下一篇《用golang实现mongodb数据库连接池-高级篇-协程安全》来优化。\n","keywords":[],"articleBody":" 版本\ngolang – 1.12.4\nmongodb – 4.0\ngo driver – 1.0.0\n简介\nmongodb的数据库driver在官方文档里面明确写明所有的数据库连接需要自己建立和释放，而且建议尽量复用已有的建立，那么也就是说driver里面并未实现连接池的功能。在我们实际应用中就需要自己实现这套数据库连接池提升程序和数据库之间的执行效率。\n设计思路 用一个数组来存放数据库连接的指针，并记录每一个指针两个状态: a.是否申请了数据库连接 b.这个连接是否已经给系统在使用中。举个例子就比较好理解了:\n申请一个用于存放数据连接的数组，一开始空的什么都没有\n程序需要一个数据库连接，连接池把数组第一个位置建立一个数据库连接，并把这个连接的状态置为：a.已申请 b.已给系统\n程序使用完释放数据库连接，现在数据库指针状态为：a.已申请 b.未使用\n程序需要新申请一个数据库连接，那么就回到了第2的状态。\n核心代码 const(\rMAX_CONNECTION = 10\rINITIAL_CONNECTION = 4\rAVAILABLE = false\rUSED = true\r)\r/*\r代码取了一个巧，用实际存放数据库指针的大小ClientPool.size和mongodata.flag来表示上述a，b两个状态\r如果mongodata.flag都为USED，那么需要新申请个数据库连接: size++\rclientList: the client pool\rclientAvailable: the available flag, means the location and available flag in the client pool\rsize: the size of allocated client pool \u003c= MAX_CONNECTION\r*/\rtype mongodata struct{\rclient *mongo.Client\rpos int\rflag bool\r}\rtype ClientPool struct{\rclientList [MAX_CONNECTION]mongodata\rsize int\r}\r//create a new database connection to the pool\rfunc (cp *ClientPool) allocateCToPool(pos int) (err error){\rcp.clientList[pos].client, err = Dbconnect()\rif err != nil {\rutils.Logger.SetPrefix(\"WARNING \")\rutils.Logger.Println(\"allocateCToPool - allocateCToPool failed,position: \", pos, err)\rreturn err\r}\rcp.clientList[pos].flag = USED\rcp.clientList[pos].pos = pos\rreturn nil\r}\r//apply a connection from the pool\rfunc (cp *ClientPool) getCToPool(pos int){\rcp.clientList[pos].flag = USED\r}\r//free a connection back to the pool\rfunc (cp *ClientPool) putCBackPool(pos int){\rcp.clientList[pos].flag = AVAILABLE\r}\r//program apply a database connection\rfunc GetClient() (mongoclient *mongodata, err error) {\rfor i:=1; i","wordCount":"251","inLanguage":"zh-cn","image":"https://kmnemon.github.io/papermod-cover.png","datePublished":"2019-05-10T00:00:00Z","dateModified":"2019-05-10T00:00:00Z","mainEntityOfPage":{"@type":"WebPage","@id":"https://kmnemon.github.io/posts/2019-05-10-golang-database-pool/"},"publisher":{"@type":"Organization","name":"科的随思录","logo":{"@type":"ImageObject","url":"https://kmnemon.github.io/favicon.ico"}}}</script></head><body id=top><script>localStorage.getItem("pref-theme")==="dark"&&document.body.classList.add("dark")</script><header class=header><nav class=nav><div class=logo><a href=https://kmnemon.github.io/ accesskey=h title="科的随思录 (Alt + H)">科的随思录</a><div class=logo-switches><button id=theme-toggle accesskey=t title="(Alt + T)"><svg id="moon" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg id="sun" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button></div></div><ul id=menu><li><a href=https://kmnemon.github.io/archives title=文章><span>文章</span></a></li><li><a href=https://kmnemon.github.io/about title=咖啡><span>咖啡</span></a></li></ul></nav></header><main class=main><article class=post-single><header class=post-header><div class=breadcrumbs><a href=https://kmnemon.github.io/>Home</a>&nbsp;»&nbsp;<a href=https://kmnemon.github.io/posts/>Posts</a></div><h1 class="post-title entry-hint-parent">用golang实现mongodb数据库连接池-基本篇</h1><div class=post-meta><span title='2019-05-10 00:00:00 +0000 UTC'>May 10, 2019</span></div></header><div class=post-content><ul><li><p>版本<br>golang &ndash; 1.12.4<br>mongodb &ndash; 4.0<br>go driver &ndash; 1.0.0</p></li><li><p>简介</p></li></ul><p>mongodb的数据库driver在官方文档里面明确写明所有的数据库连接需要自己建立和释放，而且建议尽量复用已有的建立，那么也就是说driver里面并未实现连接池的功能。在我们实际应用中就需要自己实现这套数据库连接池提升程序和数据库之间的执行效率。</p><ul><li>设计思路</li></ul><p>用一个数组来存放数据库连接的指针，并记录每一个指针两个状态: a.是否申请了数据库连接 b.这个连接是否已经给系统在使用中。举个例子就比较好理解了:</p><ol><li><p>申请一个用于存放数据连接的数组，一开始空的什么都没有<br><img loading=lazy src=/images/2019-05-10-golang-database-pool/pool_initial.png></p></li><li><p>程序需要一个数据库连接，连接池把数组第一个位置建立一个数据库连接，并把这个连接的状态置为：a.已申请 b.已给系统<br><img loading=lazy src=/images/2019-05-10-golang-database-pool/pool_create_connection.png></p></li><li><p>程序使用完释放数据库连接，现在数据库指针状态为：a.已申请 b.未使用<br><img loading=lazy src=/images/2019-05-10-golang-database-pool/pool_release_connection.png></p></li><li><p>程序需要新申请一个数据库连接，那么就回到了第2的状态。</p></li></ol><ul><li>核心代码</li></ul><pre tabindex=0><code>const(
+	MAX_CONNECTION = 10
+	INITIAL_CONNECTION = 4
+	AVAILABLE = false
+	USED = true
+
+)
+
+/*
+代码取了一个巧，用实际存放数据库指针的大小ClientPool.size和mongodata.flag来表示上述a，b两个状态
+如果mongodata.flag都为USED，那么需要新申请个数据库连接: size++
+clientList: the client pool
+clientAvailable: the available flag, means the location and available flag in the  client pool
+size: the size of allocated client pool &lt;= MAX_CONNECTION
+*/
+type mongodata struct{
+	client *mongo.Client
+	pos int
+	flag bool
+
+}
+
+type ClientPool struct{
+	clientList [MAX_CONNECTION]mongodata
+	size int
+}
+
+//create a new database connection to the pool
+func (cp *ClientPool) allocateCToPool(pos int) (err error){
+	cp.clientList[pos].client, err = Dbconnect()
+	if err != nil {
+		utils.Logger.SetPrefix(&#34;WARNING &#34;)
+		utils.Logger.Println(&#34;allocateCToPool - allocateCToPool failed,position: &#34;, pos, err)
+		return err
+	}
+
+	cp.clientList[pos].flag = USED
+	cp.clientList[pos].pos = pos
+	return nil
+}
+
+//apply a connection from the pool
+func (cp *ClientPool) getCToPool(pos int){
+	cp.clientList[pos].flag = USED
+}
+
+//free a connection back to the pool
+func (cp *ClientPool) putCBackPool(pos int){
+	cp.clientList[pos].flag = AVAILABLE
+}
+
+//program apply a database connection
+func GetClient() (mongoclient *mongodata,  err error) {
+	for i:=1; i&lt;cp.size; i++ {
+		if cp.clientList[i].flag == AVAILABLE{
+			return &amp;cp.clientList[i], nil
+		}
+	}
+
+	if cp.size &lt; MAX_CONNECTION{
+		err = cp.allocateCToPool(cp.size)
+		if err != nil {
+			utils.Logger.SetPrefix(&#34;WARNING &#34;)
+			utils.Logger.Println(&#34;GetClient - DB pooling allocate failed&#34;, err)
+			return nil, err
+		}
+
+		pos := cp.size
+		cp.size++
+		return &amp;cp.clientList[pos], nil
+	} else {
+		utils.Logger.SetPrefix(&#34;WARNING &#34;)
+		utils.Logger.Println(&#34;GetClient - DB pooling is fulled&#34;)
+		return nil, errors.New(&#34;DB pooling is fulled&#34;)
+	}
+
+}
+
+//program release a connection
+func ReleaseClient(mongoclient *mongodata){
+	cp.putCBackPool(mongoclient.pos)
+}
+</code></pre><p>以上就是核心代码实现，但是这个代码有一个问题，就是在高并发下并非协程安全，这个留在下一篇《<a href=/posts/2019-05-11-golang-database-pool-2/>用golang实现mongodb数据库连接池-高级篇-协程安全</a>》来优化。</p></div><footer class=post-footer><ul class=post-tags></ul><nav class=paginav><a class=prev href=https://kmnemon.github.io/posts/2019-05-11-golang-database-pool-2/><span class=title>«</span><br><span>用golang实现mongodb数据库连接池-高级篇-协程安全</span>
+</a><a class=next href=https://kmnemon.github.io/posts/2018-05-16-about-quality/><span class=title>»</span><br><span>about quality</span></a></nav></footer></article></main><footer class=footer><span>&copy; 2025 <a href=https://kmnemon.github.io/>科的随思录</a></span> ·
+<span>Powered by
+<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
+        <a href=https://github.com/adityatelange/hugo-PaperMod/ rel=noopener target=_blank>PaperMod</a></span></footer><a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg viewBox="0 0 12 6" fill="currentcolor"><path d="M12 6H0l6-6z"/></svg>
+</a><script>let menu=document.getElementById("menu");menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(e){e.preventDefault();var t=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView({behavior:"smooth"}),t==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${t}`)})})</script><script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script><script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove("dark"),localStorage.setItem("pref-theme","light")):(document.body.classList.add("dark"),localStorage.setItem("pref-theme","dark"))})</script><script>document.querySelectorAll("pre > code").forEach(e=>{const n=e.parentNode.parentNode,t=document.createElement("button");t.classList.add("copy-code"),t.innerHTML="copy";function s(){t.innerHTML="copied!",setTimeout(()=>{t.innerHTML="copy"},2e3)}t.addEventListener("click",t=>{if("clipboard"in navigator){navigator.clipboard.writeText(e.textContent),s();return}const n=document.createRange();n.selectNodeContents(e);const o=window.getSelection();o.removeAllRanges(),o.addRange(n);try{document.execCommand("copy"),s()}catch{}o.removeRange(n)}),n.classList.contains("highlight")?n.appendChild(t):n.parentNode.firstChild==n||(e.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?e.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(t):e.parentNode.appendChild(t))})</script></body></html>

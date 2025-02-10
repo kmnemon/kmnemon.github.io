@@ -1,0 +1,176 @@
+<!doctype html><html lang=zh-cn dir=auto><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>golang-NSQ讲明白 | 科的随思录</title>
+<meta name=keywords content><meta name=description content="版本
+golang &ndash; 1.12.4
+nsq-1.1.0.linux-amd64.go1.10.3.tar.gz
+什么是NSQ
+一句话讲NSQ是一个简单队列，类似于java经常使用的activeMQ或者RocketMQ,一般在同步分离成异步，发送消息和接受消息解耦的地方使用到。
+NSQ有以下特性:
+
+支持拓扑的高可用性和避免单点故障(SPOFs)。
+更强的消息递交保证
+为单次处理绑定着内存的足迹(通过把一些持久话的消息放入磁盘)
+对生产者和消费者的配置进行极大的简化
+提供直接的升级路径
+提升效率
+
+NSQ组成
+NSQ由三个组件组成:
+
+nsqd 用于接收消息，排队消息，投递消息，我们的客户端(生产者，消费者)主要和它打交道
+nsqlookupd 管理nsqd,nsqadmin拓扑信息。 我们的客户端(消费者)询问此组件来发现nsqd等
+nsqadmin web UI 查询各种NSQ组件的信息，消息信息
+
+NSQ使用步骤
+
+启动nsqlookupd组件
+启动nsqd并向nsqlookupd注册
+启动nsqadmin并向nsqlookupd注册
+生产者推送一个message到其中一个nsqd，并将此消息设置到一个topic里面
+消费者向nsqlookupd询问指定topic的消息，nsqlookupd把有此topic的nsqd地址给到消费者
+消费者建立channel和topic之间的订阅关系，通过channel向nsqd获取指定topic里面的消息
+nsqd向所有订阅该topic的channel推送message， 然后其中一个消费者可以通过其中一个channel获取该topic的message
+
+注意第4点，生产者为什么没有从nsqlookupd注册中心去寻找可以推送消息的nsqd呢？因为nsq的设计理念是将nsqd本地化，也就是说生产者直接推送消息到local-nsqd。这点和RocketMQ的设计理念不一样，RocketMQ的NameServer和nsqlookupd类似，但是设计上RocketMQ生产者会访问NameServer去寻找可用的MQ推送消息。
+启动，注册过程:
+
+生产者，消费者:
+
+这就是nsq一个完整的使用流程，下面分别从客户端和代码两个方面介绍详细怎么使用
+客户端使用
+启动nsqlookup
+$ nsqlookupd
+在另一个shell启动一个nsqd,并在lookupd注册,注意-broadcast-address一定是消费者可以访问的地址
+$ nsqd --lookupd-tcp-address=127.0.0.1:4160 -broadcast-address=&#34;x.x.x.x&#34;  -tcp-address=&#34;0.0.0.0:4150&#34;
+启动nsqadmin，并在lookupd注册:
+$ nsqadmin --lookupd-http-address=127.0.0.1:4161
+生产者生产一个message，并创建该消息的topic
+$ curl -d 'hello world 1' 'http://127.0.0.1:4151/pub?topic=test'
+消费者通过lookupd查找对应的topic的nsq并绑定topic和channel，通过channel接受该topic的message
+$ nsq_to_file --topic=test --output-dir=/tmp --lookupd-http-address=127.0.0.1:4161
+生产者生产更多消息
+$ curl -d 'hello world 2' 'http://127.0.0.1:4151/pub?topic=test'
+$ curl -d 'hello world 3' 'http://127.0.0.1:4151/pub?topic=test'
+可以打开nsaadmin查看所有详情http://127.0.0.1:4171/ ，同时也可以查看/tmp下面接收并写入的message (test.*.log)"><meta name=author content><link rel=canonical href=https://kmnemon.github.io/posts/2019-06-24-golang-nsq-intro/><link crossorigin=anonymous href=/assets/css/stylesheet.d6fcd20a4fb86efa4dfac8ec95da60244cc8871042183da1ef28e3a762ad79c8.css integrity="sha256-1vzSCk+4bvpN+sjsldpgJEzIhxBCGD2h7yjjp2Ktecg=" rel="preload stylesheet" as=style><link rel=icon href=https://kmnemon.github.io/favicon.ico><link rel=icon type=image/png sizes=16x16 href=https://kmnemon.github.io/favicon-16x16.png><link rel=icon type=image/png sizes=32x32 href=https://kmnemon.github.io/favicon-32x32.png><link rel=apple-touch-icon href=https://kmnemon.github.io/apple-touch-icon.png><link rel=mask-icon href=https://kmnemon.github.io/safari-pinned-tab.svg><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><link rel=alternate hreflang=zh-cn href=https://kmnemon.github.io/posts/2019-06-24-golang-nsq-intro/><noscript><style>#theme-toggle,.top-link{display:none}</style></noscript><meta property="og:url" content="https://kmnemon.github.io/posts/2019-06-24-golang-nsq-intro/"><meta property="og:site_name" content="科的随思录"><meta property="og:title" content="golang-NSQ讲明白"><meta property="og:description" content="版本 golang – 1.12.4
+nsq-1.1.0.linux-amd64.go1.10.3.tar.gz
+什么是NSQ 一句话讲NSQ是一个简单队列，类似于java经常使用的activeMQ或者RocketMQ,一般在同步分离成异步，发送消息和接受消息解耦的地方使用到。
+NSQ有以下特性:
+支持拓扑的高可用性和避免单点故障(SPOFs)。 更强的消息递交保证 为单次处理绑定着内存的足迹(通过把一些持久话的消息放入磁盘) 对生产者和消费者的配置进行极大的简化 提供直接的升级路径 提升效率 NSQ组成 NSQ由三个组件组成:
+nsqd 用于接收消息，排队消息，投递消息，我们的客户端(生产者，消费者)主要和它打交道 nsqlookupd 管理nsqd,nsqadmin拓扑信息。 我们的客户端(消费者)询问此组件来发现nsqd等 nsqadmin web UI 查询各种NSQ组件的信息，消息信息 NSQ使用步骤 启动nsqlookupd组件 启动nsqd并向nsqlookupd注册 启动nsqadmin并向nsqlookupd注册 生产者推送一个message到其中一个nsqd，并将此消息设置到一个topic里面 消费者向nsqlookupd询问指定topic的消息，nsqlookupd把有此topic的nsqd地址给到消费者 消费者建立channel和topic之间的订阅关系，通过channel向nsqd获取指定topic里面的消息 nsqd向所有订阅该topic的channel推送message， 然后其中一个消费者可以通过其中一个channel获取该topic的message 注意第4点，生产者为什么没有从nsqlookupd注册中心去寻找可以推送消息的nsqd呢？因为nsq的设计理念是将nsqd本地化，也就是说生产者直接推送消息到local-nsqd。这点和RocketMQ的设计理念不一样，RocketMQ的NameServer和nsqlookupd类似，但是设计上RocketMQ生产者会访问NameServer去寻找可用的MQ推送消息。
+启动，注册过程: 生产者，消费者: 这就是nsq一个完整的使用流程，下面分别从客户端和代码两个方面介绍详细怎么使用
+客户端使用 启动nsqlookup
+$ nsqlookupd 在另一个shell启动一个nsqd,并在lookupd注册,注意-broadcast-address一定是消费者可以访问的地址
+$ nsqd --lookupd-tcp-address=127.0.0.1:4160 -broadcast-address=&#34;x.x.x.x&#34; -tcp-address=&#34;0.0.0.0:4150&#34; 启动nsqadmin，并在lookupd注册:
+$ nsqadmin --lookupd-http-address=127.0.0.1:4161 生产者生产一个message，并创建该消息的topic
+$ curl -d 'hello world 1' 'http://127.0.0.1:4151/pub?topic=test' 消费者通过lookupd查找对应的topic的nsq并绑定topic和channel，通过channel接受该topic的message
+$ nsq_to_file --topic=test --output-dir=/tmp --lookupd-http-address=127.0.0.1:4161 生产者生产更多消息
+$ curl -d 'hello world 2' 'http://127.0.0.1:4151/pub?topic=test'$ curl -d 'hello world 3' 'http://127.0.0.1:4151/pub?topic=test' 可以打开nsaadmin查看所有详情http://127.0.0.1:4171/ ，同时也可以查看/tmp下面接收并写入的message (test.*.log)"><meta property="og:locale" content="zh-cn"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-06-24T00:00:00+00:00"><meta property="article:modified_time" content="2019-06-24T00:00:00+00:00"><meta property="og:image" content="https://kmnemon.github.io/papermod-cover.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://kmnemon.github.io/papermod-cover.png"><meta name=twitter:title content="golang-NSQ讲明白"><meta name=twitter:description content="版本
+golang &ndash; 1.12.4
+nsq-1.1.0.linux-amd64.go1.10.3.tar.gz
+什么是NSQ
+一句话讲NSQ是一个简单队列，类似于java经常使用的activeMQ或者RocketMQ,一般在同步分离成异步，发送消息和接受消息解耦的地方使用到。
+NSQ有以下特性:
+
+支持拓扑的高可用性和避免单点故障(SPOFs)。
+更强的消息递交保证
+为单次处理绑定着内存的足迹(通过把一些持久话的消息放入磁盘)
+对生产者和消费者的配置进行极大的简化
+提供直接的升级路径
+提升效率
+
+NSQ组成
+NSQ由三个组件组成:
+
+nsqd 用于接收消息，排队消息，投递消息，我们的客户端(生产者，消费者)主要和它打交道
+nsqlookupd 管理nsqd,nsqadmin拓扑信息。 我们的客户端(消费者)询问此组件来发现nsqd等
+nsqadmin web UI 查询各种NSQ组件的信息，消息信息
+
+NSQ使用步骤
+
+启动nsqlookupd组件
+启动nsqd并向nsqlookupd注册
+启动nsqadmin并向nsqlookupd注册
+生产者推送一个message到其中一个nsqd，并将此消息设置到一个topic里面
+消费者向nsqlookupd询问指定topic的消息，nsqlookupd把有此topic的nsqd地址给到消费者
+消费者建立channel和topic之间的订阅关系，通过channel向nsqd获取指定topic里面的消息
+nsqd向所有订阅该topic的channel推送message， 然后其中一个消费者可以通过其中一个channel获取该topic的message
+
+注意第4点，生产者为什么没有从nsqlookupd注册中心去寻找可以推送消息的nsqd呢？因为nsq的设计理念是将nsqd本地化，也就是说生产者直接推送消息到local-nsqd。这点和RocketMQ的设计理念不一样，RocketMQ的NameServer和nsqlookupd类似，但是设计上RocketMQ生产者会访问NameServer去寻找可用的MQ推送消息。
+启动，注册过程:
+
+生产者，消费者:
+
+这就是nsq一个完整的使用流程，下面分别从客户端和代码两个方面介绍详细怎么使用
+客户端使用
+启动nsqlookup
+$ nsqlookupd
+在另一个shell启动一个nsqd,并在lookupd注册,注意-broadcast-address一定是消费者可以访问的地址
+$ nsqd --lookupd-tcp-address=127.0.0.1:4160 -broadcast-address=&#34;x.x.x.x&#34;  -tcp-address=&#34;0.0.0.0:4150&#34;
+启动nsqadmin，并在lookupd注册:
+$ nsqadmin --lookupd-http-address=127.0.0.1:4161
+生产者生产一个message，并创建该消息的topic
+$ curl -d 'hello world 1' 'http://127.0.0.1:4151/pub?topic=test'
+消费者通过lookupd查找对应的topic的nsq并绑定topic和channel，通过channel接受该topic的message
+$ nsq_to_file --topic=test --output-dir=/tmp --lookupd-http-address=127.0.0.1:4161
+生产者生产更多消息
+$ curl -d 'hello world 2' 'http://127.0.0.1:4151/pub?topic=test'
+$ curl -d 'hello world 3' 'http://127.0.0.1:4151/pub?topic=test'
+可以打开nsaadmin查看所有详情http://127.0.0.1:4171/ ，同时也可以查看/tmp下面接收并写入的message (test.*.log)"><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Posts","item":"https://kmnemon.github.io/posts/"},{"@type":"ListItem","position":2,"name":"golang-NSQ讲明白","item":"https://kmnemon.github.io/posts/2019-06-24-golang-nsq-intro/"}]}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"golang-NSQ讲明白","name":"golang-NSQ讲明白","description":"版本 golang \u0026ndash; 1.12.4\nnsq-1.1.0.linux-amd64.go1.10.3.tar.gz\n什么是NSQ 一句话讲NSQ是一个简单队列，类似于java经常使用的activeMQ或者RocketMQ,一般在同步分离成异步，发送消息和接受消息解耦的地方使用到。\nNSQ有以下特性:\n支持拓扑的高可用性和避免单点故障(SPOFs)。 更强的消息递交保证 为单次处理绑定着内存的足迹(通过把一些持久话的消息放入磁盘) 对生产者和消费者的配置进行极大的简化 提供直接的升级路径 提升效率 NSQ组成 NSQ由三个组件组成:\nnsqd 用于接收消息，排队消息，投递消息，我们的客户端(生产者，消费者)主要和它打交道 nsqlookupd 管理nsqd,nsqadmin拓扑信息。 我们的客户端(消费者)询问此组件来发现nsqd等 nsqadmin web UI 查询各种NSQ组件的信息，消息信息 NSQ使用步骤 启动nsqlookupd组件 启动nsqd并向nsqlookupd注册 启动nsqadmin并向nsqlookupd注册 生产者推送一个message到其中一个nsqd，并将此消息设置到一个topic里面 消费者向nsqlookupd询问指定topic的消息，nsqlookupd把有此topic的nsqd地址给到消费者 消费者建立channel和topic之间的订阅关系，通过channel向nsqd获取指定topic里面的消息 nsqd向所有订阅该topic的channel推送message， 然后其中一个消费者可以通过其中一个channel获取该topic的message 注意第4点，生产者为什么没有从nsqlookupd注册中心去寻找可以推送消息的nsqd呢？因为nsq的设计理念是将nsqd本地化，也就是说生产者直接推送消息到local-nsqd。这点和RocketMQ的设计理念不一样，RocketMQ的NameServer和nsqlookupd类似，但是设计上RocketMQ生产者会访问NameServer去寻找可用的MQ推送消息。\n启动，注册过程: 生产者，消费者: 这就是nsq一个完整的使用流程，下面分别从客户端和代码两个方面介绍详细怎么使用\n客户端使用 启动nsqlookup\n$ nsqlookupd 在另一个shell启动一个nsqd,并在lookupd注册,注意-broadcast-address一定是消费者可以访问的地址\n$ nsqd --lookupd-tcp-address=127.0.0.1:4160 -broadcast-address=\u0026#34;x.x.x.x\u0026#34; -tcp-address=\u0026#34;0.0.0.0:4150\u0026#34; 启动nsqadmin，并在lookupd注册:\n$ nsqadmin --lookupd-http-address=127.0.0.1:4161 生产者生产一个message，并创建该消息的topic\n$ curl -d \u0026#39;hello world 1\u0026#39; \u0026#39;http://127.0.0.1:4151/pub?topic=test\u0026#39; 消费者通过lookupd查找对应的topic的nsq并绑定topic和channel，通过channel接受该topic的message\n$ nsq_to_file --topic=test --output-dir=/tmp --lookupd-http-address=127.0.0.1:4161 生产者生产更多消息\n$ curl -d \u0026#39;hello world 2\u0026#39; \u0026#39;http://127.0.0.1:4151/pub?topic=test\u0026#39;\r$ curl -d \u0026#39;hello world 3\u0026#39; \u0026#39;http://127.0.0.1:4151/pub?topic=test\u0026#39; 可以打开nsaadmin查看所有详情http://127.0.0.1:4171/ ，同时也可以查看/tmp下面接收并写入的message (test.*.log)\n","keywords":[],"articleBody":"版本 golang – 1.12.4\nnsq-1.1.0.linux-amd64.go1.10.3.tar.gz\n什么是NSQ 一句话讲NSQ是一个简单队列，类似于java经常使用的activeMQ或者RocketMQ,一般在同步分离成异步，发送消息和接受消息解耦的地方使用到。\nNSQ有以下特性:\n支持拓扑的高可用性和避免单点故障(SPOFs)。 更强的消息递交保证 为单次处理绑定着内存的足迹(通过把一些持久话的消息放入磁盘) 对生产者和消费者的配置进行极大的简化 提供直接的升级路径 提升效率 NSQ组成 NSQ由三个组件组成:\nnsqd 用于接收消息，排队消息，投递消息，我们的客户端(生产者，消费者)主要和它打交道 nsqlookupd 管理nsqd,nsqadmin拓扑信息。 我们的客户端(消费者)询问此组件来发现nsqd等 nsqadmin web UI 查询各种NSQ组件的信息，消息信息 NSQ使用步骤 启动nsqlookupd组件 启动nsqd并向nsqlookupd注册 启动nsqadmin并向nsqlookupd注册 生产者推送一个message到其中一个nsqd，并将此消息设置到一个topic里面 消费者向nsqlookupd询问指定topic的消息，nsqlookupd把有此topic的nsqd地址给到消费者 消费者建立channel和topic之间的订阅关系，通过channel向nsqd获取指定topic里面的消息 nsqd向所有订阅该topic的channel推送message， 然后其中一个消费者可以通过其中一个channel获取该topic的message 注意第4点，生产者为什么没有从nsqlookupd注册中心去寻找可以推送消息的nsqd呢？因为nsq的设计理念是将nsqd本地化，也就是说生产者直接推送消息到local-nsqd。这点和RocketMQ的设计理念不一样，RocketMQ的NameServer和nsqlookupd类似，但是设计上RocketMQ生产者会访问NameServer去寻找可用的MQ推送消息。\n启动，注册过程: 生产者，消费者: 这就是nsq一个完整的使用流程，下面分别从客户端和代码两个方面介绍详细怎么使用\n客户端使用 启动nsqlookup\n$ nsqlookupd 在另一个shell启动一个nsqd,并在lookupd注册,注意-broadcast-address一定是消费者可以访问的地址\n$ nsqd --lookupd-tcp-address=127.0.0.1:4160 -broadcast-address=\"x.x.x.x\" -tcp-address=\"0.0.0.0:4150\" 启动nsqadmin，并在lookupd注册:\n$ nsqadmin --lookupd-http-address=127.0.0.1:4161 生产者生产一个message，并创建该消息的topic\n$ curl -d 'hello world 1' 'http://127.0.0.1:4151/pub?topic=test' 消费者通过lookupd查找对应的topic的nsq并绑定topic和channel，通过channel接受该topic的message\n$ nsq_to_file --topic=test --output-dir=/tmp --lookupd-http-address=127.0.0.1:4161 生产者生产更多消息\n$ curl -d 'hello world 2' 'http://127.0.0.1:4151/pub?topic=test'\r$ curl -d 'hello world 3' 'http://127.0.0.1:4151/pub?topic=test' 可以打开nsaadmin查看所有详情http://127.0.0.1:4171/ ，同时也可以查看/tmp下面接收并写入的message (test.*.log)\n代码 生产者代码:\npackage main\rimport (\r\"github.com/nsqio/go-nsq\"\r\"log\"\r)\rfunc main() {\rconfig := nsq.NewConfig()\rw, _ := nsq.NewProducer(\"x.x.x.x:4150\", config)\rerr := w.Publish(\"write_test\", []byte(\"test\"))\rif err != nil {\rlog.Panic(\"Could not connect\")\r}\rw.Stop()\r} 消费者代码：\npackage main\rimport (\r\"fmt\"\r\"github.com/nsqio/go-nsq\"\r\"log\"\r\"sync\"\r)\rfunc main() {\rwg := \u0026sync.WaitGroup{}\rwg.Add(1)\rconfig := nsq.NewConfig()\rq, _ := nsq.NewConsumer(\"write_test\", \"ch\", config)\rq.AddHandler(nsq.HandlerFunc(func(message *nsq.Message) error {\rfmt.Println(string(message.Body))\rwg.Done()\rreturn nil\r}))\rerr := q.ConnectToNSQLookupd(\"x.x.x.x:4161\")\rif err != nil {\rlog.Panic(\"Could not connect\")\r}\rwg.Wait()\r} ","wordCount":"168","inLanguage":"zh-cn","image":"https://kmnemon.github.io/papermod-cover.png","datePublished":"2019-06-24T00:00:00Z","dateModified":"2019-06-24T00:00:00Z","mainEntityOfPage":{"@type":"WebPage","@id":"https://kmnemon.github.io/posts/2019-06-24-golang-nsq-intro/"},"publisher":{"@type":"Organization","name":"科的随思录","logo":{"@type":"ImageObject","url":"https://kmnemon.github.io/favicon.ico"}}}</script></head><body id=top><script>localStorage.getItem("pref-theme")==="dark"&&document.body.classList.add("dark")</script><header class=header><nav class=nav><div class=logo><a href=https://kmnemon.github.io/ accesskey=h title="科的随思录 (Alt + H)">科的随思录</a><div class=logo-switches><button id=theme-toggle accesskey=t title="(Alt + T)"><svg id="moon" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg id="sun" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button></div></div><ul id=menu><li><a href=https://kmnemon.github.io/archives title=文章><span>文章</span></a></li><li><a href=https://kmnemon.github.io/about title=咖啡><span>咖啡</span></a></li></ul></nav></header><main class=main><article class=post-single><header class=post-header><div class=breadcrumbs><a href=https://kmnemon.github.io/>Home</a>&nbsp;»&nbsp;<a href=https://kmnemon.github.io/posts/>Posts</a></div><h1 class="post-title entry-hint-parent">golang-NSQ讲明白</h1><div class=post-meta><span title='2019-06-24 00:00:00 +0000 UTC'>June 24, 2019</span></div></header><div class=toc><details open><summary accesskey=c title="(Alt + C)"><span class=details>Table of Contents</span></summary><div class=inner><ul><li><a href=#%e7%89%88%e6%9c%ac aria-label=版本>版本</a></li><li><a href=#%e4%bb%80%e4%b9%88%e6%98%afnsq aria-label=什么是NSQ>什么是NSQ</a></li><li><a href=#nsq%e7%bb%84%e6%88%90 aria-label=NSQ组成>NSQ组成</a></li><li><a href=#nsq%e4%bd%bf%e7%94%a8%e6%ad%a5%e9%aa%a4 aria-label=NSQ使用步骤>NSQ使用步骤</a><ul><ul><li><a href=#%e5%90%af%e5%8a%a8%e6%b3%a8%e5%86%8c%e8%bf%87%e7%a8%8b aria-label=启动，注册过程:>启动，注册过程:</a></li><li><a href=#%e7%94%9f%e4%ba%a7%e8%80%85%e6%b6%88%e8%b4%b9%e8%80%85 aria-label=生产者，消费者:>生产者，消费者:</a></li></ul></ul></li><li><a href=#%e5%ae%a2%e6%88%b7%e7%ab%af%e4%bd%bf%e7%94%a8 aria-label=客户端使用>客户端使用</a></li><li><a href=#%e4%bb%a3%e7%a0%81 aria-label=代码>代码</a></li></ul></div></details></div><div class=post-content><h1 id=版本>版本<a hidden class=anchor aria-hidden=true href=#版本>#</a></h1><p>golang &ndash; 1.12.4<br>nsq-1.1.0.linux-amd64.go1.10.3.tar.gz</p><h1 id=什么是nsq>什么是NSQ<a hidden class=anchor aria-hidden=true href=#什么是nsq>#</a></h1><p>一句话讲NSQ是一个简单队列，类似于java经常使用的activeMQ或者RocketMQ,一般在同步分离成异步，发送消息和接受消息解耦的地方使用到。<br>NSQ有以下特性:</p><ul><li>支持拓扑的高可用性和避免单点故障(SPOFs)。</li><li>更强的消息递交保证</li><li>为单次处理绑定着内存的足迹(通过把一些持久话的消息放入磁盘)</li><li>对生产者和消费者的配置进行极大的简化</li><li>提供直接的升级路径</li><li>提升效率</li></ul><h1 id=nsq组成>NSQ组成<a hidden class=anchor aria-hidden=true href=#nsq组成>#</a></h1><p>NSQ由三个组件组成:</p><ul><li>nsqd 用于接收消息，排队消息，投递消息，我们的客户端(生产者，消费者)主要和它打交道</li><li>nsqlookupd 管理nsqd,nsqadmin拓扑信息。 我们的客户端(消费者)询问此组件来发现nsqd等</li><li>nsqadmin web UI 查询各种NSQ组件的信息，消息信息</li></ul><h1 id=nsq使用步骤>NSQ使用步骤<a hidden class=anchor aria-hidden=true href=#nsq使用步骤>#</a></h1><ol><li>启动nsqlookupd组件</li><li>启动nsqd并向nsqlookupd注册</li><li>启动nsqadmin并向nsqlookupd注册</li><li>生产者推送一个message到其中一个nsqd，并将此消息设置到一个topic里面</li><li>消费者向nsqlookupd询问指定topic的消息，nsqlookupd把有此topic的nsqd地址给到消费者</li><li>消费者建立channel和topic之间的订阅关系，通过channel向nsqd获取指定topic里面的消息</li><li>nsqd向所有订阅该topic的channel推送message， 然后其中一个消费者可以通过其中一个channel获取该topic的message</li></ol><p>注意第4点，生产者为什么没有从nsqlookupd注册中心去寻找可以推送消息的nsqd呢？因为nsq的设计理念是将nsqd本地化，也就是说生产者直接推送消息到local-nsqd。这点和RocketMQ的设计理念不一样，RocketMQ的NameServer和nsqlookupd类似，但是设计上RocketMQ生产者会访问NameServer去寻找可用的MQ推送消息。</p><h3 id=启动注册过程>启动，注册过程:<a hidden class=anchor aria-hidden=true href=#启动注册过程>#</a></h3><p><img loading=lazy src=/images/2019-06-24-golang-nsq-intro/startup.png></p><h3 id=生产者消费者>生产者，消费者:<a hidden class=anchor aria-hidden=true href=#生产者消费者>#</a></h3><p><img loading=lazy src=/images/2019-06-24-golang-nsq-intro/producer_consumer.png></p><p>这就是nsq一个完整的使用流程，下面分别从客户端和代码两个方面介绍详细怎么使用</p><h1 id=客户端使用>客户端使用<a hidden class=anchor aria-hidden=true href=#客户端使用>#</a></h1><p>启动nsqlookup</p><pre tabindex=0><code>$ nsqlookupd
+</code></pre><p>在另一个shell启动一个nsqd,并在lookupd注册,注意-broadcast-address一定是消费者可以访问的地址</p><pre tabindex=0><code>$ nsqd --lookupd-tcp-address=127.0.0.1:4160 -broadcast-address=&#34;x.x.x.x&#34;  -tcp-address=&#34;0.0.0.0:4150&#34;
+</code></pre><p>启动nsqadmin，并在lookupd注册:</p><pre tabindex=0><code>$ nsqadmin --lookupd-http-address=127.0.0.1:4161
+</code></pre><p>生产者生产一个message，并创建该消息的topic</p><pre tabindex=0><code>$ curl -d &#39;hello world 1&#39; &#39;http://127.0.0.1:4151/pub?topic=test&#39;
+</code></pre><p>消费者通过lookupd查找对应的topic的nsq并绑定topic和channel，通过channel接受该topic的message</p><pre tabindex=0><code>$ nsq_to_file --topic=test --output-dir=/tmp --lookupd-http-address=127.0.0.1:4161
+</code></pre><p>生产者生产更多消息</p><pre tabindex=0><code>$ curl -d &#39;hello world 2&#39; &#39;http://127.0.0.1:4151/pub?topic=test&#39;
+$ curl -d &#39;hello world 3&#39; &#39;http://127.0.0.1:4151/pub?topic=test&#39;
+</code></pre><p>可以打开nsaadmin查看所有详情http://127.0.0.1:4171/ ，同时也可以查看/tmp下面接收并写入的message (test.*.log)</p><h1 id=代码>代码<a hidden class=anchor aria-hidden=true href=#代码>#</a></h1><p>生产者代码:</p><pre tabindex=0><code>package main
+
+import (
+  &#34;github.com/nsqio/go-nsq&#34;
+  &#34;log&#34;
+)
+
+
+func main() {
+  config := nsq.NewConfig()
+  w, _ := nsq.NewProducer(&#34;x.x.x.x:4150&#34;, config)
+
+  err := w.Publish(&#34;write_test&#34;, []byte(&#34;test&#34;))
+  if err != nil {
+    log.Panic(&#34;Could not connect&#34;)
+  }
+
+  w.Stop()
+}
+</code></pre><p>消费者代码：</p><pre tabindex=0><code>package main
+
+import (
+  &#34;fmt&#34;
+  &#34;github.com/nsqio/go-nsq&#34;
+  &#34;log&#34;
+  &#34;sync&#34;
+)
+
+func main() {
+
+  wg := &amp;sync.WaitGroup{}
+  wg.Add(1)
+
+  config := nsq.NewConfig()
+  q, _ := nsq.NewConsumer(&#34;write_test&#34;, &#34;ch&#34;, config)
+  q.AddHandler(nsq.HandlerFunc(func(message *nsq.Message) error {
+    fmt.Println(string(message.Body))
+    wg.Done()
+    return nil
+  }))
+  err := q.ConnectToNSQLookupd(&#34;x.x.x.x:4161&#34;)
+  if err != nil {
+    log.Panic(&#34;Could not connect&#34;)
+  }
+  wg.Wait()
+
+}
+</code></pre></div><footer class=post-footer><ul class=post-tags></ul><nav class=paginav><a class=prev href=https://kmnemon.github.io/posts/2020-04-27-large-scale-agile/><span class=title>«</span><br><span>规模化敏捷思考</span>
+</a><a class=next href=https://kmnemon.github.io/posts/2019-05-13-golang-concurrency/><span class=title>»</span><br><span>golang实现协程安全的几种方式</span></a></nav></footer></article></main><footer class=footer><span>&copy; 2025 <a href=https://kmnemon.github.io/>科的随思录</a></span> ·
+<span>Powered by
+<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
+        <a href=https://github.com/adityatelange/hugo-PaperMod/ rel=noopener target=_blank>PaperMod</a></span></footer><a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg viewBox="0 0 12 6" fill="currentcolor"><path d="M12 6H0l6-6z"/></svg>
+</a><script>let menu=document.getElementById("menu");menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(e){e.preventDefault();var t=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView({behavior:"smooth"}),t==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${t}`)})})</script><script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script><script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove("dark"),localStorage.setItem("pref-theme","light")):(document.body.classList.add("dark"),localStorage.setItem("pref-theme","dark"))})</script><script>document.querySelectorAll("pre > code").forEach(e=>{const n=e.parentNode.parentNode,t=document.createElement("button");t.classList.add("copy-code"),t.innerHTML="copy";function s(){t.innerHTML="copied!",setTimeout(()=>{t.innerHTML="copy"},2e3)}t.addEventListener("click",t=>{if("clipboard"in navigator){navigator.clipboard.writeText(e.textContent),s();return}const n=document.createRange();n.selectNodeContents(e);const o=window.getSelection();o.removeAllRanges(),o.addRange(n);try{document.execCommand("copy"),s()}catch{}o.removeRange(n)}),n.classList.contains("highlight")?n.appendChild(t):n.parentNode.firstChild==n||(e.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?e.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(t):e.parentNode.appendChild(t))})</script></body></html>

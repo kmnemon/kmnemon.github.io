@@ -1,0 +1,80 @@
+<!doctype html><html lang=zh-cn dir=auto><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>Posts | 科的随思录</title>
+<meta name=keywords content><meta name=description content="Posts - 科的随思录"><meta name=author content><link rel=canonical href=https://kmnemon.github.io/posts/><link crossorigin=anonymous href=/assets/css/stylesheet.d6fcd20a4fb86efa4dfac8ec95da60244cc8871042183da1ef28e3a762ad79c8.css integrity="sha256-1vzSCk+4bvpN+sjsldpgJEzIhxBCGD2h7yjjp2Ktecg=" rel="preload stylesheet" as=style><link rel=icon href=https://kmnemon.github.io/favicon.ico><link rel=icon type=image/png sizes=16x16 href=https://kmnemon.github.io/favicon-16x16.png><link rel=icon type=image/png sizes=32x32 href=https://kmnemon.github.io/favicon-32x32.png><link rel=apple-touch-icon href=https://kmnemon.github.io/apple-touch-icon.png><link rel=mask-icon href=https://kmnemon.github.io/safari-pinned-tab.svg><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><link rel=alternate type=application/rss+xml href=https://kmnemon.github.io/posts/index.xml><link rel=alternate hreflang=zh-cn href=https://kmnemon.github.io/posts/><noscript><style>#theme-toggle,.top-link{display:none}</style></noscript><meta property="og:url" content="https://kmnemon.github.io/posts/"><meta property="og:site_name" content="科的随思录"><meta property="og:title" content="Posts"><meta property="og:locale" content="zh-cn"><meta property="og:type" content="website"><meta property="og:image" content="https://kmnemon.github.io/papermod-cover.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://kmnemon.github.io/papermod-cover.png"><meta name=twitter:title content="Posts"><meta name=twitter:description content><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Posts","item":"https://kmnemon.github.io/posts/"}]}</script></head><body class=list id=top><script>localStorage.getItem("pref-theme")==="dark"&&document.body.classList.add("dark")</script><header class=header><nav class=nav><div class=logo><a href=https://kmnemon.github.io/ accesskey=h title="科的随思录 (Alt + H)">科的随思录</a><div class=logo-switches><button id=theme-toggle accesskey=t title="(Alt + T)"><svg id="moon" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg id="sun" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button></div></div><ul id=menu><li><a href=https://kmnemon.github.io/archives title=文章><span>文章</span></a></li><li><a href=https://kmnemon.github.io/about title=咖啡><span>咖啡</span></a></li></ul></nav></header><main class=main><header class=page-header><div class=breadcrumbs><a href=https://kmnemon.github.io/>Home</a></div><h1>Posts</h1></header><article class=post-entry><header class=entry-header><h2 class=entry-hint-parent>编程语言，群魔乱舞的时代</h2></header><div class=entry-content><p>自从AI统治了世界，编成语言宝座一直由Python占据，但近几年编程语言热度排名变化，让我感到有些奇怪。 在TIOBE中23年不出意外C#成为年度语言，22年年度语言C++，Java跌出前三，24年很可能被C#反超，Rust进入前20。
+同时这几年新一代语言层出不穷，Mojo在AI领域挑战python，名不见经传的zig语言写出个Bun准备在js领域掀起浪花，Rust对C++发起冲击多年。不禁在想老一代语言除了生态的保护，还有什么能应对新一代语言的挑战。
+C++98,03是C++的黄金时代，后来随着Java，C#成长发展，C++领域逐渐萎缩。处境一度变得十分尴尬，在企业级市场Java解决了内存管理问题变得流行，在嵌入式领域C语言有简单性和性能上的优势，还剩下游戏领域的引擎部分还是C++一家独大。
+当时C++遇到的问题：
+复杂性，太过于复杂导致编码的认知复杂度太高，C++是一把屠龙宝刀，威力太大，用好他需要专业程序员，多年的沉淀，特别10倍程序员，市场上这类人才太少，中国企业大多急功近利不愿培养。 内存泄漏，内存安全问题突出。在复杂业务逻辑下，遗漏内存释放，程序长时间运行后崩溃，定位这类问题难度很大。 标准库不完善，三方库种类繁多，不像Java的Spring全家桶，不同的程序，用不同的三方库，维护困难。你想象一下几十年的语言还没有统一的并发库就知道了。所以像腾讯这类使用C++为主都需要自建所有的基础库。 但为什么近几年C++热度突然上升，我想可能是因为：
+AI火热，Python虽然是AI领域使用最广泛的语言，但一般用于模型训练这类，但AI的核心机器学习框架就只有C++能胜任了 C++自从03后加速发展，在进一步提升复杂度上一去不回，随后加入线程，协程，所有权，模块化等等等等，和Go语言设计理念完全相反 硬件摩尔定律失效，3nm技术再往下继续发展，投入成本和时间都急剧攀升，CPU单核频率提升到达瓶颈，市场又开始关注怎么充分利用有限的硬件资源 网上有人说C++03是“经典C++（classic）”，C++11开始是“现代C++（modern）”，那么C++吸取了哪些有意思的东西，准备折腾一番</p></div><footer class=entry-footer><span title='2024-01-05 00:00:00 +0000 UTC'>January 5, 2024</span></footer><a class=entry-link aria-label="post link to 编程语言，群魔乱舞的时代" href=https://kmnemon.github.io/posts/2024-01-05-programming-monster-dance-copy/></a></article><article class=post-entry><header class=entry-header><h2 class=entry-hint-parent>Go stream让go流动起来～</h2></header><div class=entry-content><p>Java的Stream编程 自从Java 8将函数式编程引入语言后，该语言通过Lambda表达式和Stream库两者的结合，展现了全新的编码方式。实现了简洁，高效，以及类似声明式的编码风格。
+举个例子，如我们有个集合里面存放的是颜色的标签，我们想在集合中找出以“b”字符开头的标签，并进行排序，然后转换成大写字符标签，最后输出。如果用Java 8以前的编码方式，我们会进行多次轮询，最后输出结果：
+public static void main(String[] args) {
+List&lt;String> colors = Arrays.asList("blue", "green", "brown", "grey", "red", "white", "black", "beige", "purple");
+List&lt;String> filteredAndSortedColors = new ArrayList&lt;>();
+for (String color : colors) {
+if (color.startsWith("b")) {
+filteredAndSortedColors.add(color);
+}
+}
+Collections.sort(filteredAndSortedColors);
+for (String color : filteredAndSortedColors) {
+System.out.println(color.toUpperCase());
+}
+} 如果用Java 8的Lambda、Stream来实现，则代码会更加简洁、易懂，执行效率也会提高：
+public static void main(String args[]) {
+Stream.of("blue", "green", "brown", "grey", "red", "white", "black", "beige", "purple")
+.filter(s -> s.startsWith("b"))
+.sorted()
+.map(s -> s.toUpperCase())
+.forEach(System.out::println);
+} Go的Stream编程 go语言中函数是第一公民，理论上我们可以实现更简洁的Stream框架。Stream的核心有以下几个方面：
+...</p></div><footer class=entry-footer><span title='2023-12-28 00:00:00 +0000 UTC'>December 28, 2023</span></footer><a class=entry-link aria-label="post link to Go stream让go流动起来～" href=https://kmnemon.github.io/posts/2023-12-29-go-stream-flow/></a></article><article class=post-entry><header class=entry-header><h2 class=entry-hint-parent>“敏捷”与“瀑布”，在中国还真相遇过，只不过不是你认为的方式</h2></header><div class=entry-content><p>最近敏捷圈发起一阵讨论：敏捷、瀑布，在中国存在过吗，不禁思考在中国敏捷与瀑布，真没相遇过吗？
+2000年前后,CMM思想流入中国，01年《程序员》杂志开始以《CMM布道中国》为专题进行一系列讲述。从这时起CMM在中国如火如荼的发展，IPD-CMMI一度成为众多企业的学习对象。在这股思潮下，软件开发以瀑布V模型为主，该流程要求软件发现缺陷后，需向上回溯到最早缺陷引入点，随后从缺陷引入点开始进行一系列后续变更。举个例子在测试阶段发现程序缺陷，通过分析后得知是需求文档描述有误，那么需要先变更需求文档，接着变更概要设计，详细设计，测试用例，代码修改，单元测试，代码评审，最后该功能重新进入测试阶段。
+这个流程里需求分析，开发，测试人员通常属于各自职能部门，由于职能竖井（KPI，部门墙等），软件开发过程中经常需要开会协调。但只要时间充足，上线软件倒也质量尚可。但问题就出在时间充足这个假设前提，当时中国IT企业大多是以倒排期和版本火车方式进行项目计划。团队成员在同一时间会投入到多个软件版本中，时间紧，任务重，同时白天大部分时间又用于开会和扯皮，晚上才能安静的进行软件开发，长此以往团队陷入软件泥潭，疲惫不堪。
+这时团队往往采取流程裁剪这样的骚操作，概要设计，详细设计，测试用例，单元测试，代码评审等非直接编码活动统统拆剪掉。剩下哪些活动呢？总得有需求文档吧，不然团队用什么开发，最主要的编码活动不能裁剪掉，就这两个活动就可以交付软件了，可团队TL心里没底啊，测试环节也留下。于是乎V模型只剩下“需求-开发-测试”三个活动。如果企业流程不能随意裁剪，那么你仔细观察上线前一天团队在做什么，就会发现所有团队成员都在补写文档，至于这些文档和当前上线代码有什么关系，没人知道。你问这些团队这是什么开发方式，他们会说这是裁剪后的“瀑布流程”。
+2008年前后，敏捷思潮开始在企业发芽，《硝烟中的Scrum和XP》和《持续集成》成为敏捷支持者的床头书，迭代增量开发，快速反馈成为敏捷的重要指导思想，上一活动的问题，尽量在下一活动反馈中找到并修复。自动化测试成为保证质量，快速反馈，快速发布的重要标志。团队实在受不了每夜写代码，开始纷纷上马敏捷开发。可是采用敏捷开发，之前的问题就解决了吗？
+敏捷宣言第二句“工作的软件高于详尽的文档”，但团队选择性无视左边，专注到右边，你看敏捷不用写任何文档了，一阵欢呼。于是敏捷3355会议开起，需求澄清会议一开就是2，3天，会议室里面坐满黑压压一片，产品经理卖力念着需求文档，团队里三层，外三层各自玩手机。​总算结束，团队开始拆卡片，随后进入迭代开发，后期进入迭代测试。你看这个敏捷开发不就是换了个名词的“敏捷3355+裁剪后的瀑布流程”。久而久之团队开始抱怨，以前瀑布流程的时候可没那么多会议，敏捷开发咋那么烦琐，要不我们也把迭代演示，迭代回顾，代码评审，自动化测试，小批量交付等裁剪了，最后敏捷开发成为迭代进行的“需求-开发-测试”三个活动。你问这些团队这是什么开发方式，他们会说这是“敏捷开发”。
+你看中国企业采取了”瀑布流程“、”敏捷开发“，怎么最后都是一个样子？这里原因很多，有人认为是企业倒排期文化，有人认为是需求变化太快，但有一个很重要的问题，团队里面真的是合格程序员吗？真的理解计算机科学吗？以下一些问题作为参考:
+哪些算法，语言设计，操作系统，分布式计算，运用了fork-join思想？ Java为什么放弃绿色线程，现在为什么又要开始支持虚拟线程？ 设计模式，面向对象编程是灵丹妙药吗？ 你写的代码会覆盖必要的单元测试吗？ 抽象能力是计算机基础，编程语言，框架，系统，硬件进行大量的抽象，尽量隐藏细节，但并不意味着你可以不理解计算机基础，就到处调用框架，运用大量并发技术。深入团队编码，会发现并不是团队不愿意写单元测试，而是团队写的代码根本无法测试，更不用说从未写过单元测试。
+选人的时候，从未考虑候选人计算机基础能力，编码内功，只要这个人能尽快上手项目就行，这个语言，那个框架玩的飞起来。你仔细观察这些团队，会发现他们的流程再次升级，变成“需求-拷贝、粘贴-人肉点点点”。中国IT发展了20,30年，系统升级了，语言升级了，框架升级了，工具也升级了，可团队能力升级了吗？</p></div><footer class=entry-footer><span title='2023-01-03 00:00:00 +0000 UTC'>January 3, 2023</span></footer><a class=entry-link aria-label="post link to “敏捷”与“瀑布”，在中国还真相遇过，只不过不是你认为的方式" href=https://kmnemon.github.io/posts/2023-01-03-agile-waterfall/></a></article><article class=post-entry><header class=entry-header><h2 class=entry-hint-parent>敏捷本质</h2></header><div class=entry-content><p>敏捷宣言诞生至今已20多年，在众多挑战瀑布的方法中，它完美的完成了这次反叛，成为主流的方式。敏捷最早作为软件行业的开发方式，现在逐渐渗透到其他行业。
+随着敏捷方法流行，越来越多的概念，方法论，实践被加了进来，“敏捷”开始变得臃肿，很多和敏捷八杆子打不着的方法也号称“敏捷”。人们开始在各种概念中迷失，敏捷的本质被逐渐掩盖。
+敏捷首要解决的问题是小团队开发，两个披萨可以喂饱的团队（6～12个人），如下图敏捷的核心实践，都是针对小团队的一系列活动： 我认为整个敏捷开发活动最重要的是BDD和TDD两个实践，再辅以过程透明化，快速反馈与持续改进。 为什么这两个实践如此重要，整个软件开发活动中我们要解决的三个核心问题是：
+如何确保充分理解了业务需求
+如果确保技术上能实现该需求
+如何确保开发出来的功能满足业务需求
+BDD通过与业务达成一致的实例化需求，来确保我们理解了业务需求，如果我们不能写出验收用例，证明我们还没理解业务需求。验收测试用例用来衡量我们是否真正理解业务需求。
+同时我们把验收用例自动化，通过自动化验收测试，来确保我们开发出来的功能是满足业务需求的。
+TDD通过自动化测试，来确保我们技术上是可行的，如果不能写出自动化测试，就无法确保在当前技术框架下可以完成该功能开发。
+这两个实践使我们的开发活动工程化，只有通过工程化，才能确保我们的需求透明化，开发透明化，验收透明化，才能得到快速反馈，最后才能根据反馈持续改进。
+关于规模化敏捷，人类历史上是不缺乏大规模的组织活动（金字塔，巴拿马运河，登陆月球，原子弹等等等），敏捷是通过首要解决小团队问题，然后把大规模团队划分为小团队，来达到规模化效果。但如果不先解决小团队问题，规模化敏捷就会流于形式。举个例子，规模化敏捷的核心问题就是团队间协作，版本火车中投入最大，耗时最长就是整个版本开发活动，多个团队要在估算的时间完成某功能联调活动，如果团队不具备TDD能力，那么团队的任务估算无法保证，导致该功能无法按时联调，团队间产生等待，连锁反应到迭代末团队继续追赶任务，无法投入到下迭代需求分析活动中，影响一直持续到后续迭代。
+最后关于敏捷价值观，在眼花缭乱的各种方法中，以及在我们教练辅导中，是否还秉承着Kent Beck提到最核心的敏捷价值观：勇气，沟通，反馈，简单。</p></div><footer class=entry-footer><span title='2022-08-14 00:00:00 +0000 UTC'>August 14, 2022</span></footer><a class=entry-link aria-label="post link to 敏捷本质" href=https://kmnemon.github.io/posts/2022-08-14-agile-essence/></a></article><article class=post-entry><header class=entry-header><h2 class=entry-hint-parent>泛型编程浅入浅出(C++, Java, Go)</h2></header><div class=entry-content><p>今年3月随着Go 1.18版发布，引入了一个重大的语言特性：泛型编程。这个特性在发布前引起了一定的争议。崇尚少即是多的一边认为这个特性不是很必要，应该谨慎引入。另一边则认为这是语言必不可少的特性。最后Go的泛型还是如期而至
+泛型编程在其他编程语言也遇到了不同的问题，比如在Java 1.0时是没有引入泛型编程支持，到了Java 1.5的时候引入了泛型，但由于引入时间过晚，有大量的标准库和第三方库无法支持，Java选择了妥协采用间接的类型擦除方式来实现泛型编程，导致泛型的使用复杂度增加，同时场景受限。而C++比较明智，一开始就支持泛型，所以在C++ STL标准库里面大量的算法都是采用泛型实现，整个语言体系中泛型占据了核心位置
+学习一个语言的特性可以参考其他语言同样的特性，这样就可以了解这个语言特性实现是否设计合理，是否优雅，存在哪些局限性
+语言版本：
+C++11
+Java 11
+Go 1.18
+1. 泛型函数 泛型函数用来支持当一个算法用在多种数据类型上，为了避免重复的定义函数，而用泛型函数来支持
+两个数据进行取小操作
+//C++
+template &lt;class T>
+T min(T a, T b){
+return a &lt; b ? a : b;
+}
+//Java不支持
+//Go
+func Min[T int|float64](a, b T) T {
+if a &lt; b {
+return a
+} else {
+return b
+}
+} 2. 泛型函数-显示特化 当泛型函数用来支持一个算法用在多种数据类型上，但在某个类型数据上泛型函数的实现不适合该类型，那么我们可以显示特化该类型的实现算法
+/C++独有
+template&lt;> string min&lt;string>(string a, string b){
+return a.size() &lt; b.size() ? a : b;
+} 3.泛型类 泛型类的目的是创建一个集合类型，里面的各种数据类型可以进行相同的操作，泛型类避免了多个数据类型的重复定义
+...</p></div><footer class=entry-footer><span title='2022-07-03 00:00:00 +0000 UTC'>July 3, 2022</span></footer><a class=entry-link aria-label="post link to 泛型编程浅入浅出(C++, Java, Go)" href=https://kmnemon.github.io/posts/2022-06-28-generic-programming/></a></article><footer class=page-footer><nav class=pagination><a class=prev href=https://kmnemon.github.io/posts/>«&nbsp;&nbsp;
+</a><a class=next href=https://kmnemon.github.io/posts/page/3/>&nbsp;&nbsp;»</a></nav></footer></main><footer class=footer><span>&copy; 2025 <a href=https://kmnemon.github.io/>科的随思录</a></span> ·
+<span>Powered by
+<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
+        <a href=https://github.com/adityatelange/hugo-PaperMod/ rel=noopener target=_blank>PaperMod</a></span></footer><a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg viewBox="0 0 12 6" fill="currentcolor"><path d="M12 6H0l6-6z"/></svg>
+</a><script>let menu=document.getElementById("menu");menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(e){e.preventDefault();var t=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView({behavior:"smooth"}),t==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${t}`)})})</script><script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script><script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove("dark"),localStorage.setItem("pref-theme","light")):(document.body.classList.add("dark"),localStorage.setItem("pref-theme","dark"))})</script></body></html>

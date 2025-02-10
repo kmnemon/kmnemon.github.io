@@ -1,0 +1,283 @@
+<!doctype html><html lang=zh-cn dir=auto><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>现代语言怎么支持Parallel和Concurrent | 科的随思录</title>
+<meta name=keywords content><meta name=description content="Parallel和Concurrent
+我们先来回顾一下概念:
+Parallel是指同时执行多个任务或计算.通常在多核或多处理器的硬件上并行执行多个操作,每个操作独立运行,并且是同步的(并行的任务在同一时刻发生).并行计算的目标是通过同时使用多个计算资源来加速程序的执行.
+Concurrent是指系统在同一时间段内处理多个任务的能力.并发并不意味着任务是同时执行的,而是任务在某一时刻轮流执行.
+举个例子就更容易理解：
+你有一个奶茶店,制作奶茶需要三个步骤,分别是收银,调制奶茶配料和用设备制作奶茶.假设现在有两个角色,A负责收银,B负责调制奶茶配料和用设备制作奶茶.整个步骤是A->B.作为店主你很快发现A收银很快,B调制配料和制作奶茶很慢造成了瓶颈,这是你选择解决方案是再雇佣了另外一个人和B一起负责调制奶茶配料和用设备制作奶茶,现在整个步骤是A->B1 or B2.在这个场景中增加B2就是我们说的Parallel.当然你还可以用另一个方案解决,把原步骤调制奶茶配料和用设备制作奶茶拆分为两个步骤,分别让B负责调制奶茶配料,再雇佣一个人去负责用设备制作奶茶,步骤变为A->B->C,在这个场景中增加C就是增加了Concurrent.
+现代语言的并发模型
+现代语言支持并发模型一般会在操作系统线程和应用程序之间增加一层,在这层中使用预先分配的线程池和调度器来实现应用程序的并发能力.如在Go语言中称为协程(Coroutine).
+Go语言的并发模型如下:
+
+
+G—Goroutine
+M—OS thread (stands for machine)
+P—CPU core (stands for processor)
+
+默认情况每一个CPU核心(P)里面会有一个线程(M),每个线程会不断切换去运行协程(G).
+Swift语言的并发模型,同样也是在操作系统线程和应用程序之间增加了一层.稍有不同的是他通过把代码划分为逻辑单元称为局部任务(Partial Tasks),通过调度器把局部任务分配到线程池不同的线程运行来实现并发能力.
+
+现代语言中支持并发的语言特性
+那么在这些语言中怎么支持并发的呢？这里我们举例三个场景:
+场景1: 增加Parallel,就是我们前面说的第一个方案增加另一个人和B一起负责调制奶茶配料和用设备制作奶茶
+Go实现
+func taskA() int {
+    time.Sleep(2 * time.Second)
+    return 5
+}
+
+func parallelExample() int {
+    c := make(chan int)
+
+    go func() {
+        c <- taskA()
+    }()
+    go func() {
+        c <- taskA()
+    }()
+
+    r1 := <-c
+    r2 := <-c
+
+    return r1 + r2
+}
+Swift实现"><meta name=author content><link rel=canonical href=https://kmnemon.github.io/posts/2025-01-02-parallel-concurrent/><link crossorigin=anonymous href=/assets/css/stylesheet.d6fcd20a4fb86efa4dfac8ec95da60244cc8871042183da1ef28e3a762ad79c8.css integrity="sha256-1vzSCk+4bvpN+sjsldpgJEzIhxBCGD2h7yjjp2Ktecg=" rel="preload stylesheet" as=style><link rel=icon href=https://kmnemon.github.io/favicon.ico><link rel=icon type=image/png sizes=16x16 href=https://kmnemon.github.io/favicon-16x16.png><link rel=icon type=image/png sizes=32x32 href=https://kmnemon.github.io/favicon-32x32.png><link rel=apple-touch-icon href=https://kmnemon.github.io/apple-touch-icon.png><link rel=mask-icon href=https://kmnemon.github.io/safari-pinned-tab.svg><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><link rel=alternate hreflang=zh-cn href=https://kmnemon.github.io/posts/2025-01-02-parallel-concurrent/><noscript><style>#theme-toggle,.top-link{display:none}</style></noscript><meta property="og:url" content="https://kmnemon.github.io/posts/2025-01-02-parallel-concurrent/"><meta property="og:site_name" content="科的随思录"><meta property="og:title" content="现代语言怎么支持Parallel和Concurrent"><meta property="og:description" content="Parallel和Concurrent 我们先来回顾一下概念: Parallel是指同时执行多个任务或计算.通常在多核或多处理器的硬件上并行执行多个操作,每个操作独立运行,并且是同步的(并行的任务在同一时刻发生).并行计算的目标是通过同时使用多个计算资源来加速程序的执行.
+Concurrent是指系统在同一时间段内处理多个任务的能力.并发并不意味着任务是同时执行的,而是任务在某一时刻轮流执行.
+举个例子就更容易理解： 你有一个奶茶店,制作奶茶需要三个步骤,分别是收银,调制奶茶配料和用设备制作奶茶.假设现在有两个角色,A负责收银,B负责调制奶茶配料和用设备制作奶茶.整个步骤是A->B.作为店主你很快发现A收银很快,B调制配料和制作奶茶很慢造成了瓶颈,这是你选择解决方案是再雇佣了另外一个人和B一起负责调制奶茶配料和用设备制作奶茶,现在整个步骤是A->B1 or B2.在这个场景中增加B2就是我们说的Parallel.当然你还可以用另一个方案解决,把原步骤调制奶茶配料和用设备制作奶茶拆分为两个步骤,分别让B负责调制奶茶配料,再雇佣一个人去负责用设备制作奶茶,步骤变为A->B->C,在这个场景中增加C就是增加了Concurrent.
+现代语言的并发模型 现代语言支持并发模型一般会在操作系统线程和应用程序之间增加一层,在这层中使用预先分配的线程池和调度器来实现应用程序的并发能力.如在Go语言中称为协程(Coroutine). Go语言的并发模型如下: G—Goroutine M—OS thread (stands for machine) P—CPU core (stands for processor) 默认情况每一个CPU核心(P)里面会有一个线程(M),每个线程会不断切换去运行协程(G).
+Swift语言的并发模型,同样也是在操作系统线程和应用程序之间增加了一层.稍有不同的是他通过把代码划分为逻辑单元称为局部任务(Partial Tasks),通过调度器把局部任务分配到线程池不同的线程运行来实现并发能力. 现代语言中支持并发的语言特性 那么在这些语言中怎么支持并发的呢？这里我们举例三个场景:
+场景1: 增加Parallel,就是我们前面说的第一个方案增加另一个人和B一起负责调制奶茶配料和用设备制作奶茶 Go实现
+func taskA() int {time.Sleep(2 * time.Second)return 5}func parallelExample() int {c := make(chan int)go func() {c <- taskA()}()go func() {c <- taskA()}()r1 := <-cr2 := <-creturn r1 + r2} Swift实现"><meta property="og:locale" content="zh-cn"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2025-01-02T00:00:00+00:00"><meta property="article:modified_time" content="2025-01-02T00:00:00+00:00"><meta property="og:image" content="https://kmnemon.github.io/papermod-cover.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://kmnemon.github.io/papermod-cover.png"><meta name=twitter:title content="现代语言怎么支持Parallel和Concurrent"><meta name=twitter:description content="Parallel和Concurrent
+我们先来回顾一下概念:
+Parallel是指同时执行多个任务或计算.通常在多核或多处理器的硬件上并行执行多个操作,每个操作独立运行,并且是同步的(并行的任务在同一时刻发生).并行计算的目标是通过同时使用多个计算资源来加速程序的执行.
+Concurrent是指系统在同一时间段内处理多个任务的能力.并发并不意味着任务是同时执行的,而是任务在某一时刻轮流执行.
+举个例子就更容易理解：
+你有一个奶茶店,制作奶茶需要三个步骤,分别是收银,调制奶茶配料和用设备制作奶茶.假设现在有两个角色,A负责收银,B负责调制奶茶配料和用设备制作奶茶.整个步骤是A->B.作为店主你很快发现A收银很快,B调制配料和制作奶茶很慢造成了瓶颈,这是你选择解决方案是再雇佣了另外一个人和B一起负责调制奶茶配料和用设备制作奶茶,现在整个步骤是A->B1 or B2.在这个场景中增加B2就是我们说的Parallel.当然你还可以用另一个方案解决,把原步骤调制奶茶配料和用设备制作奶茶拆分为两个步骤,分别让B负责调制奶茶配料,再雇佣一个人去负责用设备制作奶茶,步骤变为A->B->C,在这个场景中增加C就是增加了Concurrent.
+现代语言的并发模型
+现代语言支持并发模型一般会在操作系统线程和应用程序之间增加一层,在这层中使用预先分配的线程池和调度器来实现应用程序的并发能力.如在Go语言中称为协程(Coroutine).
+Go语言的并发模型如下:
+
+
+G—Goroutine
+M—OS thread (stands for machine)
+P—CPU core (stands for processor)
+
+默认情况每一个CPU核心(P)里面会有一个线程(M),每个线程会不断切换去运行协程(G).
+Swift语言的并发模型,同样也是在操作系统线程和应用程序之间增加了一层.稍有不同的是他通过把代码划分为逻辑单元称为局部任务(Partial Tasks),通过调度器把局部任务分配到线程池不同的线程运行来实现并发能力.
+
+现代语言中支持并发的语言特性
+那么在这些语言中怎么支持并发的呢？这里我们举例三个场景:
+场景1: 增加Parallel,就是我们前面说的第一个方案增加另一个人和B一起负责调制奶茶配料和用设备制作奶茶
+Go实现
+func taskA() int {
+    time.Sleep(2 * time.Second)
+    return 5
+}
+
+func parallelExample() int {
+    c := make(chan int)
+
+    go func() {
+        c <- taskA()
+    }()
+    go func() {
+        c <- taskA()
+    }()
+
+    r1 := <-c
+    r2 := <-c
+
+    return r1 + r2
+}
+Swift实现"><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Posts","item":"https://kmnemon.github.io/posts/"},{"@type":"ListItem","position":2,"name":"现代语言怎么支持Parallel和Concurrent","item":"https://kmnemon.github.io/posts/2025-01-02-parallel-concurrent/"}]}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"现代语言怎么支持Parallel和Concurrent","name":"现代语言怎么支持Parallel和Concurrent","description":"Parallel和Concurrent 我们先来回顾一下概念: Parallel是指同时执行多个任务或计算.通常在多核或多处理器的硬件上并行执行多个操作,每个操作独立运行,并且是同步的(并行的任务在同一时刻发生).并行计算的目标是通过同时使用多个计算资源来加速程序的执行.\nConcurrent是指系统在同一时间段内处理多个任务的能力.并发并不意味着任务是同时执行的,而是任务在某一时刻轮流执行.\n举个例子就更容易理解： 你有一个奶茶店,制作奶茶需要三个步骤,分别是收银,调制奶茶配料和用设备制作奶茶.假设现在有两个角色,A负责收银,B负责调制奶茶配料和用设备制作奶茶.整个步骤是A-\u0026gt;B.作为店主你很快发现A收银很快,B调制配料和制作奶茶很慢造成了瓶颈,这是你选择解决方案是再雇佣了另外一个人和B一起负责调制奶茶配料和用设备制作奶茶,现在整个步骤是A-\u0026gt;B1 or B2.在这个场景中增加B2就是我们说的Parallel.当然你还可以用另一个方案解决,把原步骤调制奶茶配料和用设备制作奶茶拆分为两个步骤,分别让B负责调制奶茶配料,再雇佣一个人去负责用设备制作奶茶,步骤变为A-\u0026gt;B-\u0026gt;C,在这个场景中增加C就是增加了Concurrent.\n现代语言的并发模型 现代语言支持并发模型一般会在操作系统线程和应用程序之间增加一层,在这层中使用预先分配的线程池和调度器来实现应用程序的并发能力.如在Go语言中称为协程(Coroutine). Go语言的并发模型如下: G—Goroutine M—OS thread (stands for machine) P—CPU core (stands for processor) 默认情况每一个CPU核心(P)里面会有一个线程(M),每个线程会不断切换去运行协程(G).\nSwift语言的并发模型,同样也是在操作系统线程和应用程序之间增加了一层.稍有不同的是他通过把代码划分为逻辑单元称为局部任务(Partial Tasks),通过调度器把局部任务分配到线程池不同的线程运行来实现并发能力. 现代语言中支持并发的语言特性 那么在这些语言中怎么支持并发的呢？这里我们举例三个场景:\n场景1: 增加Parallel,就是我们前面说的第一个方案增加另一个人和B一起负责调制奶茶配料和用设备制作奶茶 Go实现\nfunc taskA() int {\rtime.Sleep(2 * time.Second)\rreturn 5\r}\rfunc parallelExample() int {\rc := make(chan int)\rgo func() {\rc \u0026lt;- taskA()\r}()\rgo func() {\rc \u0026lt;- taskA()\r}()\rr1 := \u0026lt;-c\rr2 := \u0026lt;-c\rreturn r1 + r2\r} Swift实现\n","keywords":[],"articleBody":"Parallel和Concurrent 我们先来回顾一下概念: Parallel是指同时执行多个任务或计算.通常在多核或多处理器的硬件上并行执行多个操作,每个操作独立运行,并且是同步的(并行的任务在同一时刻发生).并行计算的目标是通过同时使用多个计算资源来加速程序的执行.\nConcurrent是指系统在同一时间段内处理多个任务的能力.并发并不意味着任务是同时执行的,而是任务在某一时刻轮流执行.\n举个例子就更容易理解： 你有一个奶茶店,制作奶茶需要三个步骤,分别是收银,调制奶茶配料和用设备制作奶茶.假设现在有两个角色,A负责收银,B负责调制奶茶配料和用设备制作奶茶.整个步骤是A-\u003eB.作为店主你很快发现A收银很快,B调制配料和制作奶茶很慢造成了瓶颈,这是你选择解决方案是再雇佣了另外一个人和B一起负责调制奶茶配料和用设备制作奶茶,现在整个步骤是A-\u003eB1 or B2.在这个场景中增加B2就是我们说的Parallel.当然你还可以用另一个方案解决,把原步骤调制奶茶配料和用设备制作奶茶拆分为两个步骤,分别让B负责调制奶茶配料,再雇佣一个人去负责用设备制作奶茶,步骤变为A-\u003eB-\u003eC,在这个场景中增加C就是增加了Concurrent.\n现代语言的并发模型 现代语言支持并发模型一般会在操作系统线程和应用程序之间增加一层,在这层中使用预先分配的线程池和调度器来实现应用程序的并发能力.如在Go语言中称为协程(Coroutine). Go语言的并发模型如下: G—Goroutine M—OS thread (stands for machine) P—CPU core (stands for processor) 默认情况每一个CPU核心(P)里面会有一个线程(M),每个线程会不断切换去运行协程(G).\nSwift语言的并发模型,同样也是在操作系统线程和应用程序之间增加了一层.稍有不同的是他通过把代码划分为逻辑单元称为局部任务(Partial Tasks),通过调度器把局部任务分配到线程池不同的线程运行来实现并发能力. 现代语言中支持并发的语言特性 那么在这些语言中怎么支持并发的呢？这里我们举例三个场景:\n场景1: 增加Parallel,就是我们前面说的第一个方案增加另一个人和B一起负责调制奶茶配料和用设备制作奶茶 Go实现\nfunc taskA() int {\rtime.Sleep(2 * time.Second)\rreturn 5\r}\rfunc parallelExample() int {\rc := make(chan int)\rgo func() {\rc \u003c- taskA()\r}()\rgo func() {\rc \u003c- taskA()\r}()\rr1 := \u003c-c\rr2 := \u003c-c\rreturn r1 + r2\r} Swift实现\nfunc taskA() async -\u003e Int {\rtry! await Task.sleep(for: .seconds(2))\rreturn 5\r}\rfunc parallelExample() async -\u003e Int {\rasync let resultA = taskA()\rasync let resultB = taskA()\rlet r1 = await resultA\rlet r2 = await resultB\rreturn r1 + r2\r} 场景2: 增加Concurrent,另一个方案把原步骤拆分为两个步骤由两个人去操作 Go实现\nfunc taskA1() int {\rtime.Sleep(2 * time.Second)\rreturn 5\r}\rfunc taskB1(a1 int) int {\rtime.Sleep(1 * time.Second)\rreturn a1 + 2\r}\rfunc concurrentExample() int {\rc := make(chan int, 3)\rrc := make(chan int)\rgo func() {\rfor range 5 {\rc \u003c- taskA1()\r}\r}()\rgo func() {\rfor range 5 {\rr1 := \u003c-c\rrc \u003c- taskB1(r1)\r}\r}()\rresult := 0\rfor range 5 {\rresult += \u003c-rc\r}\rreturn result\r} Swift实现\nfunc taskA1() async -\u003e Int {\rtry! await Task.sleep(for: .seconds(2))\rreturn 5\r}\rfunc taskB1(a1: Int) async -\u003e Int {\rtry! await Task.sleep(for: .seconds(2))\rreturn a1 + 2\r}\rfunc concurrentExample() async -\u003e Int {\rvar result = 0\rlet taskCount = 5\rlet taskAStream = AsyncStream { continuation in\rTask {\rfor _ in 0..","wordCount":"559","inLanguage":"zh-cn","image":"https://kmnemon.github.io/papermod-cover.png","datePublished":"2025-01-02T00:00:00Z","dateModified":"2025-01-02T00:00:00Z","mainEntityOfPage":{"@type":"WebPage","@id":"https://kmnemon.github.io/posts/2025-01-02-parallel-concurrent/"},"publisher":{"@type":"Organization","name":"科的随思录","logo":{"@type":"ImageObject","url":"https://kmnemon.github.io/favicon.ico"}}}</script></head><body id=top><script>localStorage.getItem("pref-theme")==="dark"&&document.body.classList.add("dark")</script><header class=header><nav class=nav><div class=logo><a href=https://kmnemon.github.io/ accesskey=h title="科的随思录 (Alt + H)">科的随思录</a><div class=logo-switches><button id=theme-toggle accesskey=t title="(Alt + T)"><svg id="moon" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg id="sun" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button></div></div><ul id=menu><li><a href=https://kmnemon.github.io/archives title=文章><span>文章</span></a></li><li><a href=https://kmnemon.github.io/about title=咖啡><span>咖啡</span></a></li></ul></nav></header><main class=main><article class=post-single><header class=post-header><div class=breadcrumbs><a href=https://kmnemon.github.io/>Home</a>&nbsp;»&nbsp;<a href=https://kmnemon.github.io/posts/>Posts</a></div><h1 class="post-title entry-hint-parent">现代语言怎么支持Parallel和Concurrent</h1><div class=post-meta><span title='2025-01-02 00:00:00 +0000 UTC'>January 2, 2025</span></div></header><div class=toc><details open><summary accesskey=c title="(Alt + C)"><span class=details>Table of Contents</span></summary><div class=inner><ul><li><a href=#parallel%e5%92%8cconcurrent aria-label=Parallel和Concurrent>Parallel和Concurrent</a></li><li><a href=#%e7%8e%b0%e4%bb%a3%e8%af%ad%e8%a8%80%e7%9a%84%e5%b9%b6%e5%8f%91%e6%a8%a1%e5%9e%8b aria-label=现代语言的并发模型>现代语言的并发模型</a></li><li><a href=#%e7%8e%b0%e4%bb%a3%e8%af%ad%e8%a8%80%e4%b8%ad%e6%94%af%e6%8c%81%e5%b9%b6%e5%8f%91%e7%9a%84%e8%af%ad%e8%a8%80%e7%89%b9%e6%80%a7 aria-label=现代语言中支持并发的语言特性>现代语言中支持并发的语言特性</a><ul><ul><li><a href=#%e5%9c%ba%e6%99%af1-%e5%a2%9e%e5%8a%a0parallel%e5%b0%b1%e6%98%af%e6%88%91%e4%bb%ac%e5%89%8d%e9%9d%a2%e8%af%b4%e7%9a%84%e7%ac%ac%e4%b8%80%e4%b8%aa%e6%96%b9%e6%a1%88%e5%a2%9e%e5%8a%a0%e5%8f%a6%e4%b8%80%e4%b8%aa%e4%ba%ba%e5%92%8cb%e4%b8%80%e8%b5%b7%e8%b4%9f%e8%b4%a3%e8%b0%83%e5%88%b6%e5%a5%b6%e8%8c%b6%e9%85%8d%e6%96%99%e5%92%8c%e7%94%a8%e8%ae%be%e5%a4%87%e5%88%b6%e4%bd%9c%e5%a5%b6%e8%8c%b6 aria-label="场景1: 增加Parallel,就是我们前面说的第一个方案增加另一个人和B一起负责调制奶茶配料和用设备制作奶茶">场景1: 增加Parallel,就是我们前面说的第一个方案增加另一个人和B一起负责调制奶茶配料和用设备制作奶茶</a></li><li><a href=#%e5%9c%ba%e6%99%af2-%e5%a2%9e%e5%8a%a0concurrent%e5%8f%a6%e4%b8%80%e4%b8%aa%e6%96%b9%e6%a1%88%e6%8a%8a%e5%8e%9f%e6%ad%a5%e9%aa%a4%e6%8b%86%e5%88%86%e4%b8%ba%e4%b8%a4%e4%b8%aa%e6%ad%a5%e9%aa%a4%e7%94%b1%e4%b8%a4%e4%b8%aa%e4%ba%ba%e5%8e%bb%e6%93%8d%e4%bd%9c aria-label="场景2: 增加Concurrent,另一个方案把原步骤拆分为两个步骤由两个人去操作">场景2: 增加Concurrent,另一个方案把原步骤拆分为两个步骤由两个人去操作</a></li><li><a href=#%e5%9c%ba%e6%99%af3%e5%85%88parallel%e5%86%8dconcurrent%e5%8d%b3%e5%a2%9e%e5%8a%a0%e4%ba%ba%e5%8e%bb%e8%b0%83%e5%88%b6%e5%a5%b6%e8%8c%b6%e5%90%8c%e6%97%b6%e4%b9%9f%e5%a2%9e%e5%8a%a0%e6%ad%a5%e9%aa%a4%e8%ae%a9%e4%b8%8d%e5%90%8c%e7%9a%84%e4%ba%ba%e5%88%86%e5%88%ab%e8%b4%9f%e8%b4%a3%e8%b0%83%e5%88%b6%e5%a5%b6%e8%8c%b6%e5%92%8c%e7%94%a8%e8%ae%be%e5%a4%87%e5%88%b6%e4%bd%9c%e5%a5%b6%e8%8c%b6 aria-label=场景3:先Parallel再Concurrent,即增加人去调制奶茶,同时也增加步骤让不同的人分别负责调制奶茶和用设备制作奶茶>场景3:先Parallel再Concurrent,即增加人去调制奶茶,同时也增加步骤让不同的人分别负责调制奶茶和用设备制作奶茶</a></li></ul></ul></li></ul></div></details></div><div class=post-content><h1 id=parallel和concurrent>Parallel和Concurrent<a hidden class=anchor aria-hidden=true href=#parallel和concurrent>#</a></h1><p>我们先来回顾一下概念:
+Parallel是指同时执行多个任务或计算.通常在多核或多处理器的硬件上并行执行多个操作,每个操作独立运行,并且是同步的(并行的任务在同一时刻发生).并行计算的目标是通过同时使用多个计算资源来加速程序的执行.</p><p>Concurrent是指系统在同一时间段内处理多个任务的能力.并发并不意味着任务是同时执行的,而是任务在某一时刻轮流执行.</p><p>举个例子就更容易理解：
+你有一个奶茶店,制作奶茶需要三个步骤,分别是收银,调制奶茶配料和用设备制作奶茶.假设现在有两个角色,A负责收银,B负责调制奶茶配料和用设备制作奶茶.整个步骤是A->B.作为店主你很快发现A收银很快,B调制配料和制作奶茶很慢造成了瓶颈,这是你选择解决方案是再雇佣了另外一个人和B一起负责调制奶茶配料和用设备制作奶茶,现在整个步骤是A->B1 or B2.在这个场景中增加B2就是我们说的Parallel.当然你还可以用另一个方案解决,把原步骤调制奶茶配料和用设备制作奶茶拆分为两个步骤,分别让B负责调制奶茶配料,再雇佣一个人去负责用设备制作奶茶,步骤变为A->B->C,在这个场景中增加C就是增加了Concurrent.</p><h1 id=现代语言的并发模型>现代语言的并发模型<a hidden class=anchor aria-hidden=true href=#现代语言的并发模型>#</a></h1><p>现代语言支持并发模型一般会在操作系统线程和应用程序之间增加一层,在这层中使用预先分配的线程池和调度器来实现应用程序的并发能力.如在Go语言中称为协程(Coroutine).
+Go语言的并发模型如下:
+<img loading=lazy src=/images/2025-01-02-parallel-concurrent/go-concurrency-model.png></p><ul><li>G—Goroutine</li><li>M—OS thread (stands for machine)</li><li>P—CPU core (stands for processor)</li></ul><p>默认情况每一个CPU核心(P)里面会有一个线程(M),每个线程会不断切换去运行协程(G).</p><p>Swift语言的并发模型,同样也是在操作系统线程和应用程序之间增加了一层.稍有不同的是他通过把代码划分为逻辑单元称为局部任务(Partial Tasks),通过调度器把局部任务分配到线程池不同的线程运行来实现并发能力.
+<img loading=lazy src=/images/2025-01-02-parallel-concurrent/partialtask.png></p><h1 id=现代语言中支持并发的语言特性>现代语言中支持并发的语言特性<a hidden class=anchor aria-hidden=true href=#现代语言中支持并发的语言特性>#</a></h1><p>那么在这些语言中怎么支持并发的呢？这里我们举例三个场景:</p><h3 id=场景1-增加parallel就是我们前面说的第一个方案增加另一个人和b一起负责调制奶茶配料和用设备制作奶茶>场景1: 增加Parallel,就是我们前面说的第一个方案增加另一个人和B一起负责调制奶茶配料和用设备制作奶茶<a hidden class=anchor aria-hidden=true href=#场景1-增加parallel就是我们前面说的第一个方案增加另一个人和b一起负责调制奶茶配料和用设备制作奶茶>#</a></h3><p>Go实现</p><pre tabindex=0><code>func taskA() int {
+    time.Sleep(2 * time.Second)
+    return 5
+}
+
+func parallelExample() int {
+    c := make(chan int)
+
+    go func() {
+        c &lt;- taskA()
+    }()
+    go func() {
+        c &lt;- taskA()
+    }()
+
+    r1 := &lt;-c
+    r2 := &lt;-c
+
+    return r1 + r2
+}
+</code></pre><p>Swift实现</p><pre tabindex=0><code>func taskA() async -&gt; Int {
+    try! await Task.sleep(for: .seconds(2))
+    return 5
+}
+
+func parallelExample() async -&gt; Int {
+    async let resultA = taskA()
+    async let resultB = taskA()
+    
+    let r1 = await resultA
+    let r2 = await resultB
+    return r1 + r2
+}
+</code></pre><h3 id=场景2-增加concurrent另一个方案把原步骤拆分为两个步骤由两个人去操作>场景2: 增加Concurrent,另一个方案把原步骤拆分为两个步骤由两个人去操作<a hidden class=anchor aria-hidden=true href=#场景2-增加concurrent另一个方案把原步骤拆分为两个步骤由两个人去操作>#</a></h3><p>Go实现</p><pre tabindex=0><code>func taskA1() int {
+    time.Sleep(2 * time.Second)
+    return 5
+}
+func taskB1(a1 int) int {
+    time.Sleep(1 * time.Second)
+    return a1 + 2
+}
+
+func concurrentExample() int {
+    c := make(chan int, 3)
+
+    rc := make(chan int)
+
+    go func() {
+        for range 5 {
+            c &lt;- taskA1()
+        }
+    }()
+
+    go func() {
+        for range 5 {
+            r1 := &lt;-c
+            rc &lt;- taskB1(r1)
+        }
+    }()
+
+    result := 0
+    for range 5 {
+        result += &lt;-rc
+    }
+    return result
+}
+</code></pre><p>Swift实现</p><pre tabindex=0><code>func taskA1() async -&gt; Int {
+    try! await Task.sleep(for: .seconds(2))
+    return 5
+}
+func taskB1(a1: Int) async -&gt; Int {
+    try! await Task.sleep(for: .seconds(2))
+    return a1 + 2
+}
+
+func concurrentExample() async -&gt; Int {
+    var result = 0
+    let taskCount = 5
+    
+    let taskAStream = AsyncStream&lt;Int&gt; { continuation in
+        Task {
+            for _ in 0..&lt;taskCount {
+                let taskAResult = await taskA1()
+                continuation.yield(taskAResult)  // Yield the result as soon as it&#39;s ready
+            }
+            continuation.finish()  // Finish the stream when all taskA1 are done
+        }
+    }
+    
+    for await a1 in taskAStream {
+        let b1Result = await taskB1(a1: a1)
+        result += b1Result
+    }
+    
+    return result
+}
+</code></pre><h3 id=场景3先parallel再concurrent即增加人去调制奶茶同时也增加步骤让不同的人分别负责调制奶茶和用设备制作奶茶>场景3:先Parallel再Concurrent,即增加人去调制奶茶,同时也增加步骤让不同的人分别负责调制奶茶和用设备制作奶茶<a hidden class=anchor aria-hidden=true href=#场景3先parallel再concurrent即增加人去调制奶茶同时也增加步骤让不同的人分别负责调制奶茶和用设备制作奶茶>#</a></h3><p>Go实现</p><pre tabindex=0><code>func taskA2() int {
+    time.Sleep(2 * time.Second)
+    return 5
+}
+func taskB2(a1 int) int {
+    time.Sleep(1 * time.Second)
+    return a1 + 2
+}
+
+func parallelWithConcurrentExample() int {
+    c := make(chan int, 3)
+
+    rc := make(chan int)
+
+    go func() {
+        for range 5 {
+            c &lt;- taskA1()
+        }
+    }()
+
+    go func() {
+        for range 5 {
+            c &lt;- taskA1()
+        }
+    }()
+
+    go func() {
+        for range 10 {
+            r1 := &lt;-c
+            rc &lt;- taskB1(r1)
+        }
+    }()
+
+    result := 0
+    for range 10 {
+        result += &lt;-rc
+    }
+    return result
+}
+</code></pre><p>Swift实现</p><pre tabindex=0><code>func taskA2() async -&gt; Int {
+    try! await Task.sleep(for: .seconds(2))
+    return 5
+}
+func taskB2(a1: Int) async -&gt; Int {
+    try! await Task.sleep(for: .seconds(2))
+    return a1 + 2
+}
+
+func parallelWithConcurrentExample() async -&gt; Int {
+    var result = 0
+    let taskCount = 5
+    let streamCount = 2
+    
+    let taskAStream = AsyncStream&lt;Int&gt; { continuation in
+        var c = 0
+        Task {
+            for _ in 0..&lt;taskCount {
+                let taskA2Result = await taskA2()
+                continuation.yield(taskA2Result)  // Yield the result as soon as it&#39;s ready
+            }
+            c += 1
+            if c == 2 {
+                continuation.finish()
+            }// Finish the stream when all taskA1 are done
+        }
+        
+        Task {
+            for _ in 0..&lt;taskCount {
+                let taskA2Result = await taskA2()
+                continuation.yield(taskA2Result)  // Yield the result as soon as it&#39;s ready
+            }
+            c += 1
+            if c == 2 {
+                continuation.finish()  // Finish the stream when all taskA1 are done
+            }
+        }
+    }
+    
+    for await a1 in taskAStream {
+        let b2Result = await taskB2(a1: a1)
+        result += b2Result
+    }
+    
+    return result
+}
+</code></pre><p>这样我们就完成了现代语言怎样支持Parallel和Concurrent的介绍.</p></div><footer class=post-footer><ul class=post-tags></ul><nav class=paginav><a class=prev href=https://kmnemon.github.io/posts/2025-02-09-start-agile/><span class=title>«</span><br><span>敏捷日记 - 1.回到起点</span>
+</a><a class=next href=https://kmnemon.github.io/posts/2024-11-29-state-binding-bindable/><span class=title>»</span><br><span>SwiftUI @State、@Observable、@Binding、@Bindable实现原理</span></a></nav></footer></article></main><footer class=footer><span>&copy; 2025 <a href=https://kmnemon.github.io/>科的随思录</a></span> ·
+<span>Powered by
+<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
+        <a href=https://github.com/adityatelange/hugo-PaperMod/ rel=noopener target=_blank>PaperMod</a></span></footer><a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg viewBox="0 0 12 6" fill="currentcolor"><path d="M12 6H0l6-6z"/></svg>
+</a><script>let menu=document.getElementById("menu");menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(e){e.preventDefault();var t=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView({behavior:"smooth"}),t==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${t}`)})})</script><script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script><script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove("dark"),localStorage.setItem("pref-theme","light")):(document.body.classList.add("dark"),localStorage.setItem("pref-theme","dark"))})</script><script>document.querySelectorAll("pre > code").forEach(e=>{const n=e.parentNode.parentNode,t=document.createElement("button");t.classList.add("copy-code"),t.innerHTML="copy";function s(){t.innerHTML="copied!",setTimeout(()=>{t.innerHTML="copy"},2e3)}t.addEventListener("click",t=>{if("clipboard"in navigator){navigator.clipboard.writeText(e.textContent),s();return}const n=document.createRange();n.selectNodeContents(e);const o=window.getSelection();o.removeAllRanges(),o.addRange(n);try{document.execCommand("copy"),s()}catch{}o.removeRange(n)}),n.classList.contains("highlight")?n.appendChild(t):n.parentNode.firstChild==n||(e.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?e.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(t):e.parentNode.appendChild(t))})</script></body></html>
