@@ -24,3 +24,4 @@ Disadvantages:
 Recently, I read a book called What I Talk About When I Talk About Running. The author writes about his experiences with writing and running. One part deeply resonated with me: When he decided to become a professional writer, he chose to sell his business. His friends urged him to keep it and hire a manager instead, but he replied, "When I want to do something, I give it my all and leave no regrets." So he sold his business and became a full-time writer.
 
 I don’t have his talent, but I believe life is fair, if you keep working hard at something, eventually, you’ll see results.
+
