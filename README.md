@@ -24,7 +24,7 @@ Then open <http://localhost:8000>.
 
 ## Customizing
 
-Replace the portrait and app icon placeholders while keeping the same filenames, or update their paths in `index.html`. Product, article, Substack, X, and About URLs are placeholders and should be replaced with their final destinations.
+Replace the portrait and app icon placeholders while keeping the same filenames, or update their paths in `index.html`. Product, individual article, and About URLs are placeholders and should be replaced with their final destinations. The X profile and Substack publication links use their final URLs.
 
 The presentation is intentionally light-only; no theme preference or JavaScript is required.
 
