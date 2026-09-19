@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A playful activity timer designed for young children.">
+  <meta name="color-scheme" content="light">
+  <title>Tocky — A Playful Activity Timer</title>
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    .marketing-container { width: min(960px, calc(100% - 48px)); margin-inline: auto; }
+    .marketing-nav { min-height: 68px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
+    .brand { font-size: 20px; font-weight: 750; letter-spacing: -.02em; }
+    .marketing-nav nav { display: flex; gap: 24px; color: var(--text-secondary); font-size: 14px; }
+    .hero { padding: 96px 0 88px; text-align: center; }
+    .hero .eyebrow { margin-bottom: 18px; }
+    .hero h1 { max-width: 760px; margin: 0 auto 24px; font-size: clamp(44px, 8vw, 76px); line-height: 1; letter-spacing: -.055em; }
+    .hero p { max-width: 680px; margin: 0 auto; color: var(--text-secondary); font-size: clamp(18px, 2.5vw, 21px); line-height: 1.55; }
+    .marketing-section { padding: 64px 0; border-top: 1px solid var(--border); }
+    .section-intro { max-width: 700px; margin-bottom: 36px; }
+    .marketing-section h2 { margin: 0 0 14px; font-size: clamp(28px, 4vw, 38px); line-height: 1.15; letter-spacing: -.035em; }
+    .marketing-section h3 { margin: 0 0 12px; font-size: 21px; }
+    .marketing-section p, .marketing-section li { color: var(--text-secondary); }
+    .marketing-section p { margin: 0 0 12px; }
+    .feature-grid, .screenshot-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+    .feature-card, .screenshot-card { padding: 28px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); }
+    .feature-card p { margin: 0; }
+    .use-list { display: flex; flex-wrap: wrap; gap: 10px; margin: 0; padding: 0; list-style: none; }
+    .use-list li { padding: 8px 14px; border: 1px solid var(--border); border-radius: 99px; background: var(--surface); }
+    .screenshot-card { min-height: 220px; display: grid; place-items: center; color: var(--text-secondary); text-align: center; background: #f5f4f0; }
+    .cta-section { text-align: center; }
+    .cta-section p { font-size: 18px; }
+    .placeholder-note { font-size: 14px !important; font-style: italic; }
+    .marketing-section a, .marketing-footer a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+    .marketing-footer { display: flex; justify-content: space-between; gap: 24px; padding: 28px 0 40px; border-top: 1px solid var(--border); color: var(--text-secondary); font-size: 13px; }
+    .marketing-footer p { margin: 0; }
+    @media (max-width: 680px) {
+      .marketing-container { width: min(100% - 32px, 960px); }
+      .marketing-nav { min-height: 60px; }
+      .hero { padding: 64px 0; }
+      .marketing-section { padding: 48px 0; }
+      .feature-grid, .screenshot-grid { grid-template-columns: 1fr; }
+      .screenshot-card { min-height: 180px; }
+      .marketing-footer { flex-direction: column; gap: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <header class="marketing-nav marketing-container">
+    <a class="brand" href="/tocky/marketing">Tocky</a>
+    <nav aria-label="Tocky navigation">
+      <a href="#features">Features</a>
+      <a href="/tocky/support/">Support</a>
+    </nav>
+  </header>
+  <main id="main-content" class="marketing-container">
+    <section class="hero" aria-labelledby="hero-title">
+      <p class="eyebrow">A playful activity timer</p>
+      <h1 id="hero-title">Make Time Easy to Understand</h1>
+      <p>Tocky helps young children see how much time remains, making everyday activities and transitions feel simpler.</p>
+    </section>
+    <section class="marketing-section" aria-labelledby="designed-title">
+      <div class="section-intro">
+        <h2 id="designed-title">Designed for Young Children</h2>
+        <p>Time can be difficult for children to understand. Tocky turns an abstract countdown into a clear, friendly experience they can follow.</p>
+        <p>Use it for routines, play, learning, quiet time, and everyday transitions.</p>
+      </div>
+    </section>
+    <section class="marketing-section" id="features" aria-labelledby="features-title">
+      <div class="section-intro"><h2 id="features-title">Features</h2></div>
+      <div class="feature-grid">
+        <article class="feature-card"><h3>Easy to Use</h3><p>A simple timer experience made for families and young children.</p></article>
+        <article class="feature-card"><h3>Visual Countdown</h3><p>Help children understand the time remaining at a glance.</p></article>
+        <article class="feature-card"><h3>Works Offline</h3><p>Use Tocky anywhere without an Internet connection.</p></article>
+      </div>
+    </section>
+    <section class="marketing-section" aria-labelledby="perfect-title">
+      <div class="section-intro"><h2 id="perfect-title">Perfect For</h2></div>
+      <ul class="use-list">
+        <li>Morning routines</li>
+        <li>Playtime</li>
+        <li>Homework</li>
+        <li>Screen time</li>
+        <li>Bedtime</li>
+        <li>Transitions</li>
+      </ul>
+    </section>
+    <section class="marketing-section" aria-labelledby="screenshots-title">
+      <div class="section-intro">
+        <h2 id="screenshots-title">Screenshots</h2>
+        <p class="placeholder-note">App Store screenshots will be added here.</p>
+      </div>
+      <div class="screenshot-grid">
+        <div class="screenshot-card">Set a Timer</div>
+        <div class="screenshot-card">Visual Countdown</div>
+        <div class="screenshot-card">Time’s Up</div>
+      </div>
+    </section>
+    <section class="marketing-section cta-section" aria-labelledby="download-title">
+      <h2 id="download-title">Download</h2>
+      <p>Available on the App Store.</p>
+      <p class="placeholder-note">App Store link coming after release.</p>
+    </section>
+    <section class="marketing-section" aria-labelledby="support-title">
+      <div class="section-intro">
+        <h2 id="support-title">Support</h2>
+        <p>Need help? Visit the <a href="/tocky/support/">Support</a> page or email <a href="mailto:help.kmnemon@outlook.com">help.kmnemon@outlook.com</a>.</p>
+      </div>
+    </section>
+    <section class="marketing-section" aria-labelledby="privacy-title">
+      <div class="section-intro">
+        <h2 id="privacy-title">Privacy</h2>
+        <p>Tocky does not collect personal information.</p>
+        <p>Read our <a href="/tocky/privacy/">Privacy Policy</a>.</p>
+      </div>
+    </section>
+  </main>
+  <footer class="marketing-footer marketing-container">
+    <p>© 2026 Kole Liu</p>
+    <p><a href="/tocky/support/">Support</a> · <a href="/tocky/privacy/">Privacy</a></p>
+  </footer>
+</body>
+</html>
