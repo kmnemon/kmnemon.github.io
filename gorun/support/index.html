@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Support for the GoRun music player.">
+  <meta name="color-scheme" content="light">
+  <title>GoRun Support</title>
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    .support-header,
+    .support-content,
+    .support-footer {
+      width: min(720px, calc(100% - 48px));
+      margin-inline: auto;
+    }
+
+    .support-header {
+      padding: 64px 0 32px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .support-header h1 {
+      margin: 0 0 12px;
+      font-size: clamp(36px, 7vw, 52px);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+    }
+
+    .support-header p,
+    .support-content p,
+    .support-content li {
+      color: var(--text-secondary);
+    }
+
+    .support-header p {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .support-content {
+      padding: 16px 0 48px;
+    }
+
+    .support-content section {
+      padding: 32px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .support-content h2 {
+      margin: 0 0 18px;
+      font-size: 24px;
+      letter-spacing: -0.02em;
+    }
+
+    .support-content h3 {
+      margin: 28px 0 8px;
+      font-size: 17px;
+    }
+
+    .support-content h3:first-of-type {
+      margin-top: 0;
+    }
+
+    .support-content p {
+      margin: 0 0 12px;
+    }
+
+    .support-content ol,
+    .support-content ul {
+      margin: 8px 0 0;
+      padding-left: 24px;
+    }
+
+    .support-content li + li {
+      margin-top: 6px;
+    }
+
+    .support-content a {
+      color: var(--accent);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .support-footer {
+      padding: 0 0 40px;
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+
+    @media (max-width: 680px) {
+      .support-header,
+      .support-content,
+      .support-footer {
+        width: min(100% - 32px, 720px);
+      }
+
+      .support-header {
+        padding-top: 44px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <header class="support-header">
+    <h1>GoRun Support</h1>
+    <p>Thank you for using <strong>GoRun</strong>.</p>
+  </header>
+
+  <main id="main-content" class="support-content">
+    <section aria-label="About GoRun">
+      <p>GoRun is an offline music player for Apple Watch and iPhone, designed to let you enjoy your local music anywhere.</p>
+    </section>
+
+    <section aria-labelledby="contact-title">
+      <h2 id="contact-title">Contact</h2>
+      <p>If you need assistance or would like to report a bug, please contact:</p>
+      <p><strong>Email:</strong> <a href="mailto:help.kmnemon@outlook.com">help.kmnemon@outlook.com</a></p>
+      <p>I typically respond within 2–3 business days.</p>
+    </section>
+
+    <section aria-labelledby="faq-title">
+      <h2 id="faq-title">Frequently Asked Questions</h2>
+
+      <h3>How do I transfer music to Apple Watch?</h3>
+      <ol>
+        <li>Open GoRun on your iPhone.</li>
+        <li>Select the songs you want to transfer.</li>
+        <li>Keep your iPhone and Apple Watch nearby until the transfer completes.</li>
+      </ol>
+
+      <h3>Why can’t I find my music on Apple Watch?</h3>
+      <ul>
+        <li>Make sure Bluetooth and Wi-Fi are enabled.</li>
+        <li>Ensure the transfer has completed successfully.</li>
+        <li>Restart GoRun on Apple Watch if necessary.</li>
+      </ul>
+
+      <h3>Does GoRun require an Internet connection?</h3>
+      <p>No. Once your music has been imported, playback works offline.</p>
+
+      <h3>Does GoRun collect my personal data?</h3>
+      <p>No. GoRun does not collect or transmit your personal data.</p>
+    </section>
+
+    <section aria-labelledby="devices-title">
+      <h2 id="devices-title">Supported Devices</h2>
+      <ul>
+        <li>iPhone running iOS 18 or later</li>
+        <li>Apple Watch running watchOS 11 or later</li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="version-title">
+      <h2 id="version-title">Version</h2>
+      <p>Current version: 1.0.0</p>
+    </section>
+  </main>
+
+  <footer class="support-footer">
+    <p>© 2026 Kole Liu</p>
+  </footer>
+</body>
+</html>
