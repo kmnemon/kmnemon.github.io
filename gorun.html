@@ -1,0 +1,726 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="GoRun Player is an offline music player for iPhone and Apple Watch. Import your music, browse by tempo, and keep cadence while you move.">
+  <meta name="color-scheme" content="light dark">
+  <title>GoRun Player — Offline Music</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    :root {
+      color-scheme: light dark;
+      --on-accent: #ffffff;
+      --shot-bg: #0e1424;
+    }
+
+    .gp-wrap {
+      width: min(1080px, calc(100% - 48px));
+      margin-inline: auto;
+    }
+
+    .gp-header {
+      min-height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .gp-brand {
+      font-size: 16px;
+      font-weight: 730;
+      letter-spacing: -0.03em;
+    }
+
+    .gp-nav {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      font-size: 14px;
+      font-weight: 520;
+    }
+
+    .gp-hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(240px, 0.85fr);
+      gap: 48px;
+      align-items: center;
+      padding: 52px 0 20px;
+    }
+
+    .gp-icon {
+      width: 84px;
+      height: 84px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      object-fit: cover;
+    }
+
+    .gp-hero h1 {
+      margin: 14px 0 0;
+      font-size: clamp(42px, 6vw, 62px);
+      line-height: 0.96;
+      letter-spacing: -0.05em;
+      font-weight: 730;
+    }
+
+    .gp-subtitle {
+      margin: 12px 0 0;
+      color: var(--text);
+      font-size: clamp(18px, 2vw, 22px);
+      font-weight: 600;
+      letter-spacing: -0.03em;
+    }
+
+    .gp-lede {
+      max-width: 54ch;
+      margin: 16px 0 0;
+      color: var(--text-secondary);
+      font-size: 17px;
+      line-height: 1.55;
+    }
+
+    .gp-lede + .gp-lede { margin-top: 10px; }
+
+    .gp-store {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 24px;
+      padding: 13px 18px;
+      border: 1px solid var(--text);
+      border-radius: 8px;
+      background: var(--text);
+      color: var(--background);
+      font-size: 16px;
+      font-weight: 650;
+      letter-spacing: -0.01em;
+    }
+
+    .gp-store span {
+      display: inline-block;
+      transition: transform 150ms ease;
+    }
+
+    .gp-store:hover {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: var(--on-accent);
+    }
+
+    .gp-store:hover span { transform: translateX(3px); }
+
+    .gp-price {
+      margin: 10px 0 0;
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    .gp-facts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 20px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .gp-facts li {
+      padding: 3px 9px 4px;
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      background: var(--surface);
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 650;
+      letter-spacing: 0.02em;
+    }
+
+    .gp-hero-visual {
+      display: flex;
+      justify-content: center;
+    }
+
+    .gp-hero-visual img {
+      width: min(100%, 280px);
+      height: auto;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--shot-bg);
+    }
+
+    .gp-section {
+      padding: 42px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .gp-section h2 {
+      margin: 0 0 8px;
+      font-size: clamp(28px, 4vw, 36px);
+      line-height: 1.1;
+      letter-spacing: -0.04em;
+      font-weight: 730;
+    }
+
+    .gp-section h3 {
+      margin: 0 0 12px;
+      font-size: 20px;
+      letter-spacing: -0.03em;
+    }
+
+    .gp-intro {
+      max-width: 62ch;
+      margin: 0 0 22px;
+      color: var(--text-secondary);
+    }
+
+    .gp-section-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .gp-section-head h2,
+    .gp-section-head h3 { margin: 0; }
+
+    .gp-section-head p {
+      margin: 6px 0 0;
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    .gp-controls { display: flex; gap: 8px; }
+
+    .gp-controls button {
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--surface);
+      color: var(--text);
+      font: inherit;
+      font-size: 18px;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .gp-controls button:hover {
+      border-color: var(--border-strong);
+      color: var(--accent);
+    }
+
+    .gp-controls button:disabled {
+      color: var(--border-strong);
+      cursor: default;
+    }
+
+    .gp-track {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: 2px;
+      padding-bottom: 8px;
+      overscroll-behavior-x: contain;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border-strong) transparent;
+    }
+
+    .gp-shot {
+      flex: 0 0 min(230px, 74vw);
+      margin: 0;
+      scroll-snap-align: start;
+    }
+
+    .gp-shot a { display: block; }
+
+    .gp-shot img {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 899 / 1946;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--shot-bg);
+      object-fit: cover;
+    }
+
+    .gp-watch { flex-basis: min(190px, 62vw); }
+
+    .gp-watch img { aspect-ratio: 416 / 496; }
+
+    .gp-shot figcaption {
+      margin-top: 8px;
+      color: var(--text-secondary);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .gp-subhead {
+      margin: 28px 0 0;
+    }
+
+    .gp-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .gp-card {
+      padding: 22px 22px 18px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface);
+    }
+
+    .gp-card p,
+    .gp-card li { color: var(--text-secondary); }
+
+    .gp-card p { margin: 0; }
+
+    .gp-card ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .gp-card li + li { margin-top: 8px; }
+
+    .gp-split {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .gp-activities {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .gp-activities li {
+      padding: 7px 12px;
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      background: var(--surface);
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    .gp-version {
+      margin: 0 0 10px;
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .gp-card h3 + p,
+    .gp-version + p { margin-top: 0; }
+
+    .gp-card p + p { margin-top: 10px; }
+
+    .gp-specs {
+      display: grid;
+      grid-template-columns: 9.5rem minmax(0, 1fr);
+      gap: 12px 18px;
+      margin: 0;
+    }
+
+    .gp-specs dt {
+      font-weight: 650;
+    }
+
+    .gp-specs dd {
+      margin: 0;
+      color: var(--text-secondary);
+    }
+
+    .gp-specs a {
+      color: var(--accent);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .gp-download {
+      text-align: center;
+    }
+
+    .gp-download .gp-intro {
+      margin-inline: auto;
+    }
+
+    .gp-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 22px 0 32px;
+      border-top: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+
+    .gp-footer p { margin: 0; }
+
+    .gp-footer nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 20px;
+    }
+
+    @media (max-width: 800px) {
+      .gp-hero {
+        grid-template-columns: 1fr;
+        gap: 28px;
+        padding-top: 36px;
+      }
+
+      .gp-hero-visual img { width: min(100%, 220px); }
+
+      .gp-grid,
+      .gp-split { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 680px) {
+      .gp-wrap { width: min(100% - 32px, 1080px); }
+
+      .gp-header {
+        min-height: auto;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 16px 0;
+      }
+
+      .gp-nav { gap: 16px; }
+
+      .gp-section { padding: 34px 0; }
+
+      .gp-store { width: 100%; }
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --background: #111113;
+        --surface: #1b1b1f;
+        --text: #f4f3ef;
+        --text-secondary: #b4b4bc;
+        --border: #2e2e34;
+        --border-strong: #52525c;
+        --accent: #a5b4fc;
+        --on-accent: #16161a;
+        --shot-bg: #070b16;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <header class="gp-header gp-wrap">
+    <a class="gp-brand" href="index.html">Kole Liu</a>
+    <nav class="gp-nav" aria-label="On this page">
+      <a href="#features">Features</a>
+      <a href="#screenshots">Screenshots</a>
+      <a href="#download">Download</a>
+    </nav>
+  </header>
+
+  <main id="main-content">
+    <section class="gp-hero gp-wrap" aria-labelledby="hero-title">
+      <div>
+        <img class="gp-icon" src="images/gorun/icon.png" alt="GoRun Player app icon" width="512" height="512">
+        <p class="eyebrow">Offline music</p>
+        <span class="accent-line" aria-hidden="true"></span>
+        <h1 id="hero-title">GoRun Player</h1>
+        <p class="gp-subtitle">Tempo, Cadence &amp; Watch Player</p>
+        <p class="gp-lede">Take your music anywhere. Play offline, find music by tempo, and keep your rhythm with cadence on iPhone and Apple Watch.</p>
+        <p class="gp-lede">A lightweight offline music player: import your own music, organize your library and playlists, explore songs by tempo, and use cadence beats while running or working out. Transfer music to Apple Watch and listen without your iPhone.</p>
+        <a class="gp-store" href="https://apps.apple.com/us/app/gorun-player-offline-music/id6795789553" target="_blank" rel="noreferrer">
+          Download on the App Store
+          <span aria-hidden="true">→</span>
+        </a>
+        <p class="gp-price">Free, with an in-app purchase. GoRun Pro is $2.99.</p>
+        <ul class="gp-facts" aria-label="At a glance">
+          <li>iPhone</li>
+          <li>Apple Watch</li>
+          <li>iOS 26</li>
+          <li>watchOS 26</li>
+          <li>Music</li>
+          <li>4+</li>
+          <li>15 MB</li>
+        </ul>
+      </div>
+      <div class="gp-hero-visual">
+        <img src="images/gorun/iphone-5.jpg" width="899" height="1946" alt="App Store screenshot titled Play Everywhere, Stay Offline. The iPhone shows an offline music library and the Apple Watch shows Now Playing.">
+      </div>
+    </section>
+
+    <section class="gp-section" id="screenshots" aria-labelledby="screenshots-title">
+      <div class="gp-wrap">
+        <div class="gp-scroller" data-scroller>
+          <div class="gp-section-head">
+            <div>
+              <h2 id="screenshots-title">Screenshots</h2>
+              <p>iPhone and Apple Watch, from the App Store listing.</p>
+            </div>
+            <div class="gp-controls">
+              <button type="button" data-prev aria-label="Previous screenshots">←</button>
+              <button type="button" data-next aria-label="Next screenshots">→</button>
+            </div>
+          </div>
+          <div class="gp-track" data-track tabindex="0" aria-label="iPhone screenshots">
+            <figure class="gp-shot">
+              <a href="images/gorun/iphone-1.jpg">
+                <img src="images/gorun/iphone-1.jpg" width="899" height="1946" alt="Transfer wirelessly. iPhone song list transferring to Apple Watch, with Now Playing on the watch." loading="lazy">
+              </a>
+              <figcaption>Wireless transfer to Apple Watch</figcaption>
+            </figure>
+            <figure class="gp-shot">
+              <a href="images/gorun/iphone-2.jpg">
+                <img src="images/gorun/iphone-2.jpg" width="899" height="1946" alt="Music by tempo. iPhone tempo categories from Relaxed to Fast, and the same lists on Apple Watch." loading="lazy">
+              </a>
+              <figcaption>Music grouped by tempo</figcaption>
+            </figure>
+            <figure class="gp-shot">
+              <a href="images/gorun/iphone-3.jpg">
+                <img src="images/gorun/iphone-3.jpg" width="899" height="1946" alt="Find your rhythm. Cadence set to 165 steps per minute on iPhone and Apple Watch, with a mix control for music volume." loading="lazy">
+              </a>
+              <figcaption>Cadence beats, alone or mixed with music</figcaption>
+            </figure>
+            <figure class="gp-shot">
+              <a href="images/gorun/iphone-4.jpg">
+                <img src="images/gorun/iphone-4.jpg" width="899" height="1946" alt="AirPods control. Apple Watch Now Playing beside an AirPods gesture." loading="lazy">
+              </a>
+              <figcaption>Playback from AirPods and Apple Watch</figcaption>
+            </figure>
+            <figure class="gp-shot">
+              <a href="images/gorun/iphone-5.jpg">
+                <img src="images/gorun/iphone-5.jpg" width="899" height="1946" alt="Play everywhere, stay offline. iPhone music library and Apple Watch Now Playing." loading="lazy">
+              </a>
+              <figcaption>Offline library on iPhone and Apple Watch</figcaption>
+            </figure>
+            <figure class="gp-shot">
+              <a href="images/gorun/iphone-6.jpg">
+                <img src="images/gorun/iphone-6.jpg" width="899" height="1946" alt="Playlists on iPhone and the same playlists on Apple Watch." loading="lazy">
+              </a>
+              <figcaption>Playlists on iPhone and Apple Watch</figcaption>
+            </figure>
+          </div>
+        </div>
+
+        <div class="gp-scroller gp-subhead" data-scroller>
+          <div class="gp-section-head">
+            <div>
+              <h3>On Apple Watch</h3>
+              <p>Playback, cadence, and tempo without your iPhone.</p>
+            </div>
+            <div class="gp-controls">
+              <button type="button" data-prev aria-label="Previous Apple Watch screenshots">←</button>
+              <button type="button" data-next aria-label="Next Apple Watch screenshots">→</button>
+            </div>
+          </div>
+          <div class="gp-track" data-track tabindex="0" aria-label="Apple Watch screenshots">
+            <figure class="gp-shot gp-watch">
+              <a href="images/gorun/watch-1.jpg">
+                <img src="images/gorun/watch-1.jpg" width="416" height="496" alt="Apple Watch Now Playing screen with previous, pause, and next controls." loading="lazy">
+              </a>
+              <figcaption>Now Playing</figcaption>
+            </figure>
+            <figure class="gp-shot gp-watch">
+              <a href="images/gorun/watch-2.jpg">
+                <img src="images/gorun/watch-2.jpg" width="416" height="496" alt="Apple Watch cadence screen set to 165 steps per minute, with start and adjust controls." loading="lazy">
+              </a>
+              <figcaption>Cadence</figcaption>
+            </figure>
+            <figure class="gp-shot gp-watch">
+              <a href="images/gorun/watch-3.jpg">
+                <img src="images/gorun/watch-3.jpg" width="416" height="496" alt="Apple Watch tempo list with Relaxed and Moderate groups." loading="lazy">
+              </a>
+              <figcaption>Tempo</figcaption>
+            </figure>
+            <figure class="gp-shot gp-watch">
+              <a href="images/gorun/watch-4.jpg">
+                <img src="images/gorun/watch-4.jpg" width="416" height="496" alt="Apple Watch cadence list with a running cadence of 150 and a walking cadence of 120." loading="lazy">
+              </a>
+              <figcaption>Running and walking cadences</figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="gp-section" id="features" aria-labelledby="features-title">
+      <div class="gp-wrap">
+        <h2 id="features-title">Features</h2>
+        <p class="gp-intro">Import the music you already own, then play it offline on iPhone or leave the phone behind and listen from Apple Watch.</p>
+        <div class="gp-grid">
+          <article class="gp-card">
+            <h3>iPhone</h3>
+            <ul>
+              <li>Play local music offline</li>
+              <li>Analyze tempo (BPM)</li>
+              <li>Play music by tempo, from relaxed to high-energy</li>
+              <li>Cadence beats for running and workouts</li>
+              <li>Mix cadence beats with your music</li>
+              <li>Browse songs, artists, albums, and playlists</li>
+              <li>Create and manage playlists</li>
+              <li>Transfer music to Apple Watch wirelessly</li>
+              <li>Import from the Files app and iCloud</li>
+              <li>Import over Wi-Fi</li>
+            </ul>
+          </article>
+          <article class="gp-card">
+            <h3>Apple Watch</h3>
+            <ul>
+              <li>Play offline without your iPhone</li>
+              <li>Browse songs, artists, albums, playlists, and tempo</li>
+              <li>Play by tempo</li>
+              <li>Cadence beats</li>
+              <li>Mix cadence with music</li>
+              <li>Control playback with AirPods</li>
+              <li>Repeat and shuffle</li>
+              <li>Volume with the Digital Crown</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="gp-section" aria-label="Tempo and cadence">
+      <div class="gp-wrap gp-split">
+        <article class="gp-card">
+          <h2 id="tempo-title">Tempo</h2>
+          <p>GoRun Player analyzes the BPM of your songs and groups them by tempo, so you can match pace, mood, or workout intensity. On both iPhone and Apple Watch, play from relaxed through high-energy.</p>
+        </article>
+        <article class="gp-card" id="cadence" aria-labelledby="cadence-title">
+          <h2 id="cadence-title">Cadence</h2>
+          <p>Set a target cadence for running, walking, or cycling. Play the beat on its own, or mix it with your music, on iPhone and Apple Watch.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="gp-section" aria-labelledby="moving-title">
+      <div class="gp-wrap">
+        <h2 id="moving-title">Made for moving</h2>
+        <p class="gp-intro">Built for the times you want your own music, with or without your phone.</p>
+        <ul class="gp-activities">
+          <li>Running</li>
+          <li>Walking</li>
+          <li>Workouts</li>
+          <li>Cycling</li>
+          <li>Commuting</li>
+          <li>Travel</li>
+          <li>Everyday listening</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="gp-section" id="whats-new" aria-labelledby="whats-new-title">
+      <div class="gp-wrap gp-split">
+        <article class="gp-card">
+          <h2 id="whats-new-title">Latest</h2>
+          <p class="gp-version"><time datetime="2026-09-28">Sep 28, 2026</time> · Version 1.3.0</p>
+          <p>Cadence is here. Set your cadence for running, walking, or cycling, then play the beat on its own or mix it with your music. Available on iPhone and Apple Watch.</p>
+          <p>Earlier updates added Tempo Mode, and Light and Dark modes.</p>
+        </article>
+        <article class="gp-card" aria-labelledby="details-title">
+          <h2 id="details-title">Information</h2>
+          <dl class="gp-specs">
+            <dt>Price</dt>
+            <dd>Free. GoRun Pro in-app purchase, $2.99.</dd>
+            <dt>Platforms</dt>
+            <dd>iPhone and Apple Watch</dd>
+            <dt>Requires</dt>
+            <dd>iOS 26 or later. watchOS 26 or later.</dd>
+            <dt>Category</dt>
+            <dd>Music</dd>
+            <dt>Age</dt>
+            <dd>4+</dd>
+            <dt>Size</dt>
+            <dd>15 MB</dd>
+            <dt>Languages</dt>
+            <dd>English, French, German, Italian, Japanese, Korean, Portuguese, Simplified Chinese, Spanish, and Traditional Chinese.</dd>
+            <dt>Privacy</dt>
+            <dd>Data Not Collected. <a href="gorun/privacy/">Privacy policy</a>.</dd>
+            <dt>Copyright</dt>
+            <dd>© 2026 kole</dd>
+          </dl>
+        </article>
+      </div>
+    </section>
+
+    <section class="gp-section gp-download" id="download" aria-labelledby="download-title">
+      <div class="gp-wrap">
+        <h2 id="download-title">Download</h2>
+        <p class="gp-intro">GoRun Player is free on the App Store for iPhone and Apple Watch. GoRun Pro is a $2.99 in-app purchase.</p>
+        <a class="gp-store" href="https://apps.apple.com/us/app/gorun-player-offline-music/id6795789553" target="_blank" rel="noreferrer">
+          Download on the App Store
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="gp-footer gp-wrap">
+    <p>© 2026 Kole Liu</p>
+    <nav aria-label="Footer">
+      <a href="index.html">Home</a>
+      <a href="gorun/support/">Support</a>
+      <a href="gorun/privacy/">Privacy</a>
+      <a href="https://apps.apple.com/us/app/gorun-player-offline-music/id6795789553" target="_blank" rel="noreferrer">App Store</a>
+    </nav>
+  </footer>
+
+  <script>
+    (function () {
+      var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      document.querySelectorAll("[data-scroller]").forEach(function (root) {
+        var track = root.querySelector("[data-track]");
+        var prev = root.querySelector("[data-prev]");
+        var next = root.querySelector("[data-next]");
+        if (!track || !prev || !next) return;
+
+        function step() {
+          var card = track.querySelector(".gp-shot");
+          if (!card) return Math.round(track.clientWidth * 0.8);
+          var styles = window.getComputedStyle(track);
+          var gap = parseFloat(styles.columnGap || styles.gap) || 16;
+          return card.getBoundingClientRect().width + gap;
+        }
+
+        var controls = root.querySelector(".gp-controls");
+
+        function update() {
+          var max = track.scrollWidth - track.clientWidth;
+          prev.disabled = track.scrollLeft <= 1;
+          next.disabled = track.scrollLeft >= max - 1;
+          if (controls) controls.hidden = max <= 1;
+        }
+
+        prev.addEventListener("click", function () {
+          track.scrollBy({ left: -step(), behavior: reduce ? "auto" : "smooth" });
+        });
+
+        next.addEventListener("click", function () {
+          track.scrollBy({ left: step(), behavior: reduce ? "auto" : "smooth" });
+        });
+
+        track.addEventListener("scroll", update, { passive: true });
+        window.addEventListener("resize", update);
+        update();
+      });
+    })();
+  </script>
+</body>
+</html>
