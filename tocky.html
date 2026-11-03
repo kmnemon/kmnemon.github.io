@@ -1,0 +1,860 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Tocky is a playful visual timer and alarm for kids. Less stalling, more doing — routines, activities, and focus on iPhone and iPad.">
+  <meta name="color-scheme" content="light">
+  <title>Tocky: Kids Visual Timer — Routines, Activities &amp; Focus</title>
+  <style>
+    :root {
+      color-scheme: light;
+
+      --background: #fdfcf9;
+      --surface: #fff;
+      --text: #18181c;
+      --text-secondary: #62626b;
+      --border: #e4e3df;
+      --border-strong: #bebdc4;
+      --accent: #0f6a40;
+      --accent-soft: #e7f5ee;
+      --warm: #fff6dc;
+      --on-accent: #fff;
+      --shot-bg: #fff8ee;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--background);
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(ellipse 520px 280px at 8% 120px, #fff3c4 0%, transparent 70%),
+        radial-gradient(ellipse 460px 320px at 96% 280px, #e5f6ec 0%, transparent 72%),
+        var(--background);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Helvetica, Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+      transition: color 150ms ease;
+    }
+
+    a:hover { color: var(--accent); }
+
+    .skip-link {
+      position: fixed;
+      z-index: 20;
+      top: 10px;
+      left: 10px;
+      padding: 7px 11px;
+      border: 1px solid var(--accent);
+      border-radius: 4px;
+      background: var(--surface);
+      color: var(--text);
+      transform: translateY(-160%);
+    }
+
+    .skip-link:focus { transform: translateY(0); }
+
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    .tk-wrap {
+      width: min(1080px, calc(100% - 48px));
+      margin-inline: auto;
+    }
+
+    .tk-header {
+      min-height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tk-brand {
+      font-size: 16px;
+      font-weight: 730;
+      letter-spacing: -0.03em;
+    }
+
+    .tk-nav {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      font-size: 14px;
+      font-weight: 520;
+    }
+
+    .tk-hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(240px, 0.85fr);
+      gap: 48px;
+      align-items: center;
+      padding: 52px 0 28px;
+    }
+
+    .tk-icon {
+      width: 88px;
+      height: 88px;
+      border-radius: 22px;
+      object-fit: cover;
+      box-shadow: 0 10px 24px rgb(90 60 10 / 12%);
+    }
+
+    .eyebrow {
+      margin: 16px 0 0;
+      color: var(--accent);
+      font-size: 12px;
+      line-height: 1.2;
+      font-weight: 750;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .accent-line {
+      display: block;
+      width: 35px;
+      height: 3px;
+      margin: 14px 0 12px;
+      border-radius: 99px;
+      background: var(--accent);
+    }
+
+    .tk-hero h1 {
+      margin: 0;
+      font-size: clamp(42px, 6vw, 64px);
+      line-height: 0.96;
+      letter-spacing: -0.05em;
+      font-weight: 730;
+    }
+
+    .tk-subtitle {
+      margin: 12px 0 0;
+      color: var(--text);
+      font-size: clamp(18px, 2vw, 22px);
+      font-weight: 650;
+      letter-spacing: -0.03em;
+    }
+
+    .tk-tagline {
+      margin: 14px 0 0;
+      font-size: clamp(20px, 2.4vw, 26px);
+      font-weight: 730;
+      letter-spacing: -0.04em;
+      line-height: 1.2;
+    }
+
+    .tk-lede {
+      max-width: 58ch;
+      margin: 14px 0 0;
+      color: var(--text-secondary);
+      font-size: 17px;
+      line-height: 1.55;
+    }
+
+    .tk-lede + .tk-lede { margin-top: 10px; }
+
+    .tk-store {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 48px;
+      margin-top: 24px;
+      padding: 12px 20px;
+      border: 1px solid var(--accent);
+      border-radius: 999px;
+      background: var(--accent);
+      color: var(--on-accent);
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .tk-store span {
+      display: inline-block;
+      transition: transform 150ms ease;
+    }
+
+    .tk-store:hover {
+      border-color: #0c5534;
+      background: #0c5534;
+      color: var(--on-accent);
+    }
+
+    .tk-store:hover span { transform: translateX(3px); }
+
+    .tk-price {
+      margin: 12px 0 0;
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    .tk-facts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 18px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .tk-facts li {
+      padding: 4px 10px 5px;
+      border: 1px solid #eadfb8;
+      border-radius: 99px;
+      background: var(--warm);
+      color: #4a4336;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .tk-hero-visual {
+      display: flex;
+      justify-content: center;
+    }
+
+    .tk-hero-visual img {
+      width: min(100%, 280px);
+      height: auto;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      background: var(--shot-bg);
+      box-shadow: 0 18px 40px rgb(80 60 20 / 12%);
+    }
+
+    .tk-section {
+      padding: 42px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .tk-section h2 {
+      margin: 0 0 8px;
+      font-size: clamp(28px, 4vw, 36px);
+      line-height: 1.1;
+      letter-spacing: -0.04em;
+      font-weight: 730;
+    }
+
+    .tk-section h3 {
+      margin: 0 0 8px;
+      font-size: 20px;
+      letter-spacing: -0.03em;
+    }
+
+    .tk-intro {
+      max-width: 64ch;
+      margin: 0 0 22px;
+      color: var(--text-secondary);
+    }
+
+    .tk-section-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .tk-section-head h2,
+    .tk-section-head h3 { margin: 0; }
+
+    .tk-section-head p {
+      margin: 6px 0 0;
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    .tk-controls {
+      display: flex;
+      gap: 8px;
+    }
+    .tk-controls[hidden] { display: none; }
+
+    .tk-controls button {
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--text);
+      font: inherit;
+      font-size: 18px;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .tk-controls button:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .tk-controls button:disabled {
+      color: var(--border-strong);
+      cursor: default;
+    }
+
+    .tk-track {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: 2px;
+      padding: 4px 2px 10px;
+      overscroll-behavior-x: contain;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border-strong) transparent;
+    }
+
+    .tk-shot {
+      flex: 0 0 min(230px, 74vw);
+      margin: 0;
+      scroll-snap-align: start;
+    }
+
+    .tk-specs a,
+    .tk-footer a {
+      color: var(--accent);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .tk-shot a {
+      display: block;
+      color: inherit;
+    }
+
+    .tk-shot a:hover { color: inherit; }
+
+    .tk-shot img {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1284 / 2778;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--shot-bg);
+      object-fit: cover;
+    }
+
+    .tk-ipad { flex-basis: min(460px, 88vw); }
+
+    .tk-ipad img { aspect-ratio: 2731 / 2048; }
+
+    .tk-shot figcaption {
+      margin-top: 8px;
+      color: var(--text-secondary);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .tk-subhead { margin: 32px 0 0; }
+
+    .tk-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .tk-card {
+      padding: 22px 22px 18px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--surface);
+    }
+
+    .tk-card p,
+    .tk-card li { color: var(--text-secondary); }
+
+    .tk-card p { margin: 0; }
+
+    .tk-footer p { margin: 0; }
+
+    .tk-card p + p { margin-top: 10px; }
+
+    .tk-mark {
+      display: inline-grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      margin-bottom: 12px;
+      border-radius: 12px;
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .tk-mark svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .tk-activities {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .tk-activities li {
+      padding: 8px 14px;
+      border: 1px solid #eadfb8;
+      border-radius: 99px;
+      background: var(--warm);
+      color: #3f382c;
+      font-size: 15px;
+      font-weight: 650;
+    }
+
+    .tk-version {
+      margin: 0 0 10px;
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .tk-split {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      align-items: start;
+    }
+
+    .tk-specs {
+      display: grid;
+      grid-template-columns: 9.5rem minmax(0, 1fr);
+      gap: 12px 18px;
+      margin: 0;
+    }
+
+    .tk-specs dt { font-weight: 650; }
+
+    .tk-specs dd {
+      margin: 0;
+      color: var(--text-secondary);
+    }
+
+    .tk-download { text-align: center; }
+
+    .tk-download .tk-intro { margin-inline: auto; }
+
+    .tk-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 22px 0 32px;
+      border-top: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+
+    .tk-footer nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 20px;
+    }
+
+    @media (width <= 800px) {
+      .tk-hero {
+        grid-template-columns: 1fr;
+        gap: 28px;
+        padding-top: 36px;
+      }
+
+      .tk-hero-visual img { width: min(100%, 240px); }
+
+      .tk-grid,
+      .tk-split { grid-template-columns: 1fr; }
+    }
+
+    @media (width <= 680px) {
+      .tk-wrap { width: min(100% - 32px, 1080px); }
+
+      .tk-header {
+        min-height: auto;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 16px 0;
+      }
+
+      .tk-nav {
+        flex-wrap: wrap;
+        gap: 12px 16px;
+      }
+
+      .tk-section { padding: 34px 0; }
+
+      .tk-store { width: 100%; }
+    }
+
+    @media (width <= 520px) {
+      .tk-specs {
+        grid-template-columns: 1fr;
+        gap: 2px 0;
+      }
+      .tk-specs dt { margin-top: 12px; }
+      .tk-specs dt:first-child { margin-top: 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <header class="tk-header tk-wrap">
+    <a class="tk-brand" href="index.html">Kole Liu</a>
+    <nav class="tk-nav" aria-label="On this page">
+      <a href="#features">Features</a>
+      <a href="#screenshots">Screenshots</a>
+      <a href="#download">Download</a>
+    </nav>
+  </header>
+
+  <main id="main-content">
+    <section class="tk-hero tk-wrap" aria-labelledby="hero-title">
+      <div>
+        <img class="tk-icon" src="images/tocky/icon.png" alt="Tocky app icon: a winking yellow character with a green leaf, holding a blue ring" width="1024" height="1024">
+        <p class="eyebrow">Kids visual timer</p>
+        <span class="accent-line" aria-hidden="true"></span>
+        <h1 id="hero-title">Tocky</h1>
+        <p class="tk-subtitle">Routines, Activities &amp; Focus</p>
+        <p class="tk-tagline">Less stalling. More doing.</p>
+        <p class="tk-lede">Make everyday routines easier, happier, and more fun. Tocky is a playful visual timer and alarm that helps kids get started, stay engaged, and finish everyday activities — getting dressed, brushing teeth, cleaning up toys, bedtime — with less stalling and fewer reminders.</p>
+        <p class="tk-lede">Colorful animations, cheerful music, and small rewards help kids understand time, stay motivated, and build independence, one activity at a time.</p>
+        <a class="tk-store" href="https://apps.apple.com/us/app/tocky-kids-visual-timer/id6813092437" target="_blank" rel="noreferrer">
+          Download on the App Store
+          <span aria-hidden="true">→</span>
+        </a>
+        <p class="tk-price">Free, with in-app purchases. Tocky Pro Monthly is $1.99. Tocky Pro Lifetime is $12.99.</p>
+        <ul class="tk-facts" aria-label="At a glance">
+          <li>iPhone</li>
+          <li>iPad</li>
+          <li>iOS 18.0+</li>
+          <li>iPadOS 18.0+</li>
+          <li>Utilities</li>
+          <li>4+</li>
+          <li>43.5 MB</li>
+          <li>Family Sharing</li>
+        </ul>
+      </div>
+      <div class="tk-hero-visual">
+        <img src="images/tocky/iphone-1.jpg" width="1284" height="2778" alt="App Store screenshot. Headline: Let Kids Take the Lead. Make Daily Routines Fun and Easy. An iPhone shows Tocky brushing teeth in a playroom, a star count of 52, activity icons, and an Activity button.">
+      </div>
+    </section>
+
+    <section class="tk-section" id="screenshots" aria-labelledby="screenshots-title">
+      <div class="tk-wrap">
+        <div class="tk-scroller" data-scroller>
+          <div class="tk-section-head">
+            <div>
+              <h2 id="screenshots-title">Screenshots</h2>
+              <p>iPhone, from the App Store listing.</p>
+            </div>
+            <div class="tk-controls">
+              <button type="button" data-prev aria-label="Previous iPhone screenshots">←</button>
+              <button type="button" data-next aria-label="Next iPhone screenshots">→</button>
+            </div>
+          </div>
+          <div class="tk-track" data-track tabindex="0" aria-label="iPhone screenshots">
+            <figure class="tk-shot">
+              <a href="images/tocky/iphone-1.jpg">
+                <img src="images/tocky/iphone-1.jpg" width="1284" height="2778" alt="Let Kids Take the Lead. The iPhone home screen shows Tocky brushing teeth in a sunny playroom, 52 stars, and an Activity button." loading="lazy">
+              </a>
+              <figcaption>Choose an activity and see the day</figcaption>
+            </figure>
+            <figure class="tk-shot">
+              <a href="images/tocky/iphone-2.jpg">
+                <img src="images/tocky/iphone-2.jpg" width="1284" height="2778" alt="Their Time, Their Choice. A five-minute timer is set for Brush Teeth, with a large dial and a Start button." loading="lazy">
+              </a>
+              <figcaption>Set the time, then start</figcaption>
+            </figure>
+            <figure class="tk-shot">
+              <a href="images/tocky/iphone-3.jpg">
+                <img src="images/tocky/iphone-3.jpg" width="1284" height="2778" alt="Less Nagging, More Doing. Tocky brushes teeth beside a 19-second countdown, pause and add-time controls, and music notes." loading="lazy">
+              </a>
+              <figcaption>A colorful countdown with cheerful music</figcaption>
+            </figure>
+            <figure class="tk-shot">
+              <a href="images/tocky/iphone-4.jpg">
+                <img src="images/tocky/iphone-4.jpg" width="1284" height="2778" alt="Little Steps, Big Independence. Tocky celebrates with one star." loading="lazy">
+              </a>
+              <figcaption>A star for a finished activity</figcaption>
+            </figure>
+            <figure class="tk-shot">
+              <a href="images/tocky/iphone-5.jpg">
+                <img src="images/tocky/iphone-5.jpg" width="1284" height="2778" alt="From Morning to Bedtime. Three iPhones show a morning room, an afternoon room, and a nighttime bedroom, with Tocky illustrated in everyday activities." loading="lazy">
+              </a>
+              <figcaption>From morning routines to bedtime</figcaption>
+            </figure>
+            <figure class="tk-shot">
+              <a href="images/tocky/iphone-6.jpg">
+                <img src="images/tocky/iphone-6.jpg" width="1284" height="2778" alt="Time to Get Started. A bedtime alarm is set for 22:00, with days of the week and a Set Alarm button." loading="lazy">
+              </a>
+              <figcaption>A gentle alarm for the next activity</figcaption>
+            </figure>
+            <figure class="tk-shot">
+              <a href="images/tocky/iphone-7.jpg">
+                <img src="images/tocky/iphone-7.jpg" width="1284" height="2778" alt="Every Effort Deserves a Reward. Puzzle adventures named Dinosaur Ride, Beach Fun, Space Adventure, and Desert Oasis, with 52 stars and 101 tickets." loading="lazy">
+              </a>
+              <figcaption>Puzzle adventures earned with tickets</figcaption>
+            </figure>
+          </div>
+        </div>
+
+        <div class="tk-scroller tk-subhead" data-scroller>
+          <div class="tk-section-head">
+            <div>
+              <h3>On iPad</h3>
+              <p>The same timer, on a bigger screen.</p>
+            </div>
+            <div class="tk-controls">
+              <button type="button" data-prev aria-label="Previous iPad screenshots">←</button>
+              <button type="button" data-next aria-label="Next iPad screenshots">→</button>
+            </div>
+          </div>
+          <div class="tk-track" data-track tabindex="0" aria-label="iPad screenshots">
+            <figure class="tk-shot tk-ipad">
+              <a href="images/tocky/ipad-1.jpg">
+                <img src="images/tocky/ipad-1.jpg" width="2731" height="2048" alt="Let Kids Take the Lead on iPad. Tocky sits in a playroom with activity icons and an Activity button." loading="lazy">
+              </a>
+              <figcaption>Activities on a larger screen</figcaption>
+            </figure>
+            <figure class="tk-shot tk-ipad">
+              <a href="images/tocky/ipad-2.jpg">
+                <img src="images/tocky/ipad-2.jpg" width="2731" height="2048" alt="Their Time, Their Choice on iPad. A five-minute Brush Teeth timer with a Start button." loading="lazy">
+              </a>
+              <figcaption>Set a time and start</figcaption>
+            </figure>
+            <figure class="tk-shot tk-ipad">
+              <a href="images/tocky/ipad-3.jpg">
+                <img src="images/tocky/ipad-3.jpg" width="2731" height="2048" alt="Less Nagging, More Doing on iPad. Tocky brushes teeth during a 4 minute 59 second countdown, with music notes around the screen." loading="lazy">
+              </a>
+              <figcaption>Countdown with cheerful music</figcaption>
+            </figure>
+            <figure class="tk-shot tk-ipad">
+              <a href="images/tocky/ipad-4.jpg">
+                <img src="images/tocky/ipad-4.jpg" width="2731" height="2048" alt="Little Steps, Big Independence on iPad. Tocky celebrates with one star and one ticket." loading="lazy">
+              </a>
+              <figcaption>Stars and a ticket for finishing</figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="tk-section" id="features" aria-labelledby="features-title">
+      <div class="tk-wrap">
+        <h2 id="features-title">A timer kids can follow</h2>
+        <p class="tk-intro">Choose an activity, set the time, and start. Tocky keeps the rest of the screen simple: large controls, hand-drawn pictures, and nothing complicated to set up.</p>
+        <div class="tk-grid">
+          <article class="tk-card">
+            <span class="tk-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 8v4.5l3 1.5"/></svg>
+            </span>
+            <h3>Playful visual timers</h3>
+            <p>Colorful animated countdowns play with cheerful background music, so kids can see how much time is left and stay with what they started.</p>
+          </article>
+          <article class="tk-card">
+            <span class="tk-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7h9M14 4l3 3-3 3"/><path d="M16 17H7M10 14l-3 3 3 3"/></svg>
+            </span>
+            <h3>Count up or count down</h3>
+            <p>Count down when an activity has a time limit, or count up to see how long something takes. Either way, time stays easy to see.</p>
+          </article>
+          <article class="tk-card">
+            <span class="tk-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 7 3 7 3 7H3s3 0 3-7"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>
+            </span>
+            <h3>Friendly activity alarms</h3>
+            <p>Gentle reminders say when it is time to start the next activity, so transitions are easier for the whole family.</p>
+          </article>
+          <article class="tk-card">
+            <span class="tk-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2.2 4.6L19 8.2l-3.5 3.4.8 4.9L12 14.2 7.7 16.5l.8-4.9L5 8.2l4.8-.6L12 3z"/></svg>
+            </span>
+            <h3>Earn stars, unlock fun</h3>
+            <p>Finished activities earn stars. Kids collect stars, earn game tickets, and exchange those tickets for puzzle adventures.</p>
+          </article>
+          <article class="tk-card">
+            <span class="tk-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="6.5" height="6.5" rx="1.2"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.2"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.2"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.2"/></svg>
+            </span>
+            <h3>Puzzle adventures with Tocky</h3>
+            <p>Spend earned tickets on colorful puzzle adventures. A little fun makes each finished activity worth celebrating.</p>
+          </article>
+          <article class="tk-card">
+            <span class="tk-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M9 10h.01M15 10h.01M8.5 14c1 1.4 2.2 2 3.5 2s2.5-.6 3.5-2"/></svg>
+            </span>
+            <h3>Simple, kid-friendly design</h3>
+            <p>Large controls, colorful hand-drawn illustrations, cheerful music, and friendly animations. No complicated settings.</p>
+          </article>
+          <article class="tk-card">
+            <span class="tk-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="12" height="9" rx="1.5"/><rect x="9" y="10" width="12" height="9" rx="1.5"/></svg>
+            </span>
+            <h3>iPhone, iPad, and iCloud</h3>
+            <p>Tocky runs on iPhone and iPad. Activities and rewards sync with iCloud, so they stay together across devices.</p>
+          </article>
+          <article class="tk-card">
+            <span class="tk-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19V5"/><path d="M5 5h9l-2 3 2 3H5"/></svg>
+            </span>
+            <h3>Less reminding, more independence</h3>
+            <p>When time is visible and small wins get a celebration, kids can take a more active part in the routines of the day.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="tk-section" aria-labelledby="routines-title">
+      <div class="tk-wrap">
+        <h2 id="routines-title">Made for everyday routines</h2>
+        <p class="tk-intro">The moments that tend to stall, from the first activity of the morning through bedtime.</p>
+        <ul class="tk-activities">
+          <li>Getting dressed</li>
+          <li>Brushing teeth</li>
+          <li>Cleaning up toys</li>
+          <li>Bedtime</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="tk-section" id="whats-new" aria-labelledby="whats-new-title">
+      <div class="tk-wrap tk-split">
+        <article class="tk-card">
+          <h2 id="whats-new-title">Latest</h2>
+          <p class="tk-version"><time datetime="2026-10-25">Oct 25, 2026</time> · Version 1.2.0</p>
+          <p>The countdown animation is clearer, so kids can see time passing. When 20 seconds remain, a gentle reminder sound plays and the background music speeds up to 1.2×.</p>
+        </article>
+        <article class="tk-card" aria-labelledby="details-title">
+          <h2 id="details-title">Information</h2>
+          <dl class="tk-specs">
+            <dt>Price</dt>
+            <dd>Free. Tocky Pro Monthly, $1.99. Tocky Pro Lifetime, $12.99.</dd>
+            <dt>Platforms</dt>
+            <dd>iPhone and iPad</dd>
+            <dt>Requires</dt>
+            <dd>iOS 18.0 or later. iPadOS 18.0 or later.</dd>
+            <dt>Category</dt>
+            <dd>Utilities</dd>
+            <dt>Age</dt>
+            <dd>4+</dd>
+            <dt>Size</dt>
+            <dd>43.5 MB</dd>
+            <dt>Languages</dt>
+            <dd>English, French, German, Italian, Japanese, Korean, Portuguese, Simplified Chinese, Spanish, and Traditional Chinese.</dd>
+            <dt>Privacy</dt>
+            <dd>Data Not Collected. <a href="tocky/privacy.html">Privacy policy</a>.</dd>
+            <dt>Sharing</dt>
+            <dd>Supports Family Sharing.</dd>
+            <dt>Copyright</dt>
+            <dd>© 2026 kole</dd>
+          </dl>
+        </article>
+      </div>
+    </section>
+
+    <section class="tk-section tk-download" id="download" aria-labelledby="download-title">
+      <div class="tk-wrap">
+        <h2 id="download-title">Download</h2>
+        <p class="tk-intro">Tocky is free on the App Store for iPhone and iPad. Tocky Pro Monthly is $1.99, and Tocky Pro Lifetime is $12.99.</p>
+        <a class="tk-store" href="https://apps.apple.com/us/app/tocky-kids-visual-timer/id6813092437" target="_blank" rel="noreferrer">
+          Download on the App Store
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="tk-footer tk-wrap">
+    <p>© 2026 Kole Liu</p>
+    <nav aria-label="Footer">
+      <a href="index.html">Home</a>
+      <a href="tocky/support.html">Support</a>
+      <a href="tocky/privacy.html">Privacy</a>
+      <a href="https://apps.apple.com/us/app/tocky-kids-visual-timer/id6813092437" target="_blank" rel="noreferrer">App Store</a>
+    </nav>
+  </footer>
+
+  <script>
+    (function () {
+      var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      document.querySelectorAll("[data-scroller]").forEach(function (root) {
+        var track = root.querySelector("[data-track]");
+        var prev = root.querySelector("[data-prev]");
+        var next = root.querySelector("[data-next]");
+        if (!track || !prev || !next) return;
+
+        function step() {
+          var card = track.querySelector(".tk-shot");
+          if (!card) return Math.round(track.clientWidth * 0.8);
+          var styles = window.getComputedStyle(track);
+          var gap = parseFloat(styles.columnGap || styles.gap) || 16;
+          return card.getBoundingClientRect().width + gap;
+        }
+
+        var controls = root.querySelector(".tk-controls");
+
+        function update() {
+          var max = track.scrollWidth - track.clientWidth;
+          prev.disabled = track.scrollLeft <= 1;
+          next.disabled = track.scrollLeft >= max - 1;
+          if (controls) controls.hidden = max <= 1;
+        }
+
+        function scrollByStep(direction) {
+          track.scrollBy({ left: direction * step(), behavior: reduce ? "auto" : "smooth" });
+        }
+
+        prev.addEventListener("click", function () { scrollByStep(-1); });
+        next.addEventListener("click", function () { scrollByStep(1); });
+
+        track.addEventListener("keydown", function (event) {
+          if (event.key === "ArrowRight") {
+            event.preventDefault();
+            scrollByStep(1);
+          } else if (event.key === "ArrowLeft") {
+            event.preventDefault();
+            scrollByStep(-1);
+          }
+        });
+
+        track.addEventListener("scroll", update, { passive: true });
+        window.addEventListener("resize", update);
+        update();
+      });
+    })();
+  </script>
+</body>
+</html>
