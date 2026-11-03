@@ -9,8 +9,9 @@
   <style>
     :root {
       color-scheme: light;
+
       --background: #fdfcf9;
-      --surface: #ffffff;
+      --surface: #fff;
       --text: #18181c;
       --text-secondary: #62626b;
       --border: #e4e3df;
@@ -18,7 +19,7 @@
       --accent: #0f6a40;
       --accent-soft: #e7f5ee;
       --warm: #fff6dc;
-      --on-accent: #ffffff;
+      --on-accent: #fff;
       --shot-bg: #fff8ee;
     }
 
@@ -42,7 +43,10 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    img { display: block; max-width: 100%; }
+    img {
+      display: block;
+      max-width: 100%;
+    }
 
     a {
       color: inherit;
@@ -113,7 +117,7 @@
       height: 88px;
       border-radius: 22px;
       object-fit: cover;
-      box-shadow: 0 10px 24px rgba(90, 60, 10, 0.12);
+      box-shadow: 0 10px 24px rgb(90 60 10 / 12%);
     }
 
     .eyebrow {
@@ -236,7 +240,7 @@
       border: 1px solid var(--border);
       border-radius: 22px;
       background: var(--shot-bg);
-      box-shadow: 0 18px 40px rgba(80, 60, 20, 0.12);
+      box-shadow: 0 18px 40px rgb(80 60 20 / 12%);
     }
 
     .tk-section {
@@ -281,7 +285,10 @@
       font-size: 14px;
     }
 
-    .tk-controls { display: flex; gap: 8px; }
+    .tk-controls {
+      display: flex;
+      gap: 8px;
+    }
     .tk-controls[hidden] { display: none; }
 
     .tk-controls button {
@@ -326,7 +333,17 @@
       scroll-snap-align: start;
     }
 
-    .tk-shot a { display: block; color: inherit; }
+    .tk-specs a,
+    .tk-footer a {
+      color: var(--accent);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .tk-shot a {
+      display: block;
+      color: inherit;
+    }
 
     .tk-shot a:hover { color: inherit; }
 
@@ -371,6 +388,8 @@
 
     .tk-card p { margin: 0; }
 
+    .tk-footer p { margin: 0; }
+
     .tk-card p + p { margin-top: 10px; }
 
     .tk-mark {
@@ -384,7 +403,10 @@
       color: var(--accent);
     }
 
-    .tk-mark svg { width: 20px; height: 20px; }
+    .tk-mark svg {
+      width: 20px;
+      height: 20px;
+    }
 
     .tk-activities {
       display: flex;
@@ -435,13 +457,6 @@
       color: var(--text-secondary);
     }
 
-    .tk-specs a,
-    .tk-footer a {
-      color: var(--accent);
-      text-decoration: underline;
-      text-underline-offset: 3px;
-    }
-
     .tk-download { text-align: center; }
 
     .tk-download .tk-intro { margin-inline: auto; }
@@ -457,15 +472,13 @@
       font-size: 13px;
     }
 
-    .tk-footer p { margin: 0; }
-
     .tk-footer nav {
       display: flex;
       flex-wrap: wrap;
       gap: 8px 20px;
     }
 
-    @media (max-width: 800px) {
+    @media (width <= 800px) {
       .tk-hero {
         grid-template-columns: 1fr;
         gap: 28px;
@@ -478,7 +491,7 @@
       .tk-split { grid-template-columns: 1fr; }
     }
 
-    @media (max-width: 680px) {
+    @media (width <= 680px) {
       .tk-wrap { width: min(100% - 32px, 1080px); }
 
       .tk-header {
@@ -489,15 +502,21 @@
         padding: 16px 0;
       }
 
-      .tk-nav { flex-wrap: wrap; gap: 12px 16px; }
+      .tk-nav {
+        flex-wrap: wrap;
+        gap: 12px 16px;
+      }
 
       .tk-section { padding: 34px 0; }
 
       .tk-store { width: 100%; }
     }
 
-    @media (max-width: 520px) {
-      .tk-specs { grid-template-columns: 1fr; gap: 2px 0; }
+    @media (width <= 520px) {
+      .tk-specs {
+        grid-template-columns: 1fr;
+        gap: 2px 0;
+      }
       .tk-specs dt { margin-top: 12px; }
       .tk-specs dt:first-child { margin-top: 0; }
     }
